@@ -1,0 +1,584 @@
+---
+/**
+ * Multilingual City Pages
+ *
+ * Generates localized versions of city pages for supported languages
+ * Strategy: Only translate relevant cities for each language (geo-targeting)
+ */
+
+import CityPageLayout from '../../layouts/CityPageLayout.astro';
+import StoreBadges from '../../components/StoreBadges.astro';
+import { loadCityData } from '../../utils/api-helpers.ts';
+import { toTitleCase } from '../../utils/formatters.ts';
+import AppScreensGallery from '../../components/AppScreensGallery.astro';
+import EnhancedMobileAppCTA from '../../components/EnhancedMobileAppCTA.astro';
+import AppFeaturesList from '../../components/AppFeaturesList.astro';
+import CitySearch from '../../components/CitySearch.astro';
+import RelatedLinks from '../../components/RelatedLinks.astro';
+import ForecastSection from '../../components/ForecastSection.astro';
+import AuroraStatusCard from '../../components/AuroraStatusCard.astro';
+import VisibilityFactors from '../../components/VisibilityFactors.astro';
+import AuroraWarnings from '../../components/AuroraWarnings.astro';
+import CityFAQ from '../../components/CityFAQ.astro';
+import ResponsiveTestWrapper from '../../components/ResponsiveTestWrapper.astro';
+
+import citiesData from '../../data/cities.json';
+import type { SupportedLanguage, CityData } from '@config/language-targeting';
+import {
+  SUPPORTED_LANGUAGES,
+  getCitiesForLanguage,
+  buildCityUrl
+} from '@config/language-targeting';
+import { generateCityHreflangTags, getCityCanonicalUrl } from '../../utils/hreflang';
+import { createPageI18n, generateLocalizedCityTitle, generateLocalizedCityDescription, getCityPageStrings } from '../../utils/i18n-page';
+import { loadGlobalCityStatuses } from '../../utils/global-status';
+import { DEFAULT_STATUS_COLORS, DEFAULT_STATUS_TEXTS } from '../../data/status-defaults';
+import { getFactorDefinitions } from '../../data/factor-definitions';
+import { getMagLat, getKp, getWeather, getMoon, getDarkness, OVERCAST_THRESHOLD } from '../../utils/factor-utils';
+import { getSafeThreeHourForecast, getSafeCountryCities } from '../../utils/error-handling';
+import { calculateKpBands, calculateKpThreshold } from '../../utils/kp-bands';
+import {
+  buildCityRelatedLinks,
+  getCountrySlug,
+  getPremiumDestinations,
+  getSimilarCities
+} from '../../utils/cross-links';
+import type { CityRecord } from '../../utils/cross-links';
+
+// Enable static generation for all multilingual city pages
+export const prerender = true;
+
+/**
+ * Generate static paths for all localized city pages
+ * Only generates paths for cities that should be translated to each language
+ */
+export async function getStaticPaths() {
+  const paths = [];
+
+  for (const lang of SUPPORTED_LANGUAGES) {
+    // Skip English (handled by root [city].astro)
+    if (lang === 'en') {
+      continue;
+    }
+
+    // Get cities for this language using geo-targeting
+    const cities = getCitiesForLanguage(citiesData as CityData[], lang);
+
+    console.log(`[i18n] Generating ${lang} pages for ${cities.length} cities`);
+
+    for (const city of cities) {
+      paths.push({
+        params: {
+          lang,
+          city: city.slug
+        },
+        props: {
+          cityData: city,
+          lang
+        }
+      });
+    }
+  }
+
+  console.log(`[i18n] Total multilingual city pages: ${paths.length}`);
+
+  return paths;
+}
+
+// Get props from getStaticPaths
+const { cityData, lang } = Astro.props as { cityData: CityData; lang: SupportedLanguage };
+
+// Validate city data
+if (!cityData || !cityData.slug) {
+  throw new Error(`Invalid city data for ${lang} language`);
+}
+
+// Load translations for this language
+const i18n = await createPageI18n(lang);
+const strings = getCityPageStrings(i18n);
+
+// Load localized factor definitions
+const factorDefinitions = getFactorDefinitions(lang);
+
+// Extract city data
+const { name, country, lat, lon, slug, countryCode, description, magneticLat, state } = cityData;
+
+// Translate country name
+const countryKey = `country_${country.toLowerCase().replace(/ /g, '_')}`;
+const translatedCountry = i18n.t(countryKey, country);
+
+const cityRecord: CityRecord = {
+  slug,
+  name,
+  country,
+  countryCode,
+  magneticLat,
+  state,
+  description
+};
+
+const originSlug = slug;
+const cityRelatedLinks = buildCityRelatedLinks(cityRecord, lang);
+const premiumDestinations = getPremiumDestinations(cityRecord, 2);
+const countrySlug = getCountrySlug(country);
+
+// Generate SEO metadata
+const localizedTitle = generateLocalizedCityTitle(name, i18n);
+const localizedDescription = generateLocalizedCityDescription(name, country, i18n);
+
+// Generate hreflang tags for all available language versions
+const hreflangTags = generateCityHreflangTags(cityData);
+
+// Get canonical URL for this language version
+const canonicalUrl = getCityCanonicalUrl(cityData, lang);
+
+// Build breadcrumbs (match English template structure)
+const breadcrumbs = [
+  { title: i18n.t('breadcrumb_home', 'Home'), href: buildCityUrl('', lang) },
+  { title: translatedCountry, href: lang === 'en' ? `/country/${country.toLowerCase().replace(/\s+/g, '-')}` : `/${lang}/country/${country.toLowerCase().replace(/\s+/g, '-')}` },
+  { title: name, href: buildCityUrl(slug, lang) }
+];
+
+// Load real-time data from API
+let [apiData, globalCityStatuses] = await Promise.all([
+  loadCityData(lat, lon, name, cityData),
+  loadGlobalCityStatuses()
+]);
+
+// Extract data from API response with fallbacks
+const ui = apiData.ui || {};
+const tonight = apiData.tonight || {};
+const currentStatus = apiData.currentStatus || {};
+let statusLevel = currentStatus.level || tonight.status || 'very_low';
+let probability = Math.round((currentStatus.probability ?? tonight.probability) || 0);
+const kpIndex = apiData.conditions?.kpIndex ?? apiData.h12?.[0]?.kp;
+const cloudCover = (apiData.conditions?.cloudCover ?? 50);
+const moonIllumination = apiData.conditions?.moonIllumination;
+const skyDarkness = apiData.conditions?.skyDarkness ?? 'night';
+const magneticLatitude = apiData.location?.magneticLatitude ?? apiData.place?.mlat ?? cityData.magneticLat;
+// Minimum KP threshold for aurora visibility at this location (from backend)
+const kpThreshold = apiData.kpThreshold;
+
+// Override status during daylight/civil twilight (fixes cache returning night-time status during day)
+// This ensures users see "Unlikely" status when sun is above horizon, regardless of cached data
+if (skyDarkness === 'daylight' || skyDarkness === 'civil') {
+  statusLevel = 'very_low';
+  probability = 0;
+}
+
+// Override status when overcast - clouds completely block aurora visibility
+if (cloudCover >= OVERCAST_THRESHOLD) {
+  statusLevel = 'very_low';
+  probability = 0;
+}
+
+const statusText = ui.statusTexts?.[statusLevel] || DEFAULT_STATUS_TEXTS?.[statusLevel] || toTitleCase(statusLevel);
+
+// Calculate factors for visibility grid
+const magLat = getMagLat(magneticLatitude, factorDefinitions);
+const kp = getKp(kpIndex, factorDefinitions);
+const weather = getWeather(cloudCover, factorDefinitions);
+const moon = getMoon(moonIllumination, factorDefinitions);
+const darkness = getDarkness(skyDarkness, factorDefinitions);
+const modal = ui.modalData || {};
+
+// 3-hour forecast data with comprehensive error handling
+const hourlyForecast = getSafeThreeHourForecast(apiData);
+
+// 27-day forecast data (full array from seoSnapshot)
+const d27Full = apiData.d27Full || [];
+const monthly = apiData.monthly || {};
+const historyMini = apiData.historyMini || {};
+
+// Helper function to build city href
+const buildCityHref = (citySlug: string) => {
+  const city = citiesData.find(c => c.slug === citySlug);
+  const isSameCountry = city && city.country.toLowerCase().replace(/\s+/g, '-') === country.toLowerCase().replace(/\s+/g, '-');
+  const localizedCitySlugs = new Set(getCitiesForLanguage(citiesData as any, lang).map(c => c.slug));
+
+  if (isSameCountry) {
+    return `/${lang}/${citySlug}`;
+  }
+  return localizedCitySlugs.has(citySlug) ? `/${lang}/${citySlug}` : `/${citySlug}`;
+};
+
+const h1 = i18n.tpl(i18n.t('city_h1_template', 'Northern Lights Tonight in {name}'), { name });
+const subtitle = i18n.t('city_live_status', 'Live Aurora Status & Forecast');
+
+const warnings = {
+  kpThreshold: i18n.t('kp_threshold_warning', 'Kp {value} needed for {city}'),
+  daylight: i18n.t('city_daylight_warning', 'Sun is up - aurora not visible'),
+  overcast: i18n.t('weather_warning_overcast', 'Overcast skies may block view')
+};
+---
+
+<CityPageLayout
+  title={localizedTitle}
+  description={localizedDescription}
+  canonical={canonicalUrl}
+  lang={lang}
+  hreflangTags={hreflangTags}
+  i18n={i18n}
+  cityData={cityData}
+  breadcrumbs={breadcrumbs}
+  h1={h1}
+  subtitle={subtitle}
+>
+  <!-- 1) Aurora Status Now -->
+  <section class="aurora-now" slot="aurora-now">
+    <AuroraStatusCard
+      statusLevel={statusLevel}
+      uiData={ui}
+      citySlug={cityData.slug}
+      magneticLatitude={magneticLatitude}
+      kpIndex={kpIndex}
+      i18n={i18n}
+      probability={probability}
+    />
+    <AuroraWarnings
+      kpIndex={kpIndex}
+      kpThreshold={kpThreshold}
+      skyDarkness={skyDarkness}
+      cloudCover={cloudCover}
+      overcastThreshold={OVERCAST_THRESHOLD}
+      cityName={name}
+      warnings={warnings}
+    />
+  </section>
+
+  <!-- 2) How we calculate → факторы прогноза -->
+  <section class="methodology" slot="methodology">
+    <div class="methodology-header">
+      <div class="methodology-header-content">
+        <div class="methodology-header-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        </div>
+        <h2>{i18n.t('visibility_title', 'What affects visibility')}</h2>
+      </div>
+    </div>
+    <div class="methodology-content">
+      <VisibilityFactors
+        magLat={magLat}
+        kp={kp}
+        weather={weather}
+        moon={moon}
+        darkness={darkness}
+        factorDefinitions={factorDefinitions}
+        modalData={modal}
+        i18n={i18n}
+      />
+    </div>
+  </section>
+
+  <!-- Forecast Section with Tabs: 12h, 27d, 1y -->
+  <div slot="forecast">
+    <ForecastSection
+      lat={cityData.lat}
+      lon={cityData.lon}
+      timezone={cityData.timezone}
+      citySlug={cityData.slug}
+      cityName={name}
+      country={country}
+      region={cityData.state}
+      h12={hourlyForecast}
+      d27Full={d27Full}
+      monthly={monthly}
+      historyMini={historyMini}
+      kpThreshold={kpThreshold}
+      i18n={i18n}
+    />
+  </div>
+
+  <!-- Enhanced Mobile App CTA - Full Width -->
+  <EnhancedMobileAppCTA
+    slot="app-cta"
+    pageType="city_page"
+    citySlug={cityData.slug}
+    placement="timeline"
+    cityName={name}
+    context="timeline"
+    showSocialProof={false}
+    i18n={i18n}
+  >
+    <AppFeaturesList slot="features-list" i18n={i18n} />
+    <StoreBadges
+      slot="store-badges"
+      pageType="city_page"
+      citySlug={cityData.slug}
+      placement="timeline_slot"
+      enhanced={true}
+      size="large"
+      i18n={i18n}
+    />
+  </EnhancedMobileAppCTA>
+
+  <!-- Other cities in {Country} section with Error Handling - Full Width -->
+  <ResponsiveTestWrapper
+    slot="related"
+    testId="country-cities"
+    fallbackMessage={`No other cities available in ${country} at the moment.`}
+    minHeight="150px"
+  >
+    {(() => {
+      const countryCities = getSafeCountryCities(citiesData, country, cityData.slug, 6);
+
+      return countryCities.length > 0 ? (
+        <section class="country-cities-gallery-full-width">
+          <div class="container">
+            <h2 class="section-title">{i18n.t('country_cities_title', 'Other cities in {country}').replace('{country}', translatedCountry)}</h2>
+            <div class="city-search-wrapper">
+              <CitySearch id="country-city-search" i18n={i18n} compact />
+            </div>
+          </div>
+          <div class="cities-grid-full-width">
+            {countryCities.map(city => {
+              const cityStatus = globalCityStatuses[city.slug] || {
+                status: 'unknown',
+                statusText: 'Check forecast',
+                color: '#666666'
+              };
+              const bands = calculateKpBands(city.magneticLat);
+
+              return (
+                <a href={buildCityHref(city.slug)} class={`city-card status-${cityStatus.status}`} data-city-slug={city.slug}>
+                  <div class="city-card-content">
+                    <div class="city-header">
+                      <h3>{city.name}</h3>
+                      <div class="city-meta">
+                        <span class="meta-item">
+                          <span class="meta-label">MLAT</span>
+                          <span class="meta-value">{city.magneticLat?.toFixed(1) || 'N/A'}°</span>
+                        </span>
+                        <span class="meta-item">
+                          <span class="meta-label">Min Kp</span>
+                          <span class="meta-value">{bands.horizon.toFixed(1)}+</span>
+                        </span>
+                      </div>
+                    </div>
+                    <p class="city-description">{city[`description_${lang}`] || city.description}</p>
+                    <div class="city-status-info">
+                      <div class="city-status-text-group">
+                        <div class="city-status-text">{i18n.t('country_city_current_status', 'CURRENT STATUS')}</div>
+                        <div class="city-status-label">{cityStatus.statusText}</div>
+                      </div>
+                      <div class="city-view-btn">{i18n.t('country_city_view_forecast', 'View')}</div>
+                    </div>
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+        </section>
+      ) : (
+        <section class="country-cities-empty">
+          <div class="container">
+            <div class="empty-state">
+              <h2>{i18n.t('explore_more_locs', 'Explore More Locations')}</h2>
+              <p>{i18n.t('explore_more_desc', '{name} is our featured location in {country}. Discover aurora viewing opportunities worldwide:').replace('{name}', name).replace('{country}', translatedCountry)}</p>
+              <div class="explore-cta">
+                <a href={`/${lang}`} class="cta-button">{i18n.t('browse_all_cities', 'Browse All Cities')}</a>
+              </div>
+            </div>
+          </div>
+        </section>
+      );
+    })()}
+  </ResponsiveTestWrapper>
+
+  <section class="cta-app" slot="related">
+    <AppScreensGallery
+      title={i18n.t('app_gallery_title', 'Experience the complete aurora forecast in {name}').replace('{name}', name)}
+      subtitle={i18n.t('app_gallery_subtitle', 'Real screenshots from the AuroraMe app showing detailed forecasts for your location.')}
+      i18n={i18n}
+    />
+    <div class="container">
+      <StoreBadges
+        pageType="city_page"
+        citySlug={cityData.slug}
+        placement="app_screens_cta"
+        enhanced={true}
+        size="large"
+        i18n={i18n}
+      />
+    </div>
+  </section>
+
+  <p class="city-crosslink-intro" slot="related">
+    {i18n.t('city_intro_planning', 'Planning a trip?')}
+    <a
+      class="cross-link-inline"
+      href={lang === 'en' ? `/best-time/${slug}` : `/${lang}/best-time/${slug}`}
+      data-cross-link
+      data-slot="related"
+      data-type="guide"
+      data-target={`best-time/${slug}`}
+      data-position="1"
+    >
+      {i18n.t('city_intro_link', 'See the best months for {name}').replace('{name}', name)} →
+    </a>
+  </p>
+
+  <div slot="related">
+
+    <!-- JSON-LD breadcrumbs -->
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: breadcrumbs.map((b, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: b.title,
+          item: `https://auroraforecast.me${b.href}`
+        }))
+      })}
+    ></script>
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'Place',
+        name: `${name || 'Unknown'}, ${country || 'Unknown'}`,
+        geo: { '@type': 'GeoCoordinates', latitude: lat || 0, longitude: lon || 0 }
+      })}
+    ></script>
+
+    <!-- Event schema for aurora viewing tonight -->
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'Event',
+        name: `Aurora Forecast Tonight in ${name}`,
+        description: `Northern lights viewing opportunity in ${name}, ${translatedCountry}. Current probability: ${probability}%. KP index: ${kpIndex ?? 'N/A'}.`,
+        image: `https://auroraforecast.me/og/${slug}.png`,
+        startDate: new Date().toISOString().split('T')[0] + 'T21:00:00',
+        endDate: new Date(Date.now() + 86400000).toISOString().split('T')[0] + 'T05:00:00',
+        eventStatus: 'https://schema.org/EventScheduled',
+        eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+        location: {
+          '@type': 'Place',
+          name: `${name}, ${translatedCountry}`,
+          address: {
+            '@type': 'PostalAddress',
+            addressLocality: name,
+            addressCountry: translatedCountry
+          },
+          geo: { '@type': 'GeoCoordinates', latitude: lat || 0, longitude: lon || 0 }
+        },
+        performer: {
+          '@type': 'Thing',
+          name: 'Aurora Borealis',
+          alternateName: 'Northern Lights',
+          description: 'Natural light display in Earth\'s sky'
+        },
+        organizer: {
+          '@type': 'Organization',
+          name: 'AuroraMe',
+          url: 'https://auroraforecast.me'
+        },
+        offers: {
+          '@type': 'Offer',
+          price: '0',
+          priceCurrency: 'USD',
+          availability: 'https://schema.org/InStock',
+          url: `https://auroraforecast.me/${lang}/${slug}`,
+          validFrom: new Date().toISOString().split('T')[0]
+        }
+      })}
+    ></script>
+
+    <script src="/js/hydrate.js" defer></script>
+    <script src="/scripts/city-page-runtime.js" defer></script>
+
+    <div class="container">
+      <RelatedLinks
+        title={i18n.t('related_guides_title', 'More aurora guides')}
+        links={cityRelatedLinks}
+        originSlug={originSlug}
+        slot="related_block"
+        i18n={i18n}
+      />
+    </div>
+  </div>
+
+  <!-- FAQ Section -->
+  <CityFAQ
+    slot="faq"
+    name={name}
+    country={translatedCountry}
+    magneticLatitude={magneticLatitude || cityData.magneticLat || 60}
+    lat={lat}
+    kpIndex={kpIndex}
+    probability={probability}
+    statusLevel={statusLevel}
+    statusText={statusText}
+    cloudCover={cloudCover}
+    i18n={i18n}
+  />
+
+  <!-- Strategic CTA 3: After FAQ -->
+  <section class="strategic-cta cta-travel" slot="travel-cta">
+    <div class="cta-content">
+      <h3>{i18n.t('travel_cta_title', 'Traveling? Track multiple locations easily')}</h3>
+      <p>{i18n.t('travel_cta_desc', 'Compare aurora chances across cities and get alerts for all your planned destinations.')}</p>
+      <StoreBadges pageType="city_page" citySlug={cityData.slug} placement="travel_cta" enhanced={true} i18n={i18n} />
+      {premiumDestinations.length > 0 && (
+        <p class="city-crosslink-premium">
+          {i18n.t('premium_dest_intro', 'For brighter shows consider')}
+          {premiumDestinations.map((city, idx) => (
+            <span>
+              {idx > 0 ? ', ' : ' '}
+              <a
+                class="cross-link-inline"
+                href={lang === 'en' ? `/best-time/${city.slug}` : `/${lang}/best-time/${city.slug}`}
+                data-cross-link
+                data-slot="planning"
+                data-type="premium"
+                data-target={`best-time/${city.slug}`}
+                data-position={`${idx + 1}`}
+              >
+                {city.name}
+              </a>
+            </span>
+          ))}
+        </p>
+      )}
+    </div>
+  </section>
+
+  <!-- Sticky Store Badges -->
+  <StoreBadges slot="sticky-footer" pageType="city_page" citySlug={cityData.slug} placement="sticky_footer" sticky={true} enhanced={true} i18n={i18n} />
+
+  <!-- Sticky footer scroll detection -->
+  <script slot="sticky-footer" is:inline>
+    (function() {
+      const stickyFooter = document.querySelector('.store-badges.sticky');
+      const footerLinks = document.querySelector('.footer-links');
+      if (!stickyFooter || !footerLinks) return;
+
+      function checkScroll() {
+        const footerRect = footerLinks.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
+        // When footer is visible (its top is in the viewport)
+        if (footerRect.top <= windowHeight) {
+          stickyFooter.classList.add('landed');
+        } else {
+          stickyFooter.classList.remove('landed');
+        }
+      }
+
+      window.addEventListener('scroll', checkScroll, { passive: true });
+      checkScroll();
+    })();
+  </script>
+
+</CityPageLayout>
+
+<script src="/scripts/aurora-sync.js?v=3" defer></script>
+<script type="module" src="/scripts/cross-link-tracker.js"></script>
+<div data-origin-slug={originSlug} style="display:none;"></div>

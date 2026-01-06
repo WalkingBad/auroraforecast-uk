@@ -1,0 +1,181 @@
+/**
+ * Guides Index Page Styles
+ * Extracted from inline <style> block (69 lines)
+ * Date: 2025-11-24
+ */
+
+/* ==========================================================================
+   Main Container
+   ========================================================================== */
+
+.guides-index {
+  background: #0A0A0A;
+  min-height: 100vh;
+  padding: 3rem 0 6rem;
+}
+
+.guides-index__container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* ==========================================================================
+   Header
+   ========================================================================== */
+
+.guides-index__header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.guides-index__title {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 600;
+  color: #FFFFFF;
+  margin: 0 0 1rem;
+}
+
+.guides-index__subtitle {
+  font-size: 1.25rem;
+  color: #C8C8C8;
+  line-height: 1.6;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* ==========================================================================
+   Guides Grid
+   ========================================================================== */
+
+.guides-index__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+  margin-bottom: 4rem;
+}
+
+.guide-card {
+  display: block;
+  background: #111214;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 2rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.guide-card:hover {
+  border-color: #6BE7A0;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(107, 231, 160, 0.1);
+}
+
+.guide-card:hover .guide-card__title {
+  color: #6BE7A0;
+}
+
+.guide-card__category {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6BE7A0;
+  background: rgba(107, 231, 160, 0.15);
+  padding: 0.25rem 0.75rem;
+}
+
+/* ==========================================================================
+   Cities Section
+   ========================================================================== */
+
+.guides-index__cities {
+  margin-top: var(--aurora-spacing-xxl);
+  padding: var(--aurora-spacing-xxl);
+  background: var(--aurora-surface);
+  border: 1px solid var(--aurora-border-light);
+  border-radius: var(--aurora-radius-card);
+  text-align: center;
+}
+
+.guides-index__cities h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--aurora-text-primary);
+  margin: 0 0 var(--aurora-spacing-m);
+}
+
+.guides-index__cities p {
+  font-size: 1rem;
+  color: var(--aurora-text-secondary);
+  margin: 0 0 var(--aurora-spacing-xl);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.guides-index__cities-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--aurora-spacing-s);
+  margin-bottom: var(--aurora-spacing-xl);
+}
+
+.city-quick-link {
+  display: inline-block;
+  padding: var(--aurora-spacing-s) var(--aurora-spacing-l);
+  background: var(--aurora-bg-primary);
+  border: 1px solid var(--aurora-border-light);
+  border-radius: var(--aurora-radius-s);
+  color: var(--aurora-text-primary);
+  text-decoration: none;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  transition: all var(--aurora-timing-fast) ease;
+}
+
+.city-quick-link:hover {
+  border-color: var(--aurora-primary);
+  background: var(--cross-link-hover-bg);
+  transform: translateY(-2px);
+}
+
+.guides-index__regions-btn {
+  display: inline-block;
+  padding: var(--aurora-spacing-m) var(--aurora-spacing-xxl);
+  background: linear-gradient(135deg, var(--aurora-primary), var(--aurora-primary-hover));
+  color: var(--aurora-on-primary);
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: var(--aurora-radius-button);
+  transition: all var(--aurora-timing-base) ease;
+  box-shadow: var(--aurora-elevation-e1);
+}
+
+.guides-index__regions-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--aurora-elevation-e2);
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .guides-index__cities {
+    padding: var(--aurora-spacing-xl);
+  }
+
+  .guides-index__cities h2 {
+    font-size: 1.5rem;
+  }
+
+  .city-quick-link {
+    font-size: 0.875rem;
+    padding: var(--aurora-spacing-xs) var(--aurora-spacing-m);
+  }
+}

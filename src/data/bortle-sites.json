@@ -1,0 +1,325 @@
+{
+  "us-ak": [
+    {
+      "name": "Denali National Park",
+      "bortle": 1,
+      "lat": 63.1148,
+      "lon": -151.1926,
+      "distance_from": {
+        "fairbanks": 120,
+        "anchorage": 240
+      },
+      "access": "Parks Highway, open year-round",
+      "description": "One of the darkest skies in North America"
+    },
+    {
+      "name": "Chena Hot Springs",
+      "bortle": 2,
+      "lat": 65.0539,
+      "lon": -146.0553,
+      "distance_from": {
+        "fairbanks": 60
+      },
+      "access": "Chena Hot Springs Road, maintained winter",
+      "description": "Aurora viewing with hot springs resort"
+    },
+    {
+      "name": "Murphy Dome",
+      "bortle": 3,
+      "lat": 64.9525,
+      "lon": -148.0742,
+      "distance_from": {
+        "fairbanks": 20
+      },
+      "access": "Murphy Dome Road, 4WD recommended",
+      "description": "Popular local aurora viewing spot"
+    }
+  ],
+  "us-wa": [
+    {
+      "name": "North Cascades National Park",
+      "bortle": 2,
+      "lat": 48.7718,
+      "lon": -121.2985,
+      "distance_from": {
+        "seattle": 110
+      },
+      "access": "Highway 20, closed in winter",
+      "description": "Dark skies in the Cascade Mountains"
+    },
+    {
+      "name": "Mount Rainier National Park",
+      "bortle": 3,
+      "lat": 46.8523,
+      "lon": -121.7603,
+      "distance_from": {
+        "seattle": 85,
+        "tacoma": 65
+      },
+      "access": "Paradise area, check road conditions",
+      "description": "High elevation aurora viewing"
+    }
+  ],
+  "us-mn": [
+    {
+      "name": "Boundary Waters",
+      "bortle": 1,
+      "lat": 48.1042,
+      "lon": -91.0955,
+      "distance_from": {
+        "duluth": 110,
+        "minneapolis": 260
+      },
+      "access": "Superior National Forest roads",
+      "description": "Pristine wilderness with exceptional darkness"
+    },
+    {
+      "name": "Voyageurs National Park",
+      "bortle": 2,
+      "lat": 48.4925,
+      "lon": -93.0009,
+      "distance_from": {
+        "duluth": 150,
+        "minneapolis": 300
+      },
+      "access": "Highway 53 to park entrances",
+      "description": "Dark skies over lakes and forests"
+    }
+  ],
+  "us-me": [
+    {
+      "name": "Acadia National Park",
+      "bortle": 3,
+      "lat": 44.3386,
+      "lon": -68.2733,
+      "distance_from": {
+        "portland": 160,
+        "boston": 280
+      },
+      "access": "Route 3 to Mount Desert Island",
+      "description": "Coastal dark sky viewing"
+    },
+    {
+      "name": "Baxter State Park",
+      "bortle": 2,
+      "lat": 45.8867,
+      "lon": -68.9213,
+      "distance_from": {
+        "portland": 240,
+        "bangor": 85
+      },
+      "access": "Millinocket entrance, seasonal",
+      "description": "Maine's darkest skies around Mt. Katahdin"
+    }
+  ],
+  "us-mt": [
+    {
+      "name": "Glacier National Park",
+      "bortle": 1,
+      "lat": 48.7596,
+      "lon": -113.7870,
+      "distance_from": {
+        "kalispell": 35,
+        "great_falls": 200
+      },
+      "access": "Going-to-the-Sun Road, seasonal",
+      "description": "International Dark Sky Park"
+    }
+  ],
+  "us-nd": [
+    {
+      "name": "Theodore Roosevelt National Park",
+      "bortle": 2,
+      "lat": 47.5960,
+      "lon": -103.4397,
+      "distance_from": {
+        "bismarck": 130,
+        "fargo": 220
+      },
+      "access": "Interstate 94 to Medora",
+      "description": "Badlands with minimal light pollution"
+    }
+  ],
+  "us-mi": [
+    {
+      "name": "Headlands International Dark Sky Park",
+      "bortle": 2,
+      "lat": 45.7839,
+      "lon": -84.7342,
+      "distance_from": {
+        "mackinaw_city": 2,
+        "detroit": 280
+      },
+      "access": "US-31 near Mackinaw City",
+      "description": "Designated Dark Sky Park on Lake Michigan"
+    },
+    {
+      "name": "Keweenaw Peninsula",
+      "bortle": 2,
+      "lat": 47.2266,
+      "lon": -88.4140,
+      "distance_from": {
+        "marquette": 110,
+        "green_bay": 250
+      },
+      "access": "US-41 to Copper Harbor",
+      "description": "Northernmost Michigan with dark skies"
+    }
+  ],
+  "ca-ab": [
+    {
+      "name": "Jasper National Park",
+      "bortle": 1,
+      "lat": 52.8734,
+      "lon": -117.9543,
+      "distance_from": {
+        "edmonton": 365,
+        "calgary": 405
+      },
+      "access": "Yellowhead Highway 16",
+      "description": "World's second largest Dark Sky Preserve"
+    },
+    {
+      "name": "Wood Buffalo National Park",
+      "bortle": 1,
+      "lat": 59.4357,
+      "lon": -112.0329,
+      "distance_from": {
+        "edmonton": 765,
+        "fort_mcmurray": 260
+      },
+      "access": "Highway 5 from Fort Smith",
+      "description": "World's largest Dark Sky Preserve"
+    }
+  ],
+  "ca-mb": [
+    {
+      "name": "Churchill Northern Studies Centre",
+      "bortle": 1,
+      "lat": 58.7393,
+      "lon": -93.8191,
+      "distance_from": {
+        "churchill": 23,
+        "winnipeg": 1050
+      },
+      "access": "Launch Road from Churchill",
+      "description": "Aurora research facility with dark skies"
+    },
+    {
+      "name": "Whiteshell Provincial Park",
+      "bortle": 3,
+      "lat": 49.7528,
+      "lon": -95.2033,
+      "distance_from": {
+        "winnipeg": 120
+      },
+      "access": "Highway 44 from Winnipeg",
+      "description": "Canadian Shield dark sky area"
+    }
+  ],
+  "ca-nt": [
+    {
+      "name": "Thelon Wildlife Sanctuary",
+      "bortle": 1,
+      "lat": 64.1833,
+      "lon": -104.4667,
+      "distance_from": {
+        "yellowknife": 480
+      },
+      "access": "Charter flight only",
+      "description": "Remote pristine wilderness"
+    },
+    {
+      "name": "Prelude Lake",
+      "bortle": 2,
+      "lat": 62.5267,
+      "lon": -113.9342,
+      "distance_from": {
+        "yellowknife": 30
+      },
+      "access": "Ingraham Trail (Highway 4)",
+      "description": "Popular aurora viewing near Yellowknife"
+    }
+  ],
+  "ca-yt": [
+    {
+      "name": "Tombstone Territorial Park",
+      "bortle": 1,
+      "lat": 64.4833,
+      "lon": -138.2667,
+      "distance_from": {
+        "dawson_city": 115,
+        "whitehorse": 530
+      },
+      "access": "Dempster Highway",
+      "description": "Spectacular mountain aurora viewing"
+    }
+  ],
+  "ca-nu": [
+    {
+      "name": "Sylvia Grinnell Territorial Park",
+      "bortle": 2,
+      "lat": 63.7298,
+      "lon": -68.4257,
+      "distance_from": {
+        "iqaluit": 2
+      },
+      "access": "Road from Iqaluit",
+      "description": "Accessible dark sky near Iqaluit"
+    }
+  ],
+  "us-new-england": [
+    {
+      "name": "Mount Washington",
+      "bortle": 2,
+      "lat": 44.2706,
+      "lon": -71.3033,
+      "distance_from": {
+        "boston": 170,
+        "portland": 95
+      },
+      "access": "Mount Washington Auto Road, seasonal",
+      "description": "Highest peak in Northeast, above clouds"
+    },
+    {
+      "name": "Northeast Kingdom",
+      "bortle": 2,
+      "lat": 44.6339,
+      "lon": -71.9881,
+      "distance_from": {
+        "burlington": 100,
+        "boston": 220
+      },
+      "access": "Interstate 91 to rural roads",
+      "description": "Vermont's darkest region"
+    }
+  ],
+  "us-midwest": [
+    {
+      "name": "Cherry Springs State Park",
+      "bortle": 2,
+      "lat": 41.6634,
+      "lon": -77.8236,
+      "distance_from": {
+        "pittsburgh": 180,
+        "buffalo": 150
+      },
+      "access": "Route 44, Potter County PA",
+      "description": "East Coast's darkest skies"
+    }
+  ],
+  "us-pacific-northwest": [
+    {
+      "name": "Oregon Star Party Site",
+      "bortle": 1,
+      "lat": 44.3020,
+      "lon": -120.1432,
+      "distance_from": {
+        "portland": 200,
+        "bend": 50
+      },
+      "access": "Ochoco National Forest roads",
+      "description": "Renowned astronomy gathering site"
+    }
+  ]
+}

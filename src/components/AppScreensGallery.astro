@@ -1,0 +1,137 @@
+---
+import type { ImageMetadata } from 'astro';
+import '../styles/components/app-screens-gallery.css';
+
+import screenshot00 from '../../assets/iPhone-6-9-V01-00.webp';
+import screenshot01 from '../../assets/iPhone-6-9-V01-01.webp';
+import screenshot02 from '../../assets/iPhone-6-9-V01-02.webp';
+import screenshot03 from '../../assets/iPhone-6-9-V01-03.webp';
+import screenshot04 from '../../assets/iPhone-6-9-V01-04.webp';
+import screenshot05 from '../../assets/iPhone-6-9-V01-05.webp';
+import screenshot06 from '../../assets/iPhone-6-9-V01-06.webp';
+
+export interface GalleryImage {
+  src: ImageMetadata;
+  alt: string;
+}
+
+export interface Props {
+  title?: string;
+  subtitle?: string;
+  images?: GalleryImage[];
+}
+
+const defaultImages: GalleryImage[] = [
+  { src: screenshot00, alt: 'AuroraMe app showing live aurora on 3D globe' },
+  { src: screenshot01, alt: 'AuroraMe app showing tonight aurora visibility and best viewing time' },
+  { src: screenshot02, alt: 'AuroraMe app smart alerts - Go outside in 60 min notification' },
+  { src: screenshot03, alt: 'AuroraMe app best months calendar for aurora viewing' },
+  { src: screenshot04, alt: 'AuroraMe app best days planner for aurora trip planning' },
+  { src: screenshot05, alt: 'AuroraMe app why tonight screen with Kp index, clouds and darkness' },
+  { src: screenshot06, alt: 'AuroraMe app clear status showing visibility factors' }
+];
+
+const {
+  title = 'AuroraMe mobile app preview',
+  subtitle = 'Real screenshots from the AuroraMe app for iOS and Android.',
+  images = defaultImages
+} = Astro.props;
+
+const sliderId = `app-screens-slider-${Math.random().toString(36).slice(2, 7)}`;
+---
+
+<section class="app-screens-slider" data-component="app-screens-slider">
+  <div class="app-screens-slider__surface surface-card" data-slider={sliderId}>
+    <div class="app-screens-slider__content">
+      {(title || subtitle) && (
+        <div class="app-screens-slider__heading">
+          {title && <p class="app-screens-slider__title">{title}</p>}
+          {subtitle && <p class="app-screens-slider__subtitle">{subtitle}</p>}
+        </div>
+      )}
+
+      <div class="app-screens-slider__viewport" data-slider-track>
+        {images.map((image) => (
+          <div class="app-screens-slider__item">
+            <img
+              class="app-screens-slider__image"
+              src={image.src.src}
+              alt={image.alt || 'AuroraMe app screenshot showing mobile forecast timeline'}
+              loading="lazy"
+              decoding="async"
+              width={image.src.width}
+              height={image.src.height}
+            />
+          </div>
+        ))}
+      </div>
+
+      <div class="app-screens-slider__controls" aria-hidden="true">
+        <button class="app-screens-slider__nav app-screens-slider__nav--prev" type="button" data-slider-prev aria-label="Scroll screenshots left">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 4.5 8 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="app-screens-slider__nav app-screens-slider__nav--next" type="button" data-slider-next aria-label="Scroll screenshots right">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 4.5 16 12l-7.5 7.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  (() => {
+    const script = document.currentScript;
+    const host = script?.previousElementSibling;
+    if (!host) return;
+
+    const slider = host.querySelector('[data-slider]');
+    if (!slider) return;
+
+    const viewport = slider.querySelector('[data-slider-track]');
+    const prevBtn = slider.querySelector('[data-slider-prev]');
+    const nextBtn = slider.querySelector('[data-slider-next]');
+    if (!viewport || !prevBtn || !nextBtn) return;
+
+    const getItemWidth = () => {
+      const firstItem = viewport.querySelector('.app-screens-slider__item');
+      return firstItem ? firstItem.getBoundingClientRect().width : 0;
+    };
+
+    const updateNavState = () => {
+      const maxScroll = viewport.scrollWidth - viewport.clientWidth;
+      const current = viewport.scrollLeft;
+      prevBtn.disabled = current <= 8;
+      nextBtn.disabled = current >= maxScroll - 8;
+    };
+
+    const scrollByAmount = (direction) => {
+      const width = getItemWidth();
+      if (!width) return;
+      viewport.scrollBy({ left: direction * (width + 16), behavior: 'smooth' });
+    };
+
+    const onKeyPress = (event) => {
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        scrollByAmount(-1);
+      } else if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        scrollByAmount(1);
+      }
+    };
+
+    prevBtn.addEventListener('click', () => scrollByAmount(-1));
+    nextBtn.addEventListener('click', () => scrollByAmount(1));
+    viewport.addEventListener(
+      'scroll',
+      () => window.requestAnimationFrame(updateNavState),
+      { passive: true }
+    );
+    window.addEventListener('resize', () => window.requestAnimationFrame(updateNavState));
+    viewport.addEventListener('keydown', onKeyPress);
+
+    viewport.setAttribute('tabindex', '0');
+
+    requestAnimationFrame(updateNavState);
+  })();
+</script>

@@ -1,0 +1,312 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import '../../styles/components/live-forecast-bar.css';
+import '../../styles/pages/near-me.css';
+import '../../styles/bundles/city-page.css';
+import '../../styles/pages/city-page-inline.css';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import StoreBadges from '../../components/StoreBadges.astro';
+import citiesData from '../../data/cities.json';
+// Force rebuild
+import { createPageI18n } from '../../utils/i18n-page.ts';
+
+// Enable static generation
+export const prerender = true;
+
+export async function getStaticPaths() {
+  return [
+    { params: { lang: 'de' } },
+    { params: { lang: 'es' } },
+    { params: { lang: 'fr' } },
+    { params: { lang: 'no' } },
+    { params: { lang: 'ru' } },
+  ];
+}
+
+const { lang } = Astro.params;
+
+// Initialize i18n
+const i18n = await createPageI18n(lang);
+
+const title = "Northern Lights Near Me - Find Aurora Borealis Nearby";
+const description = "Find the best northern lights viewing spots near your location. Instant aurora forecast for your area. Check visibility, KP index, and cloud cover.";
+const canonical = `https://auroraforecast.me/${lang}/northern-lights-near-me`;
+
+// Pass city metadata to client-side for distance calculation
+const cityMetadata = citiesData.map(city => ({
+  name: city.name,
+  slug: city.slug,
+  lat: city.lat,
+  lon: city.lon,
+  country: city.country,
+  state: city.stateName || city.state,
+  searchText: `${city.name} ${city.country} ${city.stateName || ''}`.toLowerCase()
+}));
+
+const breadcrumbs = [
+  { title: i18n.t('nav_home'), href: `/${lang}` },
+  { title: i18n.t('near_me_title'), href: `/${lang}/northern-lights-near-me` },
+];
+
+// Client-side strings
+const i18nStrings = {
+  locating: i18n.t('near_me_status_locating'),
+  found: i18n.t('near_me_status_found'),
+  notFound: i18n.t('near_me_status_not_found'),
+  error: i18n.t('near_me_status_error'),
+  unsupported: i18n.t('near_me_status_unsupported'),
+  noResults: i18n.t('near_me_no_results')
+};
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} lang={lang} i18n={i18n}>
+  <!-- Full Width Header with Aurora Animation (City Page Style) -->
+  <div class="city-header-full-width">
+    <div class="aurora-background">
+      <div class="aurora-light"></div>
+      <div class="aurora-light-2"></div>
+      <div class="aurora-light-3"></div>
+      <div class="aurora-overlay"></div>
+    </div>
+    <div class="container city-header-content">
+      <h1>{i18n.t('near_me_title')}</h1>
+      <div class="live-status-subtitle" style="text-align: center;">{i18n.t('near_me_subtitle')}</div>
+    </div>
+  </div>
+
+  <main class="near-me-page">
+    <div class="container">
+      <div class="breadcrumbs-wrapper">
+        <Breadcrumbs items={breadcrumbs} />
+      </div>
+
+      <section class="hero-section-content">
+        <div class="location-action-area">
+          <button id="locate-btn" class="locate-button">
+            <span class="icon">📍</span>
+            <span class="text">{i18n.t('near_me_btn_locate')}</span>
+          </button>
+          <p class="location-status" id="location-status"></p>
+        </div>
+
+        <div class="manual-search">
+          <p>{i18n.t('near_me_manual_search')}</p>
+          <!-- Reusing Search Box Structure from LiveForecastBar -->
+          <div class="search-box" style="margin: 0 auto;">
+            <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+            </svg>
+            <input
+              type="text"
+              placeholder={i18n.t('near_me_search_placeholder')}
+              id="city-search-input"
+              class="search-input"
+              autocomplete="off"
+            />
+            <div id="search-results" class="search-results hidden"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="info-section">
+        <h2>{i18n.t('near_me_faq_title')}</h2>
+        <div class="info-grid">
+          <div class="info-card">
+            <h3>{i18n.t('near_me_faq_1_title')}</h3>
+            <p>{i18n.t('near_me_faq_1_text')}</p>
+          </div>
+          <div class="info-card">
+            <h3>{i18n.t('near_me_faq_2_title')}</h3>
+            <p>{i18n.t('near_me_faq_2_text')}</p>
+          </div>
+          <div class="info-card">
+            <h3>{i18n.t('near_me_faq_3_title')}</h3>
+            <p>{i18n.t('near_me_faq_3_text')}</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="regions-section">
+        <h2>{i18n.t('near_me_regions_title')}</h2>
+        <div class="regions-grid">
+          <a href={`/${lang}/country/united-states`} class="region-card">{i18n.t('country_name_united_states')}</a>
+          <a href={`/${lang}/country/canada`} class="region-card">{i18n.t('country_name_canada')}</a>
+          <a href={`/${lang}/country/united-kingdom`} class="region-card">{i18n.t('country_name_united_kingdom')}</a>
+          <a href={`/${lang}/country/iceland`} class="region-card">{i18n.t('country_name_iceland')}</a>
+          <a href={`/${lang}/country/norway`} class="region-card">{i18n.t('country_name_norway')}</a>
+          <a href={`/${lang}/country/finland`} class="region-card">{i18n.t('country_name_finland')}</a>
+          <a href={`/${lang}/country/sweden`} class="region-card">{i18n.t('country_name_sweden')}</a>
+          <a href={`/${lang}/country/new-zealand`} class="region-card">{i18n.t('country_name_new_zealand')}</a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Sticky Store Badges -->
+  <StoreBadges pageType="near_me" placement="sticky_footer" sticky={true} enhanced={true} />
+</BaseLayout>
+
+<script define:vars={{ cityMetadata, lang, i18nStrings }}>
+  // Export city metadata for client-side logic
+  window.AURORA_CITY_METADATA = cityMetadata;
+  window.CURRENT_LANG = lang;
+  window.I18N_STRINGS = i18nStrings;
+</script>
+
+<script>
+  const locateBtn = document.getElementById('locate-btn');
+  const statusText = document.getElementById('location-status');
+  const lang = window.CURRENT_LANG || '';
+  const prefix = lang ? `/${lang}` : '';
+  const strings = window.I18N_STRINGS || {};
+
+  // Haversine formula to calculate distance
+  function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Radius of the earth in km
+    const dLat = deg2rad(lat2 - lat1);
+    const dLon = deg2rad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }
+
+  function deg2rad(deg) {
+    return deg * (Math.PI / 180);
+  }
+
+  function findNearestCity(userLat, userLon) {
+    let nearestCity = null;
+    let minDistance = Infinity;
+
+    window.AURORA_CITY_METADATA.forEach(city => {
+      if (city.lat && city.lon) {
+        const dist = getDistanceFromLatLonInKm(userLat, userLon, city.lat, city.lon);
+        if (dist < minDistance) {
+          minDistance = dist;
+          nearestCity = city;
+        }
+      }
+    });
+
+    return { city: nearestCity, distance: minDistance };
+  }
+
+  if (locateBtn) {
+    locateBtn.addEventListener('click', () => {
+      if (!navigator.geolocation) {
+        statusText.textContent = strings.unsupported || "Geolocation is not supported by your browser";
+        return;
+      }
+
+      statusText.textContent = (strings.locating || "Locating...");
+      locateBtn.disabled = true;
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          const result = findNearestCity(latitude, longitude);
+
+          if (result.city) {
+            const foundText = (strings.found || "Found nearest location: {city} ({distance}km)")
+              .replace('{city}', result.city.name)
+              .replace('{distance}', Math.round(result.distance));
+            statusText.textContent = foundText;
+            
+            // Redirect to city page
+            setTimeout(() => {
+              window.location.href = `${prefix}/${result.city.slug}`;
+            }, 1000);
+          } else {
+            statusText.textContent = strings.notFound || "Could not find a nearby city in our database.";
+            locateBtn.disabled = false;
+          }
+        },
+        (error) => {
+          console.error("Geolocation error:", error);
+          statusText.textContent = strings.error || "Unable to retrieve your location. Please search manually.";
+          locateBtn.disabled = false;
+        }
+      );
+    });
+  }
+  
+  // Search Logic (Replicated from LiveForecastBar)
+  const searchInput = document.getElementById('city-search-input');
+  const searchResults = document.getElementById('search-results');
+  
+  // Normalize search text for special characters
+  const normalizeSearchText = (text) => {
+    return text
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/ø/g, 'o')
+      .replace(/ö/g, 'o')
+      .replace(/å/g, 'a')
+      .replace(/ä/g, 'a')
+      .replace(/æ/g, 'ae')
+      .replace(/ü/g, 'u')
+      .replace(/ñ/g, 'n')
+      .replace(/ç/g, 'c')
+      .replace(/ß/g, 'ss')
+      .replace(/þ/g, 'th')
+      .replace(/ð/g, 'd');
+  };
+
+  if (searchInput && searchResults) {
+    let debounceTimer;
+
+    searchInput.addEventListener('input', (e) => {
+      clearTimeout(debounceTimer);
+
+      debounceTimer = setTimeout(() => {
+        const query = normalizeSearchText(e.target.value.trim());
+
+        if (query.length < 2) {
+          searchResults.classList.add('hidden');
+          return;
+        }
+
+        // Use the pre-computed searchText if available, or fallback to name
+        const matches = window.AURORA_CITY_METADATA
+          .filter(city => {
+             const searchTarget = city.searchText || city.name.toLowerCase();
+             return normalizeSearchText(searchTarget).includes(query);
+          })
+          .slice(0, 8);
+        
+        if (matches.length > 0) {
+          searchResults.innerHTML = matches.map(city => `
+            <a href="${prefix}/${city.slug}" class="search-result-item">
+              <div class="result-main">
+                <span class="result-name">${city.name}</span>
+                <span class="result-location">${city.country}${city.state ? `, ${city.state}` : ''}</span>
+              </div>
+            </a>
+          `).join('');
+          searchResults.classList.remove('hidden');
+        } else {
+          searchResults.innerHTML = `<div class="no-results">${strings.noResults || 'No cities found'}</div>`;
+          searchResults.classList.remove('hidden');
+        }
+      }, 200);
+    });
+
+    // Close search results when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+        searchResults.classList.add('hidden');
+      }
+    });
+    
+    // Show results on focus
+    searchInput.addEventListener('focus', () => {
+      if (searchInput.value.length >= 2) {
+        searchResults.classList.remove('hidden');
+      }
+    });
+  }
+</script>

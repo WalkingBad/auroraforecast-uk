@@ -1,0 +1,166 @@
+---
+import StoreBadges from './StoreBadges.astro';
+import screenshot01 from '../../assets/iPhone-6-9-V01-01.webp';
+import screenshot03 from '../../assets/iPhone-6-9-V01-03.webp';
+import screenshot04 from '../../assets/iPhone-6-9-V01-04.webp';
+import '../styles/components/app-hero.css';
+import type { PageType } from '../utils/utm-builder';
+import type { I18nPageHelper } from '../utils/i18n-page';
+
+const screenshots = [
+  { src: screenshot01, alt: 'AuroraMe app showing tonight aurora visibility and best viewing time' },
+  { src: screenshot03, alt: 'AuroraMe app best months calendar for aurora viewing' },
+  { src: screenshot04, alt: 'AuroraMe app best days planner for aurora trip planning' }
+];
+
+export interface Props {
+  title?: string;
+  subtitle?: string;
+  i18n?: I18nPageHelper;
+
+  // UTM parameters (new dynamic system)
+  pageType?: PageType;
+  citySlug?: string;
+  countryCode?: string;
+  placement?: string;
+
+  // Legacy utm prop for backwards compatibility
+  utm?: string;
+
+  hideStickyFooter?: boolean;
+}
+
+const {
+  title,
+  subtitle,
+  i18n,
+  pageType = 'homepage',
+  citySlug,
+  countryCode,
+  placement = 'hero',
+  utm = "app_hero", // legacy fallback
+  hideStickyFooter = true
+} = Astro.props;
+
+// Use i18n translations if available, otherwise fall back to English defaults
+const finalTitle = title || (i18n ? i18n.t('app_hero_title') : "Never Miss Aurora Again — Download Free App");
+const finalSubtitle = subtitle || (i18n ? i18n.t('app_hero_subtitle') : "Get instant alerts when aurora appears tonight. Track Kp index, clouds, and moon phase in real-time. 72-hour forecast shows best viewing times. Works worldwide.");
+---
+
+<section class="app-hero">
+  <div class="app-hero__container">
+    <div class="app-hero__content">
+      <div class="app-hero__text">
+        <h2 class="app-hero__title">{finalTitle}</h2>
+        <p class="app-hero__subtitle">{finalSubtitle}</p>
+        <div class="app-hero__stores">
+          <StoreBadges
+            pageType={pageType}
+            citySlug={citySlug}
+            countryCode={countryCode}
+            placement={placement}
+            utm={utm}
+            enhanced={true}
+            size="large"
+            i18n={i18n}
+          />
+        </div>
+      </div>
+      <div class="app-hero__visual">
+        <div class="app-hero__screenshots">
+          {screenshots.map((shot, index) => (
+            <img
+              class={`app-hero__screenshot app-hero__screenshot--${index + 1}`}
+              src={shot.src.src}
+              alt={shot.alt}
+              width={shot.src.width}
+              height={shot.src.height}
+              loading={index === 0 ? "eager" : "lazy"}
+              decoding="async"
+            />
+          ))}
+        </div>
+        <!-- Mobile slider -->
+        <div class="app-hero__slider" data-slider>
+          <div class="app-hero__slider-track">
+            {screenshots.map((shot) => (
+              <div class="app-hero__slider-item">
+                <img
+                  src={shot.src.src}
+                  alt={shot.alt}
+                  width={shot.src.width}
+                  height={shot.src.height}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+            ))}
+          </div>
+          <div class="app-hero__slider-dots">
+            {screenshots.map((_, index) => (
+              <button class={`app-hero__dot ${index === 0 ? 'active' : ''}`} data-index={index} aria-label={`Slide ${index + 1}`}></button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {hideStickyFooter && (
+    <style is:global>
+      .store-badges--sticky {
+        display: none !important;
+      }
+    </style>
+  )}
+</section>
+
+<script is:inline>
+  // Mobile slider for app-hero
+  (function() {
+    const slider = document.querySelector('.app-hero__slider');
+    if (!slider) return;
+
+    const track = slider.querySelector('.app-hero__slider-track');
+    const dots = slider.querySelectorAll('.app-hero__dot');
+    if (!track || !dots.length) return;
+
+    let currentIndex = 0;
+
+    function goToSlide(index) {
+      currentIndex = index;
+      track.style.transform = `translateX(-${index * 100}%)`;
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === index);
+      });
+    }
+
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => goToSlide(index));
+    });
+
+    // Touch swipe support
+    let startX = 0;
+    let isDragging = false;
+
+    track.addEventListener('touchstart', (e) => {
+      startX = e.touches[0].clientX;
+      isDragging = true;
+    }, { passive: true });
+
+    track.addEventListener('touchend', (e) => {
+      if (!isDragging) return;
+      isDragging = false;
+      const endX = e.changedTouches[0].clientX;
+      const diff = startX - endX;
+
+      if (Math.abs(diff) > 50) {
+        if (diff > 0 && currentIndex < dots.length - 1) {
+          goToSlide(currentIndex + 1);
+        } else if (diff < 0 && currentIndex > 0) {
+          goToSlide(currentIndex - 1);
+        }
+      }
+    }, { passive: true });
+  })();
+</script>

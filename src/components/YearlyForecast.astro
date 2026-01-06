@@ -1,0 +1,374 @@
+---
+import './YearlyForecast.css';
+import AppDownloadCTA from './AppDownloadCTA.astro';
+
+interface Props {
+  lat: number;
+  lon: number;
+  cityName: string;
+  citySlug?: string;
+  i18n?: any;
+  history: {
+    lastSeen: string | null;
+    confidence: string;
+    localThreshold: number;
+    bestMonths: string[];
+  };
+}
+
+const { lat, lon, cityName, citySlug, i18n, history } = Astro.props;
+
+// Build premium checkout URL with proper redirect params
+const siteBaseUrl = import.meta.env.DEV
+  ? 'http://localhost:4321'
+  : 'https://auroraforecast.me';
+const baseCheckoutUrl = import.meta.env.PUBLIC_LS_CHECKOUT_URL_EXTENDED || '#';
+const finalRedirectPath = citySlug ? `/${citySlug}` : '/';
+
+// Build redirect URL for LS checkout
+// CRITICAL: {order_id} must NOT be URL-encoded - LS needs to recognize it as template variable
+const redirectBase = encodeURIComponent(`${siteBaseUrl}/checkout/success?order_id=`);
+const redirectParams = encodeURIComponent(`&city=${citySlug || ''}&redirect=${encodeURIComponent(finalRedirectPath)}`);
+const redirectUrl = `${redirectBase}{order_id}${redirectParams}`;
+
+// Full checkout URL with redirect params
+const checkoutUrl = baseCheckoutUrl !== '#'
+  ? `${baseCheckoutUrl}?checkout[redirect_url]=${redirectUrl}&checkout[custom][city]=${citySlug || ''}&checkout[custom][redirect]=${encodeURIComponent(finalRedirectPath)}`
+  : '#';
+
+// Initial data from seoSnapshot (fallback)
+const kpThreshold = history.localThreshold || 9.0;
+const initialBestMonths = history.bestMonths?.length ? history.bestMonths.join(", ") : "Sep, Oct, Mar, Apr";
+
+// Months for heatmap
+const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+---
+
+<div class="yearly-forecast-container" data-lat={lat} data-lon={lon}>
+  <!-- Last Aurora (Premium) - first block like in app -->
+  <div class="stats-card premium-view hidden" id="last-aurora-card">
+    <div class="card-header-row">
+      <div class="card-title">Last Aurora</div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-item">
+        <div class="stat-label">
+          <span class="icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+          </span>
+          Date
+        </div>
+        <div class="stat-value" id="last-seen-date">Loading...</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">
+          <span class="icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+              <polyline points="17 6 23 6 23 12"></polyline>
+            </svg>
+          </span>
+          Intensity
+        </div>
+        <div class="stat-value" id="last-seen-intensity">Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Past 365 Days - like in app -->
+  <div class="stats-card">
+    <div class="card-header-row">
+      <div class="card-title">Past 365 Days</div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-item">
+        <div class="stat-label">
+          <span class="icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+          </span>
+          Aurora Nights
+        </div>
+        <!-- Free: show locked -->
+        <div class="stat-value locked free-view" id="nights-locked">
+          <span class="lock-icon-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </span>
+          Premium
+        </div>
+        <!-- Premium: show real value -->
+        <div class="stat-value premium-view hidden" id="total-nights">Loading...</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">
+          <span class="icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+          </span>
+          Local threshold
+        </div>
+        <div class="stat-value" id="kp-threshold">Kp ≥ {kpThreshold.toFixed(1)}</div>
+      </div>
+    </div>
+    <div class="stats-row" style="margin-top: 12px;">
+      <div class="stat-item">
+        <div class="stat-label">
+          <span class="icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+          </span>
+          Best Season
+        </div>
+        <!-- Free: show locked -->
+        <div class="stat-value locked free-view">
+          <span class="lock-icon-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </span>
+          Premium
+        </div>
+        <!-- Premium: show real value -->
+        <div class="stat-value premium-view hidden" id="best-months">{initialBestMonths}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Seasonal Pattern -->
+  <div class="stats-card seasonal-card">
+    <div class="card-header-row">
+       <div class="title-row">
+         <h3>Seasonal Pattern</h3>
+       </div>
+    </div>
+    <p class="subtitle">This calendar shows how often aurora was observed here by week across the year. Colors reflect historical intensity: greener months had more aurora nights, grey had little or none. Use it to plan trips around the strongest months, then confirm exact nights with the 72h forecast.</p>
+
+    <div class="heatmap-container" id="yearly-heatmap-container">
+       <!-- Premium Overlay (Default) -->
+       <div class="heatmap-overlay" id="yearly-overlay">
+         <div class="heatmap-blurred-bg">
+            <div class="heatmap-grid-dummy" id="heatmap-blur">
+                <div class="heatmap-header-dummy">
+                   <span></span><span>W1</span><span>W2</span><span>W3</span><span>W4</span>
+                </div>
+                {months.map((m) => (
+                    <div class="heatmap-row">
+                        <span class="month-label">{m}</span>
+                        <div class="cell level-0"></div>
+                        <div class="cell level-1"></div>
+                        <div class="cell level-0"></div>
+                        <div class="cell level-2"></div>
+                    </div>
+                ))}
+            </div>
+         </div>
+
+         <!-- A/B Test: App Download CTA (replacing Lemon Squeezy checkout) -->
+         <div class="lock-content">
+            <AppDownloadCTA block="yearly" citySlug={citySlug} i18n={i18n} />
+         </div>
+
+         <!-- LEGACY: Lemon Squeezy checkout - commented for A/B test, restore if needed
+         <div class="lock-content">
+            <span class="lock-icon-large">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+            </span>
+            <h4>Best Months to Visit</h4>
+            <p>See 11 years of historical patterns.<br>Upgrade to find optimal travel dates.</p>
+            <a href={checkoutUrl} class="cta-button" rel="nofollow noopener">
+              <span class="cta-main">Unlock All</span>
+              <span class="cta-sub">Premium</span>
+            </a>
+         </div>
+         -->
+       </div>
+
+       <!-- Real Heatmap (Hidden until premium) -->
+       <div class="heatmap-real hidden" id="yearly-real">
+          <div class="heatmap-grid-real" id="heatmap-grid">
+              <div class="heatmap-header-real">
+                  <span></span><span>W1</span><span>W2</span><span>W3</span><span>W4</span>
+               </div>
+               <!-- Will be populated by JS -->
+          </div>
+       </div>
+    </div>
+
+    <div class="legend premium-view hidden" id="yearly-legend">
+        <div class="legend-item"><span class="dot unlikely"></span>Unlikely</div>
+        <div class="legend-item"><span class="dot low"></span>Low</div>
+        <div class="legend-item"><span class="dot medium"></span>Medium</div>
+        <div class="legend-item"><span class="dot high"></span>High</div>
+      </div>
+  </div>
+</div>
+
+<script>
+  const AURORA_SUMMARY_API = 'https://httpaurorasummary-o4f4vlg27q-ew.a.run.app';
+  const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  let auroraSummaryData: any = null;
+
+  // Fetch real aurora summary data
+  async function fetchAuroraSummary(lat: number, lon: number): Promise<any> {
+    try {
+      const year = new Date().getFullYear();
+      const url = `${AURORA_SUMMARY_API}?lat=${lat}&lon=${lon}&year=${year}`;
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return await response.json();
+    } catch (error) {
+      console.error('Failed to fetch aurora summary:', error);
+      return null;
+    }
+  }
+
+  // Update UI with real data
+  function updateUI(data: any) {
+    if (!data) return;
+
+    // Last Seen
+    if (data.lastSeen) {
+      const dateEl = document.getElementById('last-seen-date');
+      const intensityEl = document.getElementById('last-seen-intensity');
+      if (dateEl) {
+        const date = new Date(data.lastSeen.rangeLocal?.start || data.lastSeen.rangeUtc?.start);
+        dateEl.textContent = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      }
+      if (intensityEl) {
+        const intensity = data.lastSeen.intensityLevel || 'unknown';
+        intensityEl.textContent = intensity.charAt(0).toUpperCase() + intensity.slice(1);
+      }
+    } else {
+      const dateEl = document.getElementById('last-seen-date');
+      const intensityEl = document.getElementById('last-seen-intensity');
+      if (dateEl) dateEl.textContent = 'No recent data';
+      if (intensityEl) intensityEl.textContent = '-';
+    }
+
+    // Summary 365
+    if (data.summary365) {
+      const nightsEl = document.getElementById('total-nights');
+      const monthsEl = document.getElementById('best-months');
+      if (nightsEl) nightsEl.textContent = `~${data.summary365.totalNights}/year`;
+      if (monthsEl && data.summary365.bestMonths?.length) {
+        monthsEl.textContent = data.summary365.bestMonths.join(', ');
+      }
+    }
+
+    // Kp threshold
+    if (data.threshold) {
+      const kpEl = document.getElementById('kp-threshold');
+      if (kpEl) kpEl.textContent = `Kp ≥ ${data.threshold.kpThreshold.toFixed(1)}`;
+    }
+
+    // Calendar heatmap
+    // API returns { "2025": { "1": {...}, "2": {...}, ... } }
+    // We need to extract the year data for rendering
+    if (data.calendarYear) {
+      const year = new Date().getFullYear().toString();
+      const yearData = data.calendarYear[year] || Object.values(data.calendarYear)[0];
+      if (yearData) {
+        renderHeatmap(yearData);
+      }
+    }
+  }
+
+  // Render heatmap from calendarYear data
+  function renderHeatmap(calendarYear: Record<string, { weeks: string[], counts: number[] }>) {
+    const grid = document.getElementById('heatmap-grid');
+    if (!grid) return;
+
+    // Clear existing rows (keep header)
+    const header = grid.querySelector('.heatmap-header-real');
+    grid.innerHTML = '';
+    if (header) grid.appendChild(header);
+    else {
+      const newHeader = document.createElement('div');
+      newHeader.className = 'heatmap-header-real';
+      newHeader.innerHTML = '<span></span><span>W1</span><span>W2</span><span>W3</span><span>W4</span>';
+      grid.appendChild(newHeader);
+    }
+
+    // Render each month
+    for (let m = 1; m <= 12; m++) {
+      const monthData = calendarYear[String(m)];
+      const row = document.createElement('div');
+      row.className = 'heatmap-row';
+
+      const label = document.createElement('span');
+      label.className = 'month-label';
+      label.textContent = MONTHS[m - 1];
+      row.appendChild(label);
+
+      // 4 weeks
+      for (let w = 0; w < 4; w++) {
+        const cell = document.createElement('div');
+        const level = monthData?.weeks?.[w] || 'none';
+        const count = monthData?.counts?.[w] || 0;
+        cell.className = `heatmap-cell ${level}`;
+        if (count > 0) cell.textContent = String(count);
+        row.appendChild(cell);
+      }
+
+      grid.appendChild(row);
+    }
+  }
+
+  // Check premium and load data
+  async function initYearlyForecast() {
+    const container = document.querySelector('.yearly-forecast-container') as HTMLElement;
+    if (!container) return;
+
+    const lat = parseFloat(container.dataset.lat || '0');
+    const lon = parseFloat(container.dataset.lon || '0');
+
+    const cookies = document.cookie.split(';');
+    // Check for both aurora_premium (JWT) and aurora_premium_flag (simple flag)
+    const isPremium = cookies.some(c => {
+      const trimmed = c.trim();
+      return trimmed.startsWith('aurora_premium=') || trimmed.startsWith('aurora_premium_flag=');
+    });
+
+    if (isPremium) {
+      // Show premium elements
+      document.getElementById('yearly-overlay')?.classList.add('hidden');
+      document.getElementById('yearly-real')?.classList.remove('hidden');
+      document.getElementById('last-aurora-card')?.classList.remove('hidden');
+
+      document.querySelectorAll('.free-view').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.premium-view').forEach(el => el.classList.remove('hidden'));
+
+      // Fetch real data
+      if (!auroraSummaryData) {
+        auroraSummaryData = await fetchAuroraSummary(lat, lon);
+        updateUI(auroraSummaryData);
+      }
+    }
+  }
+
+  initYearlyForecast();
+  document.addEventListener('astro:page-load', initYearlyForecast);
+</script>

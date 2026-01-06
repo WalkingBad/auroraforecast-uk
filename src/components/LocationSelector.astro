@@ -1,0 +1,234 @@
+---
+import '../styles/components/location-selector.css';
+
+// Design constants (fallback - ideally from API)
+const AURORA_COLORS = {
+  surface: '#111214',
+  text: '#FFFFFF',
+  textSecondary: '#A1A1AA',
+  border: 'rgba(255,255,255,0.15)'
+};
+
+const AURORA_SPACING = {
+  m: '16px',
+  l: '24px'
+};
+
+export interface Props {
+  selectedLocation?: {
+    name: string;
+    lat: number;
+    lon: number;
+    country?: string;
+  };
+}
+
+const { selectedLocation } = Astro.props;
+
+// Popular aurora viewing locations
+const popularLocations = [
+  { name: 'Reykjavik', country: 'Iceland', lat: 64.1466, lon: -21.9426 },
+  { name: 'Tromsø', country: 'Norway', lat: 69.6492, lon: 18.9553 },
+  { name: 'Fairbanks', country: 'Alaska, USA', lat: 64.8378, lon: -147.7164 },
+  { name: 'Yellowknife', country: 'Canada', lat: 62.4540, lon: -114.3718 },
+  { name: 'Rovaniemi', country: 'Finland', lat: 66.5039, lon: 25.7294 },
+  { name: 'Abisko', country: 'Sweden', lat: 68.3553, lon: 18.8267 },
+  { name: 'Alta', country: 'Norway', lat: 69.9689, lon: 23.2717 },
+  { name: 'Murmansk', country: 'Russia', lat: 68.9792, lon: 33.0925 }
+];
+
+const currentLocation = selectedLocation || popularLocations[0]; // Default to Reykjavik
+---
+
+<div class="location-selector">
+  <div class="current-location">
+    <div class="location-icon">📍</div>
+    <div class="location-info">
+      <h3 class="location-name">{currentLocation.name}</h3>
+      {currentLocation.country && (
+        <p class="location-country">{currentLocation.country}</p>
+      )}
+    </div>
+    <button class="change-location-btn" id="changeLocationBtn">
+      Change
+      <svg class="chevron-icon" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+      </svg>
+    </button>
+  </div>
+  
+  <div class="location-dropdown" id="locationDropdown" aria-hidden="true">
+    <div class="dropdown-header">
+      <h4>Popular Aurora Locations</h4>
+      <button class="close-btn" id="closeDropdown" aria-label="Close">✕</button>
+    </div>
+    
+    <div class="location-search">
+      <input 
+        type="text" 
+        placeholder="Search locations..." 
+        class="search-input"
+        id="locationSearch"
+      />
+    </div>
+    
+    <div class="locations-list" id="locationsList">
+      {popularLocations.map(location => (
+        <button 
+          class="location-item"
+          data-lat={location.lat}
+          data-lon={location.lon}
+          data-name={location.name}
+          data-country={location.country}
+        >
+          <div class="location-details">
+            <span class="item-name">{location.name}</span>
+            <span class="item-country">{location.country}</span>
+          </div>
+          <div class="location-coords">
+            {location.lat.toFixed(2)}°, {location.lon.toFixed(2)}°
+          </div>
+        </button>
+      ))}
+    </div>
+    
+    <div class="current-location-option">
+      <button class="use-current-location" id="useCurrentLocation">
+        <svg class="location-icon" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+        </svg>
+        Use my current location
+      </button>
+    </div>
+  </div>
+  
+  <!-- Overlay -->
+  <div class="dropdown-overlay" id="dropdownOverlay" aria-hidden="true"></div>
+</div>
+
+
+<script>
+  // Location selector functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    const changeLocationBtn = document.getElementById('changeLocationBtn');
+    const locationDropdown = document.getElementById('locationDropdown');
+    const dropdownOverlay = document.getElementById('dropdownOverlay');
+    const closeDropdown = document.getElementById('closeDropdown');
+    const locationSearch = document.getElementById('locationSearch');
+    const locationsList = document.getElementById('locationsList');
+    const useCurrentLocation = document.getElementById('useCurrentLocation');
+    
+    if (!changeLocationBtn || !locationDropdown) return;
+    
+    let isOpen = false;
+    
+    function openDropdown() {
+      isOpen = true;
+      locationDropdown.setAttribute('aria-hidden', 'false');
+      dropdownOverlay?.setAttribute('aria-hidden', 'false');
+      changeLocationBtn.setAttribute('aria-expanded', 'true');
+      locationSearch?.focus();
+      
+      // Dispatch custom event
+      document.dispatchEvent(new CustomEvent('locationSelectorOpen'));
+    }
+    
+    function closeDropdownFunc() {
+      isOpen = false;
+      locationDropdown?.setAttribute('aria-hidden', 'true');
+      dropdownOverlay?.setAttribute('aria-hidden', 'true');
+      changeLocationBtn?.setAttribute('aria-expanded', 'false');
+      
+      // Clear search
+      if (locationSearch) {
+        (locationSearch as HTMLInputElement).value = '';
+        filterLocations('');
+      }
+      
+      // Dispatch custom event
+      document.dispatchEvent(new CustomEvent('locationSelectorClose'));
+    }
+    
+    function filterLocations(query: string) {
+      const items = locationsList?.querySelectorAll('.location-item');
+      if (!items) return;
+      
+      items.forEach(item => {
+        const name = item.getAttribute('data-name')?.toLowerCase() || '';
+        const country = item.getAttribute('data-country')?.toLowerCase() || '';
+        const matches = name.includes(query.toLowerCase()) || country.includes(query.toLowerCase());
+        
+        (item as HTMLElement).style.display = matches ? 'flex' : 'none';
+      });
+    }
+    
+    function selectLocation(lat: number, lon: number, name: string, country?: string) {
+      closeDropdownFunc();
+      
+      // Dispatch location change event
+      document.dispatchEvent(new CustomEvent('locationChanged', {
+        detail: { lat, lon, name, country }
+      }));
+    }
+    
+    // Event listeners
+    changeLocationBtn.addEventListener('click', () => {
+      if (isOpen) {
+        closeDropdownFunc();
+      } else {
+        openDropdown();
+      }
+    });
+    
+    closeDropdown?.addEventListener('click', closeDropdownFunc);
+    dropdownOverlay?.addEventListener('click', closeDropdownFunc);
+    
+    // Search functionality
+    locationSearch?.addEventListener('input', (e) => {
+      const query = (e.target as HTMLInputElement).value;
+      filterLocations(query);
+    });
+    
+    // Location item clicks
+    locationsList?.addEventListener('click', (e) => {
+      const item = (e.target as HTMLElement).closest('.location-item');
+      if (!item) return;
+      
+      const lat = parseFloat(item.getAttribute('data-lat') || '0');
+      const lon = parseFloat(item.getAttribute('data-lon') || '0');
+      const name = item.getAttribute('data-name') || '';
+      const country = item.getAttribute('data-country') || '';
+      
+      selectLocation(lat, lon, name, country);
+    });
+    
+    // Current location
+    useCurrentLocation?.addEventListener('click', () => {
+      if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            selectLocation(
+              position.coords.latitude,
+              position.coords.longitude,
+              'Your Location'
+            );
+          },
+          (error) => {
+            console.error('Error getting location:', error);
+            alert('Could not get your location. Please select a location manually.');
+          }
+        );
+      } else {
+        alert('Geolocation is not supported by this browser.');
+      }
+    });
+    
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isOpen) {
+        closeDropdownFunc();
+        changeLocationBtn.focus();
+      }
+    });
+  });
+</script>

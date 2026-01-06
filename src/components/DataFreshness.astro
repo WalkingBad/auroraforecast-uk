@@ -1,0 +1,44 @@
+---
+import '../styles/components/data-freshness.css';
+
+/**
+ * Data Freshness Indicator Component
+ * Shows when the data was last updated to build trust with users
+ * Displays: "Updated • 22:05 local"
+ */
+
+export interface Props {
+  updatedAt: string | Date;
+  timezone?: string;
+}
+
+const { updatedAt, timezone = 'UTC' } = Astro.props;
+
+// Convert to Date object if string
+const updateDate = typeof updatedAt === 'string' ? new Date(updatedAt) : updatedAt;
+
+// Format time for display
+const localTime = updateDate.toLocaleTimeString('en-US', {
+  timeZone: timezone === 'UTC' ? 'UTC' : timezone,
+  hour: '2-digit',
+  minute: '2-digit',
+  hour12: false
+});
+
+// Calculate how fresh the data is (for indicator color)
+const now = new Date();
+const ageInMinutes = (now.getTime() - updateDate.getTime()) / (1000 * 60);
+const freshnessClass = ageInMinutes < 15 ? 'fresh' :
+                       ageInMinutes < 60 ? 'recent' : 'stale';
+
+// Add timezone label if not UTC
+const tzLabel = timezone === 'UTC' ? 'UTC' : 'local';
+---
+
+<div class={`data-freshness ${freshnessClass}`}>
+  <span class="freshness-label">Updated</span>
+  <span class="freshness-separator">•</span>
+  <span class="freshness-time">{localTime} {tzLabel}</span>
+  <span class="freshness-indicator" aria-label={`Data is ${freshnessClass}`}></span>
+</div>
+

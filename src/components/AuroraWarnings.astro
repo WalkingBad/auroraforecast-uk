@@ -1,0 +1,73 @@
+---
+interface Props {
+  kpIndex: number | null;
+  kpThreshold: number | null;
+  skyDarkness: string;
+  cloudCover: number;
+  overcastThreshold: number;
+  cityName: string;
+  warnings: {
+    kpThreshold: string;
+    daylight: string;
+    overcast: string;
+  };
+}
+
+const {
+  kpIndex,
+  kpThreshold,
+  skyDarkness,
+  cloudCover,
+  overcastThreshold,
+  cityName,
+  warnings
+} = Astro.props;
+---
+
+<script define:vars={{ kpIndex, kpThreshold, skyDarkness, cloudCover, overcastThreshold, cityName, warnings }}>
+  // Aurora warnings rotation
+  (() => {
+    const warningsContainer = document.getElementById('aurora-warnings');
+    if (!warningsContainer) return;
+
+    // Add fade transition CSS
+    warningsContainer.style.transition = 'opacity 0.4s ease-in-out';
+
+    const activeWarnings = [];
+
+    // KP threshold warning removed per user request
+
+    // Priority 1: Daylight warning
+    if (skyDarkness === 'daylight' || skyDarkness === 'civil') {
+      activeWarnings.push({
+        html: `<div class="status-pill warning"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="3"/><path d="M8 0v2M8 14v2M0 8h2M14 8h2M2.9 2.9l1.4 1.4M11.7 11.7l1.4 1.4M2.9 13.1l1.4-1.4M11.7 4.3l1.4-1.4"/></svg> ${warnings.daylight}</div>`,
+        type: 'daylight'
+      });
+    }
+
+    // Priority 2: Overcast warning
+    if (skyDarkness !== 'daylight' && skyDarkness !== 'civil' && cloudCover >= overcastThreshold) {
+      activeWarnings.push({
+        html: `<div class="status-pill overcast"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M11.5 11c1.4 0 2.5-1.1 2.5-2.5S12.9 6 11.5 6c-.2 0-.4 0-.6.1C10.4 4.3 8.9 3 7 3 4.8 3 3 4.8 3 7c0 .3 0 .5.1.8C1.8 8.3 1 9.5 1 11c0 1.7 1.3 3 3 3h7.5z"/></svg> ${warnings.overcast.replace(/\\n/g, '<br>')}</div>`,
+        type: 'overcast'
+      });
+    }
+
+    if (activeWarnings.length === 0) return;
+
+    let currentIndex = 0;
+    const updateWarning = () => {
+      warningsContainer.style.opacity = '0';
+      setTimeout(() => {
+        warningsContainer.innerHTML = activeWarnings[currentIndex].html;
+        warningsContainer.style.opacity = '1';
+        currentIndex = (currentIndex + 1) % activeWarnings.length;
+      }, 400);
+    };
+
+    updateWarning();
+    if (activeWarnings.length > 1) {
+      setInterval(updateWarning, 7000);
+    }
+  })();
+</script>

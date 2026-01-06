@@ -1,0 +1,132 @@
+---
+import AppHero from './AppHero.astro';
+import StoreBadges from './StoreBadges.astro';
+import heroBackground from '../../assets/main-background.webp';
+import type { I18nPageHelper } from '../utils/i18n-page';
+
+export interface Props {
+  i18n?: I18nPageHelper;
+}
+
+const { i18n } = Astro.props;
+
+// Use i18n translations if available, otherwise fall back to English defaults
+const title = i18n ? i18n.t('hero_title') : "Northern Lights Tonight: Real-Time Aurora Forecast";
+const subtitle = i18n ? i18n.t('hero_subtitle') : "Get instant aurora alerts when northern lights are visible in your area. Track Kp index, clouds, and moon phase in real-time.";
+---
+
+<section class="hero">
+  <div class="hero__content">
+    <h1 class="hero__title">{title}</h1>
+    <p class="hero__subtitle">{subtitle}</p>
+
+    <!-- Store badges in hero header -->
+    <div class="hero__badges">
+      <StoreBadges
+        pageType="homepage"
+        placement="hero_header"
+        enhanced={true}
+        size="large"
+        showRatings={true}
+        sticky={false}
+        i18n={i18n}
+      />
+    </div>
+  </div>
+</section>
+
+<style define:vars={{ heroBackground: `url(${heroBackground.src})` }}>
+  .hero {
+    position: relative;
+    width: 100%;
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: var(--heroBackground);
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* Parallax effect */
+    overflow: hidden;
+  }
+
+  /* Overlay for better text readability with aurora hints */
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(10, 10, 10, 0.4) 0%,
+      rgba(20, 10, 30, 0.5) 50%,
+      rgba(10, 10, 10, 0.8) 100%
+    );
+    z-index: 0;
+  }
+
+  .hero__content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 3rem 1rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .hero__title {
+    font-size: clamp(3rem, 7vw, 5rem);
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    color: var(--aurora-text-primary);
+    line-height: 1.1;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    letter-spacing: -0.02em;
+    background: linear-gradient(180deg, #FFFFFF 0%, #E0E0E0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero__subtitle {
+    color: var(--aurora-text-secondary);
+    font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+    line-height: 1.6;
+    margin-bottom: 0;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    font-weight: 400;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero__badges {
+    margin-top: var(--aurora-spacing-xxl);
+    display: flex;
+    justify-content: center;
+  }
+
+  /* Mobile optimization */
+  @media (max-width: 768px) {
+    .hero {
+      min-height: 60vh;
+      background-attachment: scroll; /* Disable parallax on mobile for better performance */
+    }
+
+    .hero__content {
+      padding: 2rem 1rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hero {
+      min-height: 50vh;
+    }
+
+    .hero__content {
+      padding: 1.5rem 1rem;
+    }
+  }
+</style>

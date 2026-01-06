@@ -1,0 +1,364 @@
+/* Northern Lights Tonight Page Styles */
+/* Uses design system tokens and patterns from city-cards.css */
+
+/* Container Widths */
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 var(--aurora-spacing-l);
+}
+
+.container-wide {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--aurora-spacing-l);
+}
+
+/* Hero Section */
+.tonight-hero {
+  background: var(--aurora-background-primary);
+  padding: var(--aurora-spacing-xxl) 0;
+  text-align: center;
+}
+
+.tonight-hero h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 300;
+  margin-bottom: var(--aurora-spacing-m);
+  color: var(--aurora-text-primary);
+}
+
+.hero-subtitle {
+  color: var(--aurora-text-secondary);
+  font-size: 1.1rem;
+  margin-bottom: var(--aurora-spacing-xl);
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.5;
+}
+
+/* Live Status Card */
+.live-status-card {
+  background: var(--aurora-surface);
+  border: 1px solid var(--aurora-border-light);
+  border-radius: var(--aurora-radius-card);
+  padding: var(--aurora-spacing-xl);
+  max-width: 500px;
+  margin: var(--aurora-spacing-xl) auto 0;
+  box-shadow: var(--aurora-elevation-e1);
+}
+
+.live-pulse {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: var(--aurora-spacing-m);
+  color: var(--aurora-status-high);
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--aurora-status-high);
+  border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.2);
+  }
+}
+
+.status-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--aurora-spacing-l);
+  margin-top: var(--aurora-spacing-l);
+}
+
+.status-item {
+  text-align: center;
+}
+
+.status-label {
+  font-size: 0.85rem;
+  color: var(--aurora-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: var(--aurora-spacing-xs);
+}
+
+.status-value {
+  font-size: 2rem;
+  font-weight: 300;
+  color: var(--aurora-text-primary);
+  line-height: 1;
+}
+
+.kp-value {
+  color: var(--aurora-primary);
+}
+
+/* Visible Tonight Section */
+.visible-tonight {
+  padding: var(--aurora-spacing-xxl) 0;
+  background: var(--aurora-surface);
+}
+
+.visible-tonight h2 {
+  text-align: center;
+  margin-bottom: var(--aurora-spacing-m);
+  font-weight: 500;
+  color: var(--aurora-text-primary);
+}
+
+.section-subtitle {
+  text-align: center;
+  color: var(--aurora-text-secondary);
+  margin-bottom: var(--aurora-spacing-xl);
+  font-size: 0.95rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Cities Grid - Override city-cards.css with higher specificity */
+.visible-tonight .cities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--aurora-spacing-l);
+  margin-top: var(--aurora-spacing-xl);
+}
+
+@media (max-width: 768px) {
+  .visible-tonight .cities-grid {
+    grid-template-columns: 1fr;
+    gap: var(--aurora-spacing-m);
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .visible-tonight .cities-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1025px) {
+  .visible-tonight .cities-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Best Times Section */
+.best-times {
+  padding: var(--aurora-spacing-xxl) 0;
+  background: var(--aurora-background-primary);
+}
+
+.best-times h2 {
+  text-align: center;
+  margin-bottom: var(--aurora-spacing-xl);
+  font-weight: 500;
+  color: var(--aurora-text-primary);
+}
+
+.timeline {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--aurora-spacing-l);
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.time-block {
+  background: var(--aurora-surface);
+  border: 1px solid var(--aurora-border-light);
+  border-radius: var(--aurora-radius-card);
+  padding: var(--aurora-spacing-xl);
+  text-align: center;
+}
+
+.time-block.peak {
+  border-left: 4px solid var(--aurora-primary);
+}
+
+.time-block.dark {
+  border-left: 4px solid var(--aurora-status-medium);
+}
+
+.time-label {
+  font-size: 0.85rem;
+  color: var(--aurora-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: var(--aurora-spacing-s);
+}
+
+.time-range {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--aurora-text-primary);
+  margin-bottom: var(--aurora-spacing-m);
+}
+
+.time-block p {
+  color: var(--aurora-text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Requirements Section */
+.requirements {
+  padding: var(--aurora-spacing-xxl) 0;
+  background: var(--aurora-surface);
+}
+
+.requirements h2 {
+  text-align: center;
+  margin-bottom: var(--aurora-spacing-xl);
+  font-weight: 500;
+  color: var(--aurora-text-primary);
+}
+
+.requirements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--aurora-spacing-l);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.req-item {
+  background: var(--aurora-chip);
+  border: 1px solid var(--aurora-border-light);
+  border-radius: var(--aurora-radius-card);
+  padding: var(--aurora-spacing-l);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--aurora-spacing-m);
+  transition: border-color var(--aurora-timing-fast) ease;
+}
+
+.req-item:hover {
+  border-color: var(--aurora-primary);
+}
+
+.req-icon {
+  font-size: 2rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.req-content {
+  flex: 1;
+}
+
+.req-content h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: var(--aurora-spacing-xs);
+  color: var(--aurora-text-primary);
+}
+
+.req-content p {
+  color: var(--aurora-text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container,
+  .container-wide {
+    padding: 0 var(--aurora-spacing-m);
+  }
+
+  .tonight-hero h1 {
+    font-size: 1.8rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+
+  .live-status-card {
+    padding: var(--aurora-spacing-l);
+  }
+
+  .status-value {
+    font-size: 1.8rem;
+  }
+
+  .timeline {
+    grid-template-columns: 1fr;
+  }
+
+  .requirements-grid {
+    grid-template-columns: 1fr;
+    gap: var(--aurora-spacing-m);
+  }
+}
+
+@media (max-width: 480px) {
+  .container,
+  .container-wide {
+    padding: 0 var(--aurora-spacing-s);
+  }
+
+  .tonight-hero h1 {
+    font-size: 1.5rem;
+  }
+
+  .hero-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .status-value {
+    font-size: 1.5rem;
+  }
+
+  .time-range {
+    font-size: 1.2rem;
+  }
+}
+
+/* Desktop optimizations */
+@media (min-width: 768px) {
+  section {
+    padding: 3rem 0;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .pulse-dot {
+    animation: none;
+  }
+
+  .req-item {
+    transition: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .live-status-card,
+  .time-block,
+  .req-item {
+    border-width: 2px;
+  }
+}

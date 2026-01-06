@@ -1,0 +1,537 @@
+---
+import type { SupportedLanguage } from '@config/language-targeting';
+import { SUPPORTED_LANGUAGES } from '@config/language-targeting';
+import GuideLayout from '../../../layouts/GuideLayout.astro';
+import { buildStoreUrl, buildUtmParams } from '../../../utils/utm-builder.ts';
+import { IOS_STORE_URL, ANDROID_STORE_URL } from '../../../config/store-urls.ts';
+import { createPageI18n } from '../../../utils/i18n-page.ts';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  return SUPPORTED_LANGUAGES
+    .filter(lang => lang !== 'en')
+    .map(lang => ({
+      params: { lang },
+      props: { lang }
+    }));
+}
+
+const { lang } = Astro.props as { lang: SupportedLanguage };
+const i18n = await createPageI18n(lang);
+
+const title = i18n.t('best_time_meta_title');
+const description = i18n.t('best_time_meta_description');
+const publishDate = "2025-10-20T00:00:00Z";
+const readingTime = i18n.t('best_time_meta_reading_time');
+
+// UTM tracking for guide
+const guideSlug = "best-time-northern-lights";
+const iosStoreUrl = buildStoreUrl(
+  IOS_STORE_URL,
+  buildUtmParams('guide', { guideSlug, placement: 'inline' })
+);
+const androidStoreUrl = buildStoreUrl(
+  ANDROID_STORE_URL,
+  buildUtmParams('guide', { guideSlug, placement: 'inline' })
+);
+
+const relatedGuides = [
+  {
+    title: i18n.t('best_time_related1_title'),
+    slug: "northern-lights-tonight",
+    category: i18n.t('best_time_related1_category'),
+    readingTime: i18n.t('best_time_related1_time')
+  },
+  {
+    title: i18n.t('best_time_related2_title'),
+    slug: "kp-index-explained",
+    category: i18n.t('best_time_related2_category'),
+    readingTime: i18n.t('best_time_related2_time')
+  },
+  {
+    title: i18n.t('best_time_related3_title'),
+    slug: "aurora-forecast-tracker",
+    category: i18n.t('best_time_related3_category'),
+    readingTime: i18n.t('best_time_related3_time')
+  }
+];
+---
+
+<GuideLayout
+  title={title}
+  description={description}
+  publishDate={publishDate}
+  readingTime={readingTime}
+  relatedGuides={relatedGuides}
+  i18n={i18n}
+  guideSlug={guideSlug}
+>
+  <section class="guide__section">
+    <h2>Best Time Tonight: Quick Answer</h2>
+    <p>
+      The <strong>best time to see northern lights tonight</strong> is between <strong>10 PM and 2 AM local time</strong> — when three factors peak:
+    </p>
+    <ol>
+      <li><strong>Complete darkness</strong> (twilight has ended)</li>
+      <li><strong>Statistical aurora peak</strong> (geomagnetic midnight)</li>
+      <li><strong>Practical viewing</strong> (not too late for most people)</li>
+    </ol>
+
+    <div class="guide__info-box">
+      <h4>💡 Important Exception</h4>
+      <p>
+        If current Kp is high and skies are clear <em>right now</em> (even if it's 9 PM), <strong>go outside immediately</strong>. Don't wait for "the perfect time" — aurora can peak unexpectedly and fade within 30-60 minutes.
+      </p>
+    </div>
+  </section>
+
+  <section class="guide__section">
+    <h2>Understanding Geomagnetic Midnight</h2>
+    <p>
+      Aurora activity follows <strong>geomagnetic midnight</strong>, not local midnight. This is when your location's magnetic field lines are most "stretched" by solar wind interaction.
+    </p>
+
+    <h3>What is Geomagnetic Midnight?</h3>
+    <p>
+      The time when your location faces directly <em>away</em> from the Sun in terms of magnetic field orientation. This is typically 1-3 hours offset from local midnight depending on your longitude.
+    </p>
+
+    <h3>Geomagnetic Midnight by Location</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Location</th>
+          <th>Local Midnight</th>
+          <th>Geomagnetic Midnight</th>
+          <th>Peak Aurora Window</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Tromsø, Norway</td>
+          <td>00:00</td>
+          <td>22:30</td>
+          <td>10:00 PM - 1:00 AM</td>
+        </tr>
+        <tr>
+          <td>Reykjavik, Iceland</td>
+          <td>00:00</td>
+          <td>23:15</td>
+          <td>10:30 PM - 1:30 AM</td>
+        </tr>
+        <tr>
+          <td>Fairbanks, Alaska</td>
+          <td>00:00</td>
+          <td>00:45</td>
+          <td>11:00 PM - 2:30 AM</td>
+        </tr>
+        <tr>
+          <td>Yellowknife, Canada</td>
+          <td>00:00</td>
+          <td>01:15</td>
+          <td>11:30 PM - 3:00 AM</td>
+        </tr>
+        <tr>
+          <td>Edinburgh, Scotland</td>
+          <td>00:00</td>
+          <td>23:00</td>
+          <td>10:30 PM - 1:30 AM</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>
+      <strong>Key insight:</strong> The "10 PM - 2 AM" rule works for most locations because it centers around typical geomagnetic midnight (±2 hours).
+    </p>
+  </section>
+
+  <section class="guide__section">
+    <h2>Best Months for Northern Lights</h2>
+    <p>
+      Aurora can occur year-round, but <strong>visibility</strong> depends on darkness hours. Here's the breakdown:
+    </p>
+
+    <h3>Peak Season: September - March</h3>
+    <p><strong>Why these months?</strong></p>
+    <ul>
+      <li>Long darkness hours (10-18 hours per night depending on latitude)</li>
+      <li>No midnight sun interference</li>
+      <li>Statistically more geomagnetic storms (equinox effect)</li>
+    </ul>
+
+    <h3>Month-by-Month Guide</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Month</th>
+          <th>Darkness Hours (65°N)</th>
+          <th>Aurora Visibility</th>
+          <th>Rating</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>January</td>
+          <td>18 hours</td>
+          <td>Excellent (but cold)</td>
+          <td>⭐⭐⭐⭐⭐</td>
+        </tr>
+        <tr>
+          <td>February</td>
+          <td>16 hours</td>
+          <td>Excellent</td>
+          <td>⭐⭐⭐⭐⭐</td>
+        </tr>
+        <tr>
+          <td>March</td>
+          <td>14 hours</td>
+          <td>Very good (warming weather)</td>
+          <td>⭐⭐⭐⭐⭐</td>
+        </tr>
+        <tr>
+          <td>April</td>
+          <td>10 hours</td>
+          <td>Good (shorter window)</td>
+          <td>⭐⭐⭐⭐</td>
+        </tr>
+        <tr>
+          <td>May</td>
+          <td>6 hours</td>
+          <td>Limited (twilight issues)</td>
+          <td>⭐⭐</td>
+        </tr>
+        <tr>
+          <td>June - July</td>
+          <td>0-2 hours</td>
+          <td>Impossible above 60°N</td>
+          <td>❌</td>
+        </tr>
+        <tr>
+          <td>August</td>
+          <td>6 hours</td>
+          <td>Emerging (darkness returns)</td>
+          <td>⭐⭐⭐</td>
+        </tr>
+        <tr>
+          <td>September</td>
+          <td>10 hours</td>
+          <td>Very good (equinox boost)</td>
+          <td>⭐⭐⭐⭐⭐</td>
+        </tr>
+        <tr>
+          <td>October</td>
+          <td>14 hours</td>
+          <td>Excellent</td>
+          <td>⭐⭐⭐⭐⭐</td>
+        </tr>
+        <tr>
+          <td>November</td>
+          <td>16 hours</td>
+          <td>Excellent</td>
+          <td>⭐⭐⭐⭐⭐</td>
+        </tr>
+        <tr>
+          <td>December</td>
+          <td>18 hours</td>
+          <td>Excellent (but polar night)</td>
+          <td>⭐⭐⭐⭐⭐</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="guide__info-box guide__info-box--warning">
+      <h4>⚠️ The Equinox Effect</h4>
+      <p>
+        March and September (spring/fall equinoxes) show <strong>27% more geomagnetic storms</strong> than other months. This "Russell-McPherron effect" occurs because Earth's magnetic field tilts favorably for solar wind coupling during equinoxes.
+      </p>
+      <p>
+        <strong>Implication:</strong> Book aurora trips for late February-March or September-October for best activity + reasonable darkness.
+      </p>
+    </div>
+  </section>
+
+  <section class="guide__section">
+    <h2>Best Hours of the Night</h2>
+    <p>
+      Aurora activity fluctuates throughout the night. Here's the statistical breakdown based on 10+ years of observation data:
+    </p>
+
+    <h3>Hour-by-Hour Aurora Probability</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>Aurora Probability</th>
+          <th>Typical Activity</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>8:00 PM - 9:30 PM</td>
+          <td>Low (20%)</td>
+          <td>Early substorms (rare)</td>
+        </tr>
+        <tr>
+          <td>9:30 PM - 11:00 PM</td>
+          <td>Moderate (40%)</td>
+          <td>Activity building</td>
+        </tr>
+        <tr>
+          <td>11:00 PM - 1:00 AM</td>
+          <td>High (70%)</td>
+          <td>Peak substorm period</td>
+        </tr>
+        <tr>
+          <td>1:00 AM - 3:00 AM</td>
+          <td>Moderate (50%)</td>
+          <td>Secondary peak</td>
+        </tr>
+        <tr>
+          <td>3:00 AM - 5:00 AM</td>
+          <td>Low (30%)</td>
+          <td>Activity declining</td>
+        </tr>
+        <tr>
+          <td>5:00 AM - sunrise</td>
+          <td>Very low (15%)</td>
+          <td>Rare late displays</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Why 11 PM - 1 AM is Optimal</h3>
+    <ol>
+      <li><strong>Geomagnetic midnight peak:</strong> Most locations' magnetic midnight falls in this window</li>
+      <li><strong>Full darkness:</strong> Twilight has completely ended</li>
+      <li><strong>Practical timing:</strong> Not too early (still setting up) or too late (most people asleep)</li>
+      <li><strong>Moon position:</strong> Often low/set during this period (darker skies)</li>
+    </ol>
+  </section>
+
+  <section class="guide__section">
+    <h2>Seasonal Darkness Patterns</h2>
+    <p>
+      Your viewing window changes dramatically by season and latitude:
+    </p>
+
+    <h3>Winter (Dec - Feb)</h3>
+    <p><strong>Darkness window:</strong> 4 PM - 9 AM (above 65°N)</p>
+    <ul>
+      <li><strong>Advantage:</strong> 15-18 hours of darkness = multiple viewing opportunities</li>
+      <li><strong>Challenge:</strong> Extreme cold (-20°C to -40°C), short daylight for daytime activities</li>
+      <li><strong>Best for:</strong> Hardcore aurora hunters willing to brave cold</li>
+    </ul>
+
+    <h3>Spring/Fall (Mar-Apr, Sep-Oct)</h3>
+    <p><strong>Darkness window:</strong> 7 PM - 6 AM</p>
+    <ul>
+      <li><strong>Advantage:</strong> 10-12 hours darkness, moderate temperatures (-5°C to +10°C)</li>
+      <li><strong>Advantage:</strong> Equinox boost = more frequent storms</li>
+      <li><strong>Best for:</strong> First-time visitors and photographers</li>
+    </ul>
+
+    <h3>Summer (May-Aug)</h3>
+    <p><strong>Darkness window:</strong> 0-6 hours (limited/none above 60°N)</p>
+    <ul>
+      <li><strong>Challenge:</strong> "White nights" = no complete darkness above Arctic Circle</li>
+      <li><strong>Exception:</strong> Brief 2-3 hour window in August (southern aurora zones only)</li>
+      <li><strong>Not recommended</strong> for dedicated aurora trips</li>
+    </ul>
+  </section>
+
+  <section class="guide__section">
+    <h2>Moon Phase Impact on Viewing Times</h2>
+    <p>
+      Moon phase significantly affects <em>when</em> to view aurora during the night:
+    </p>
+
+    <h3>New Moon (0% Illumination)</h3>
+    <ul>
+      <li><strong>Best hours:</strong> Entire night (8 PM - 5 AM)</li>
+      <li><strong>Visibility:</strong> Faint displays clearly visible</li>
+      <li><strong>Ideal for:</strong> Photography, faint aurora appreciation</li>
+    </ul>
+
+    <h3>First Quarter (50% Illumination)</h3>
+    <ul>
+      <li><strong>Best hours:</strong> After moonset (~midnight-1 AM)</li>
+      <li><strong>Visibility:</strong> Strong displays visible all night, faint displays only after moonset</li>
+      <li><strong>Strategy:</strong> Check moonset time, plan viewing after</li>
+    </ul>
+
+    <h3>Full Moon (100% Illumination)</h3>
+    <ul>
+      <li><strong>Best hours:</strong> When moon is low on horizon or behind clouds/mountains</li>
+      <li><strong>Visibility:</strong> Only Kp 5+ displays visible, washes out faint aurora</li>
+      <li><strong>Strategy:</strong> Position yourself so moon is behind you, aurora ahead</li>
+    </ul>
+
+    <h3>Last Quarter (50% Illumination)</h3>
+    <ul>
+      <li><strong>Best hours:</strong> Before moonrise (~10 PM - midnight)</li>
+      <li><strong>Visibility:</strong> Good before moonrise, diminished after</li>
+      <li><strong>Strategy:</strong> Start viewing early, before moon rises</li>
+    </ul>
+
+    <div class="guide__info-box">
+      <h4>💡 Moon-Free Hours Strategy</h4>
+      <p>
+        Even during full moon, there are "moon-free hours" when moon is below horizon:
+      </p>
+      <ul>
+        <li>Check moon phase and moonrise/moonset times (new moon is best)</li>
+        <li>Target viewing during moon-free periods for darkest skies</li>
+        <li>AuroraMe app for <a href={iosStoreUrl}>iOS</a> or <a href={androidStoreUrl}>Android</a> calculates this automatically</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="guide__section">
+    <h2>Real-Time vs Long-Term Planning</h2>
+
+    <h3>Planning a Trip (1-3 Months Ahead)</h3>
+    <p><strong>Choose based on:</strong></p>
+    <ol>
+      <li><strong>Month:</strong> September-March (prioritize Feb-Mar or Sep-Oct for equinox boost)</li>
+      <li><strong>Solar cycle phase:</strong> Peak activity years (2024-2026 is solar maximum)</li>
+      <li><strong>Moon phase:</strong> Book around new moon (±3 days) if possible</li>
+      <li><strong>Location:</strong> High magnetic latitude (65°+) for frequent displays</li>
+    </ol>
+
+    <h3>Tonight's Viewing Decision (Real-Time)</h3>
+    <p><strong>Check in this order:</strong></p>
+    <ol>
+      <li><strong>Current Kp:</strong> Is Kp at your threshold right now? (check NOAA nowcast)</li>
+      <li><strong>Cloud forecast:</strong> Less than 50% clouds in next 3 hours?</li>
+      <li><strong>Darkness:</strong> Has nautical twilight ended? (sun &lt; -12° altitude)</li>
+      <li><strong>Moon status:</strong> Is moon below horizon or low illumination?</li>
+    </ol>
+    <p>
+      If all 4 = YES → <strong>Go outside immediately, don't wait for "perfect time"</strong>
+    </p>
+  </section>
+
+  <section class="guide__section">
+    <h2>How Long to Stay Outside</h2>
+    <p>
+      Aurora is <strong>dynamic</strong>. A common mistake is checking for 10 minutes, seeing nothing, and going back inside right before a substorm peaks.
+    </p>
+
+    <h3>Recommended Viewing Durations</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Conditions</th>
+          <th>Recommended Duration</th>
+          <th>Reasoning</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Kp at threshold, clear skies</td>
+          <td>30-60 minutes</td>
+          <td>Catch substorm peaks (15-30 min bursts)</td>
+        </tr>
+        <tr>
+          <td>Kp +1 above threshold</td>
+          <td>60-90 minutes</td>
+          <td>Multiple substorms likely</td>
+        </tr>
+        <tr>
+          <td>Major storm (Kp 6+)</td>
+          <td>2-4 hours</td>
+          <td>Extended viewing opportunity</td>
+        </tr>
+        <tr>
+          <td>Borderline conditions</td>
+          <td>45-60 minutes</td>
+          <td>Check for sudden intensification</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="guide__info-box guide__info-box--warning">
+      <h4>⚠️ The "Substorm Waiting Game"</h4>
+      <p>
+        Aurora displays cycle through phases:
+      </p>
+      <ol>
+        <li><strong>Growth (10-20 min):</strong> Faint arcs form</li>
+        <li><strong>Expansion (15-30 min):</strong> Rapid movement, bright colors (BEST VIEWING)</li>
+        <li><strong>Recovery (20-40 min):</strong> Fading back to arcs</li>
+      </ol>
+      <p>
+        If you arrive during growth or recovery phase, stay outside. The next expansion phase may occur within 30-60 minutes.
+      </p>
+    </div>
+  </section>
+
+  <section class="guide__section">
+    <h2>Advanced: All-Night Strategy</h2>
+    <p>
+      For dedicated aurora hunters during major storms:
+    </p>
+
+    <h3>The 4-Hour Watch Approach</h3>
+    <ol>
+      <li><strong>9:00 PM - 10:30 PM:</strong> Setup gear, scout location, early monitoring</li>
+      <li><strong>10:30 PM - 12:30 AM:</strong> Primary viewing window (highest probability)</li>
+      <li><strong>12:30 AM - 2:00 AM:</strong> Secondary peak, photograph best displays</li>
+      <li><strong>2:00 AM - 4:00 AM:</strong> Late displays, wrap up</li>
+    </ol>
+
+    <h3>Warmth & Comfort Tips</h3>
+    <ul>
+      <li><strong>Heated car idling nearby:</strong> 5-minute warmup breaks every 30 min</li>
+      <li><strong>Thermos with hot drinks:</strong> Tea, coffee, or hot chocolate</li>
+      <li><strong>Hand/foot warmers:</strong> Essential below -10°C</li>
+      <li><strong>Multiple layers:</strong> Add/remove layers as needed (avoid sweating)</li>
+    </ul>
+  </section>
+
+  <section class="guide__section">
+    <h2>FAQ: Best Time for Aurora</h2>
+
+    <h3>Can I see aurora at 7 PM?</h3>
+    <p>
+      Unlikely. At 7 PM in most aurora zones, there's still twilight (sun -6° to -12° altitude). Aurora becomes visible only after <strong>nautical twilight ends</strong> (sun below -12°). This is typically 8:30-10:00 PM depending on season and latitude.
+    </p>
+
+    <h3>Is 4 AM too late to see aurora?</h3>
+    <p>
+      Not necessarily. While statistical probability is lower, late displays (3-5 AM) do occur. If you get an aurora alert at 4 AM and conditions are good, go outside — you might catch the tail end of a storm.
+    </p>
+
+    <h3>Does aurora follow a daily schedule?</h3>
+    <p>
+      No. Aurora timing is driven by <strong>solar wind arrival</strong> (unpredictable) and geomagnetic midnight (varies by location). There's no fixed daily schedule. This is why alerts are crucial.
+    </p>
+
+    <h3>What if I miss the peak hour?</h3>
+    <p>
+      Don't stress about "missing" 11 PM - 1 AM. Aurora displays last 1-4 hours on average. Arriving at midnight during a major storm still gives you hours of viewing. The "peak hour" is just statistical likelihood, not a hard rule.
+    </p>
+
+    <h3>Can I predict aurora weeks in advance?</h3>
+    <p>
+      No. Best you can do is:
+    </p>
+    <ul>
+      <li>Identify favorable months (Sep-Mar)</li>
+      <li>Check solar cycle phase (2024-2026 = solar max = more frequent storms)</li>
+      <li>Monitor 27-day solar rotation forecast (40% accuracy)</li>
+    </ul>
+    <p>
+      Precise timing requires 24-48 hour forecasts + real-time monitoring.
+    </p>
+  </section>
+
+  <section class="guide__section" style="text-align: center; margin-top: 4rem;">
+    <h2>Never Miss the Best Viewing Hour</h2>
+    <p style="font-size: 1.125rem; color: #C8C8C8; max-width: 600px; margin: 1rem auto 2rem;">
+      AuroraMe analyzes darkness windows, moon phase, and Kp peaks to alert you during the optimal viewing hour for your location. Download free app and get notified when everything aligns tonight.
+    </p>
+  </section>
+</GuideLayout>
+

@@ -1,0 +1,140 @@
+---
+import type { SupportedLanguage } from '@config/language-targeting';
+import { SUPPORTED_LANGUAGES } from '@config/language-targeting';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import '../../styles/pages/error-404.css';
+import { createPageI18n } from '../../utils/i18n-page.ts';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  return SUPPORTED_LANGUAGES
+    .filter(lang => lang !== 'en')
+    .map(lang => ({
+      params: { lang },
+      props: { lang }
+    }));
+}
+
+const { lang } = Astro.props as { lang: SupportedLanguage };
+const i18n = await createPageI18n(lang);
+
+const title = i18n.t('page404_meta_title');
+const description = i18n.t('page404_meta_description');
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="error-404">
+    <!-- Aurora Background Animation -->
+    <div class="aurora-bg">
+      <div class="aurora-wave wave-1"></div>
+      <div class="aurora-wave wave-2"></div>
+      <div class="aurora-wave wave-3"></div>
+      <div class="stars"></div>
+    </div>
+
+    <!-- Content -->
+    <div class="content-wrapper">
+      <div class="error-content">
+        <!-- Animated 404 with Northern Lights effect -->
+        <h1 class="error-code">
+          <span class="glow-text">4</span>
+          <span class="glow-text delay-1">0</span>
+          <span class="glow-text delay-2">4</span>
+        </h1>
+
+        <h2 class="error-title">{i18n.t('page404_title')}</h2>
+
+        <p class="error-message">
+          {i18n.t('page404_message_line1')}<br>
+          {i18n.t('page404_message_line2')}
+        </p>
+
+        <!-- Fun Facts -->
+        <div class="fun-fact">
+          <p class="fact-icon">💡</p>
+          <p class="fact-text">
+            {i18n.t('page404_funfact')}
+          </p>
+        </div>
+
+        <!-- Quick Navigation -->
+        <div class="nav-section">
+          <h3 class="nav-heading">{i18n.t('page404_nav_heading')}</h3>
+
+          <!-- Home Button -->
+          <a href="/" class="btn btn-primary">
+            <span class="btn-icon">🏠</span>
+            {i18n.t('page404_btn_home')}
+          </a>
+
+          <!-- Popular Destinations -->
+          <div class="popular-destinations">
+            <h4 class="destinations-title">{i18n.t('page404_destinations_title')}</h4>
+
+            <div class="destinations-grid">
+              <!-- Row 1: Iceland & Scandinavia -->
+              <a href="/{lang}/reykjavk" class="destination-card iceland">
+                <span class="destination-flag">🇮🇸</span>
+                <span class="destination-name">Reykjavík</span>
+                <span class="destination-country">Iceland</span>
+              </a>
+
+              <a href="/{lang}/troms" class="destination-card norway">
+                <span class="destination-flag">🇳🇴</span>
+                <span class="destination-name">Tromsø</span>
+                <span class="destination-country">Norway</span>
+              </a>
+
+              <a href="/{lang}/rovaniemi" class="destination-card finland">
+                <span class="destination-flag">🇫🇮</span>
+                <span class="destination-name">Rovaniemi</span>
+                <span class="destination-country">Finland</span>
+              </a>
+
+              <!-- Row 2: Sweden & North America -->
+              <a href="/{lang}/abisko" class="destination-card sweden">
+                <span class="destination-flag">🇸🇪</span>
+                <span class="destination-name">Abisko</span>
+                <span class="destination-country">Sweden</span>
+              </a>
+
+              <a href="/{lang}/fairbanks" class="destination-card usa">
+                <span class="destination-flag">🇺🇸</span>
+                <span class="destination-name">Fairbanks</span>
+                <span class="destination-country">Alaska, USA</span>
+              </a>
+
+              <a href="/{lang}/yellowknife" class="destination-card canada">
+                <span class="destination-flag">🇨🇦</span>
+                <span class="destination-name">Yellowknife</span>
+                <span class="destination-country">Canada</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Browse by Country -->
+          <div class="country-links">
+            <h4 class="countries-title">{i18n.t('page404_countries_title')}</h4>
+            <div class="country-grid">
+              <a href="/{lang}/country/iceland" class="country-link">Iceland</a>
+              <a href="/{lang}/country/norway" class="country-link">Norway</a>
+              <a href="/{lang}/country/finland" class="country-link">Finland</a>
+              <a href="/{lang}/country/sweden" class="country-link">Sweden</a>
+              <a href="/{lang}/country/canada" class="country-link">Canada</a>
+              <a href="/{lang}/country/united-states" class="country-link">United States</a>
+              <a href="/{lang}/country/greenland" class="country-link">Greenland</a>
+              <a href="/{lang}/country/russia" class="country-link">Russia</a>
+            </div>
+          </div>
+
+          <!-- Search Suggestion -->
+          <div class="search-tip">
+            <p class="tip-icon">🔍</p>
+            <p class="tip-text" set:html={i18n.t('page404_search_tip')}></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

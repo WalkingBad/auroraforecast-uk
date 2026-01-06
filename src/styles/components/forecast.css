@@ -1,0 +1,183 @@
+/*
+  3-Hour Forecast Timeline Component
+  Moved from global.css for better modularity
+  @sync app/lib/constants/design_system.dart
+*/
+
+/* 3-Hour Forecast Section */
+.three-hour-forecast {
+  margin: var(--aurora-spacing-xxl) 0;
+  background: var(--aurora-surface);
+  border: 1px solid var(--aurora-border-light);
+  border-radius: var(--aurora-radius-card);
+  padding: var(--aurora-spacing-xl);
+}
+
+.three-hour-forecast h2 {
+  margin-top: 0;
+  margin-bottom: var(--aurora-spacing-l);
+  font-family: 'Cormorant', serif;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--aurora-text-primary);
+}
+
+/* Timeline Grid Layout */
+.forecast-timeline {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--aurora-spacing-l);
+  margin-bottom: var(--aurora-spacing-xl);
+}
+
+/* Individual Forecast Item */
+.forecast-item {
+  background: var(--aurora-chip);
+  border: 1px solid var(--aurora-border-light);
+  border-radius: var(--aurora-radius-chip);
+  padding: var(--aurora-spacing-l);
+  text-align: center;
+}
+
+.forecast-time {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--aurora-text-secondary);
+  margin-bottom: var(--aurora-spacing-s);
+}
+
+.forecast-kp {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--aurora-text-primary);
+  margin-bottom: var(--aurora-spacing-s);
+}
+
+.forecast-status {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: var(--aurora-spacing-s);
+}
+
+.forecast-probability {
+  font-size: 12px;
+  color: var(--aurora-text-tertiary);
+}
+
+/* Forecast CTA Section */
+.forecast-cta {
+  text-align: center;
+  padding-top: var(--aurora-spacing-l);
+  border-top: 1px solid var(--aurora-border-light);
+}
+
+.forecast-cta p {
+  margin-bottom: var(--aurora-spacing-l);
+  color: var(--aurora-text-secondary);
+  font-size: 14px;
+}
+
+/* Forecast Unavailable State */
+.three-hour-forecast-unavailable {
+  margin: var(--aurora-spacing-xxl) 0;
+  background: var(--aurora-surface);
+  border: 1px solid var(--aurora-border-light);
+  border-radius: var(--aurora-radius-card);
+  padding: var(--aurora-spacing-xl);
+}
+
+.forecast-unavailable-content h2 {
+  margin-top: 0;
+  margin-bottom: var(--aurora-spacing-l);
+  font-family: 'Cormorant', serif;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--aurora-text-primary);
+}
+
+.unavailable-message {
+  text-align: center;
+  margin-bottom: var(--aurora-spacing-xl);
+  padding: var(--aurora-spacing-l);
+  background: rgba(255, 184, 0, 0.05);
+  border: 1px solid rgba(255, 184, 0, 0.2);
+  border-radius: var(--aurora-radius-m);
+}
+
+.unavailable-message p {
+  margin-bottom: var(--aurora-spacing-s);
+  color: var(--aurora-text-secondary);
+  font-size: 14px;
+}
+
+.unavailable-message p:last-child {
+  margin-bottom: 0;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .forecast-timeline {
+    grid-template-columns: 1fr;
+    gap: var(--aurora-spacing-m);
+  }
+
+  .three-hour-forecast,
+  .three-hour-forecast-unavailable {
+    margin: var(--aurora-spacing-xl) 0;
+    padding: var(--aurora-spacing-l);
+  }
+
+  .three-hour-forecast h2,
+  .forecast-unavailable-content h2 {
+    font-size: 20px;
+    margin-bottom: var(--aurora-spacing-m);
+  }
+
+  .forecast-item {
+    padding: var(--aurora-spacing-m);
+  }
+
+  .unavailable-message {
+    padding: var(--aurora-spacing-m);
+    margin-bottom: var(--aurora-spacing-l);
+  }
+
+  .unavailable-message p {
+    font-size: 13px;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 480px) {
+  .three-hour-forecast,
+  .three-hour-forecast-unavailable {
+    margin: var(--aurora-spacing-l) 0;
+    padding: var(--aurora-spacing-m);
+  }
+
+  .forecast-timeline {
+    gap: var(--aurora-spacing-s);
+  }
+
+  .forecast-item {
+    padding: var(--aurora-spacing-s);
+  }
+
+  .forecast-time {
+    font-size: 12px;
+  }
+
+  .forecast-kp {
+    font-size: 14px;
+  }
+
+  .forecast-status {
+    font-size: 12px;
+  }
+
+  .forecast-probability {
+    font-size: 11px;
+  }
+}

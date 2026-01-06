@@ -1,0 +1,171 @@
+/**
+ * Kp Index Scale Component Styles
+ * Used by: components/KpIndexScale.astro
+ * Extracted from inline <style> block (146 lines)
+ * Date: 2025-11-24
+ * Features: Visual Kp index scale from 0-9 with current indicator
+ */
+
+/* ==========================================================================
+   Container
+   ========================================================================== */
+
+.kp-scale {
+  width: 100%;
+  position: relative;
+  padding: 0;
+}
+
+/* ==========================================================================
+   Bars
+   ========================================================================== */
+
+.kp-scale__bars {
+  display: flex;
+  gap: 2px;
+  height: 40px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.kp-scale--compact .kp-scale__bars {
+  height: 24px;
+  gap: 1px;
+}
+
+.kp-scale__bar {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.kp-scale__bar:hover {
+  opacity: 0.8;
+  transform: scaleY(1.05);
+}
+
+.kp-scale__bar--current {
+  outline: 2px solid #FFFFFF;
+  outline-offset: -2px;
+  z-index: 10;
+}
+
+.kp-scale__number {
+  font-size: 12px;
+  font-weight: 600;
+  color: #FFFFFF;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* ==========================================================================
+   Labels
+   ========================================================================== */
+
+.kp-scale__labels {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin-top: 8px;
+  font-size: 11px;
+  color: #8A8A8A;
+}
+
+.kp-scale__label {
+  text-align: center;
+  line-height: 1.2;
+}
+
+.kp-scale__label--start {
+  text-align: left;
+}
+
+.kp-scale__label--end {
+  text-align: right;
+}
+
+.kp-scale__label--threshold {
+  position: absolute;
+  transform: translateX(-50%);
+  color: #34C97B;
+  font-weight: 600;
+}
+
+.kp-scale__sublabel {
+  font-size: 9px;
+  display: block;
+  margin-top: 2px;
+}
+
+.kp-scale__sublabel--highlight {
+  color: #34C97B;
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   Current Indicator
+   ========================================================================== */
+
+.kp-scale__current-indicator {
+  position: absolute;
+  top: -8px;
+  transform: translateX(-50%);
+  z-index: 20;
+}
+
+.kp-scale__current-marker {
+  position: relative;
+}
+
+.kp-scale__current-marker::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 8px solid #FFFFFF;
+}
+
+.kp-scale__current-value {
+  position: absolute;
+  top: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #111214;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #FFFFFF;
+  white-space: nowrap;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  .kp-scale__bars {
+    height: 32px;
+  }
+
+  .kp-scale--compact .kp-scale__bars {
+    height: 20px;
+  }
+
+  .kp-scale__number {
+    font-size: 10px;
+  }
+
+  .kp-scale__labels {
+    font-size: 10px;
+  }
+}

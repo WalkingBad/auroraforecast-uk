@@ -1,0 +1,64 @@
+---
+
+import '../styles/components/faq.css';
+import type { I18nPageHelper } from '../utils/i18n-page';
+
+export interface Props {
+  i18n?: I18nPageHelper;
+}
+
+const { i18n } = Astro.props;
+
+// Translation with fallback to English
+const title = i18n ? i18n.t('faq_title') : 'Frequently Asked Questions';
+
+const faqItems = [
+  {
+    question: i18n ? i18n.t('faq_q1_question') : 'What KP do I need?',
+    hint: i18n ? i18n.t('faq_q1_hint') : 'Required KP depends on your magnetic latitude (MLAT). Higher MLAT needs lower KP. Check your local KP threshold on the city page — we calculate it from MLAT.',
+    answer: i18n ? i18n.t('faq_q1_answer') : 'Your required KP depends on magnetic latitude. Northern locations need lower KP values. Check your city page for the exact threshold calculated from your MLAT.',
+    theme: 'faq-theme-primary'
+  },
+  {
+    question: i18n ? i18n.t('faq_q2_question') : 'When is the best time?',
+    answer: i18n ? i18n.t('faq_q2_answer') : 'Use the "best hour tonight" feature on each city page. It combines KP forecast, cloud cover, and darkness window to find optimal viewing time.',
+    theme: 'faq-theme-secondary'
+  },
+  {
+    question: i18n ? i18n.t('faq_q3_question') : 'Can I see aurora in summer?',
+    answer: i18n ? i18n.t('faq_q3_answer') : 'Aurora needs darkness to be visible. Summer\'s long daylight and bright moonlight significantly reduce aurora visibility, even during strong activity.',
+    theme: 'faq-theme-tertiary'
+  },
+  {
+    question: i18n ? i18n.t('faq_q4_question') : 'How accurate are aurora predictions?',
+    answer: i18n ? i18n.t('faq_q4_answer') : 'AuroraMe combines 4 reality factors: NOAA OVATION space weather, cloud coverage, moon phase, and darkness windows. Location-specific KP thresholds are calibrated from 3+ years of historical data (8,768+ measurements).',
+    theme: 'faq-theme-primary'
+  },
+  {
+    question: i18n ? i18n.t('faq_q5_question') : 'What\'s included in Aurora History?',
+    answer: i18n ? i18n.t('faq_q5_answer') : 'Multi-year statistical analysis with best months algorithm, calendar heatmap (12 months × 4 weeks), yesterday\'s observation windows, and location-calibrated frequency (Tromsø 200 nights/year vs Edinburgh 10 nights/year).',
+    theme: 'faq-theme-secondary'
+  },
+  {
+    question: i18n ? i18n.t('faq_q6_question') : 'How do quiet hours work?',
+    answer: i18n ? i18n.t('faq_q6_answer') : 'Quiet hours prevent notifications during sleep (default 11 PM - 7 AM, customizable per location). Progressive urgency: strong aurora activity overrides quiet hours. 30-minute cooldown between alerts.',
+    theme: 'faq-theme-tertiary'
+  }
+];
+---
+
+<section class="faq-section">
+  <h2>{title}</h2>
+  <div class="faq-grid">
+    {faqItems.map(item => (
+      <div class={`faq-item ${item.theme}`}>
+        <h3>
+          {item.question}
+        </h3>
+        <p>{item.answer}</p>
+      </div>
+    ))}
+  </div>
+</section>
+
+

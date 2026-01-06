@@ -1,0 +1,70 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import AppHero from '../components/AppHero.astro';
+import heroBackground from '../../assets/main-background.webp';
+import '../styles/pages/country-page.css';
+import '../styles/components/store-badges.css';
+import '../styles/components/city-cards.css';
+import '../styles/components/app-screens-gallery.css';
+import '../styles/components/cross-links.css';
+
+interface Props {
+  title: string;
+  description: string;
+  canonical: string;
+  lang?: string;
+  i18n?: any;
+  hreflangTags?: any[];
+  countryData: any;
+  breadcrumbs: any[];
+}
+
+const {
+  title,
+  description,
+  canonical,
+  lang = 'en',
+  i18n,
+  hreflangTags,
+  countryData,
+  breadcrumbs
+} = Astro.props;
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonical}
+  lang={lang}
+  i18n={i18n}
+  hreflangTags={hreflangTags}
+>
+  <div class="country-header-parallax" style={`background-image: url(${heroBackground.src})`}>
+    <div class="country-header">
+      <slot name="header-content" />
+      
+      <div class="country-stats">
+        <slot name="stats" />
+      </div>
+    </div>
+  </div>
+
+  <main class="container">
+    <!-- Breadcrumbs below header image -->
+    <Breadcrumbs items={breadcrumbs} i18n={i18n} />
+
+    <AppHero pageType="country_hub" countryCode={countryData.countryCode} placement="hero" hideStickyFooter={false} />
+
+    <slot name="cities-gallery" />
+    <slot name="live-links" />
+    <slot name="guide" />
+    <slot name="regions" />
+    <slot name="best-time-links" />
+    <slot name="structured-data" />
+    <slot name="social-links" />
+    <slot name="page-nav" />
+  </main>
+
+  <slot name="sticky-footer" />
+</BaseLayout>

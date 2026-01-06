@@ -1,0 +1,17 @@
+---
+import StatePage from '../../components/pages/StatePage.astro';
+import { getStateStaticEntries } from '../../utils/state-pages';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  return getStateStaticEntries().map(({ stateData, isRegion }) => ({
+    params: { country: stateData.countryISO, state: stateData.iso },
+    props: { stateData, isRegion }
+  }));
+}
+
+const { stateData, isRegion = false } = Astro.props;
+---
+
+<StatePage lang="en" stateData={stateData} isRegion={isRegion} />

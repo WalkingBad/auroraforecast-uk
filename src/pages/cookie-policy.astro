@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CookiePolicyContent from '../components/legal/CookiePolicyContent.astro';
+import { createPageI18n } from '../utils/i18n-page.ts';
+import { SUPPORTED_LANGUAGES } from '@config/language-targeting';
+import { generatePageHreflangTags, getPageCanonicalUrl } from '../utils/hreflang';
+
+const i18n = await createPageI18n('en');
+const currentDate = new Date().toISOString().split('T')[0];
+const hreflangTags = generatePageHreflangTags('cookie-policy', SUPPORTED_LANGUAGES);
+const canonicalUrl = getPageCanonicalUrl('cookie-policy', 'en');
+---
+
+<BaseLayout
+  title={i18n.t('cookie_meta_title')}
+  description={i18n.t('cookie_meta_description')}
+  canonical={canonicalUrl}
+  lang="en"
+  hreflangTags={hreflangTags}
+>
+  <CookiePolicyContent i18n={i18n} currentDate={currentDate} lang="en" />
+</BaseLayout>

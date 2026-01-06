@@ -1,0 +1,68 @@
+---
+import '../styles/components/popular-cities-simple.css';
+import type { I18nPageHelper } from '../utils/i18n-page';
+
+export interface Props {
+  title?: string;
+  limit?: number;
+  i18n?: I18nPageHelper;
+}
+
+const {
+  title = "Check Aurora Forecast in Your City",
+  limit = 12,
+  i18n
+} = Astro.props;
+
+// Popular aurora viewing cities by region (slugs verified from cities.json)
+// Ordered by target audience: USA first, then Canada, then international
+const popularCities = [
+  // USA (primary audience)
+  { name: 'Fairbanks', slug: 'fairbanks', country: 'USA', flag: '🇺🇸' },
+  { name: 'Anchorage', slug: 'anchorage', country: 'USA', flag: '🇺🇸' },
+
+  // Canada
+  { name: 'Yellowknife', slug: 'yellowknife', country: 'Canada', flag: '🇨🇦' },
+  { name: 'Whitehorse', slug: 'whitehorse', country: 'Canada', flag: '🇨🇦' },
+  { name: 'Edmonton', slug: 'edmonton', country: 'Canada', flag: '🇨🇦' },
+
+  // International (Iceland & Scandinavia)
+  { name: 'Reykjavík', slug: 'reykjavk', country: 'Iceland', flag: '🇮🇸' },
+  { name: 'Tromsø', slug: 'troms', country: 'Norway', flag: '🇳🇴' },
+  { name: 'Rovaniemi', slug: 'rovaniemi', country: 'Finland', flag: '🇫🇮' },
+  { name: 'Kiruna', slug: 'kiruna', country: 'Sweden', flag: '🇸🇪' },
+  { name: 'Abisko', slug: 'abisko', country: 'Sweden', flag: '🇸🇪' },
+  { name: 'Luleå', slug: 'lule', country: 'Sweden', flag: '🇸🇪' },
+  { name: 'Bergen', slug: 'bergen', country: 'Norway', flag: '🇳🇴' },
+];
+
+const displayCities = popularCities.slice(0, limit);
+
+// Build language-aware href
+const buildCityHref = (citySlug: string) => {
+  if (i18n && i18n.lang !== 'en') {
+    return `/${i18n.lang}/${citySlug}`;
+  }
+  return `/${citySlug}`;
+};
+
+const homeHref = i18n && i18n.lang !== 'en' ? `/${i18n.lang}` : '/';
+---
+
+<aside class="popular-cities">
+  <h2 class="popular-cities__title">{title}</h2>
+  <div class="popular-cities__grid">
+    {displayCities.map((city) => (
+      <a href={buildCityHref(city.slug)} class="city-link">
+        <span class="city-link__flag">{city.flag}</span>
+        <span class="city-link__name">{city.name}</span>
+        <span class="city-link__country">{city.country}</span>
+      </a>
+    ))}
+  </div>
+  <div class="popular-cities__footer">
+    <a href={homeHref} class="regions-link">
+      Browse all regions →
+    </a>
+  </div>
+</aside>

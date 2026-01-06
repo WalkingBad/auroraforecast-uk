@@ -1,0 +1,419 @@
+---
+import GuideLayout from '../../layouts/GuideLayout.astro';
+import { createPageI18n } from '../../utils/i18n-page.ts';
+
+const i18n = await createPageI18n('en');
+
+const title = i18n.t('alerts_setup_meta_title');
+const description = i18n.t('alerts_setup_meta_description');
+const publishDate = "2025-10-20T00:00:00Z";
+const readingTime = i18n.t('alerts_setup_meta_reading_time');
+
+const relatedGuides = [
+  {
+    title: i18n.t('alerts_setup_related1_title'),
+    slug: "northern-lights-tonight",
+    category: i18n.t('alerts_setup_related1_category'),
+    readingTime: i18n.t('alerts_setup_related1_time')
+  },
+  {
+    title: i18n.t('alerts_setup_related2_title'),
+    slug: "aurora-forecast-tracker",
+    category: i18n.t('alerts_setup_related2_category'),
+    readingTime: i18n.t('alerts_setup_related2_time')
+  },
+  {
+    title: i18n.t('alerts_setup_related3_title'),
+    slug: "best-time-northern-lights",
+    category: i18n.t('alerts_setup_related3_category'),
+    readingTime: i18n.t('alerts_setup_related3_time')
+  }
+];
+---
+
+<GuideLayout
+  title={title}
+  description={description}
+  publishDate={publishDate}
+  readingTime={readingTime}
+  relatedGuides={relatedGuides}
+>
+  <section class="guide__section">
+    <h2>Why You Need Aurora Alerts</h2>
+    <p>
+      Aurora appears <strong>unpredictably</strong>. Even with good forecasts, the exact timing of substorms (peak activity bursts) is uncertain. Most displays last 30-120 minutes — if you're asleep or indoors, you miss them completely.
+    </p>
+    <p>
+      <strong>Real example:</strong> Kp forecast predicts "moderate activity 10 PM - 2 AM." Actual aurora peaks at 11:15 PM for 45 minutes, then fades. Without alerts, you check at midnight and see nothing.
+    </p>
+
+    <div class="guide__info-box">
+      <h4>💡 Success Rate With vs Without Alerts</h4>
+      <ul>
+        <li><strong>Without alerts:</strong> See aurora 1-3 times per aurora season (rely on luck)</li>
+        <li><strong>With alerts:</strong> See aurora 10-20+ times per season (get notified during every event)</li>
+      </ul>
+      <p>In high-latitude areas (Alaska, Northern Norway), this means 50+ additional aurora viewing opportunities per year.</p>
+    </div>
+  </section>
+
+  <section class="guide__section">
+    <h2>How Aurora Alerts Work</h2>
+    <p>
+      Smart aurora alert systems monitor multiple data sources and only notify you when <strong>all conditions align</strong>:
+    </p>
+
+    <h3>Factors Monitored</h3>
+    <ol>
+      <li><strong>Kp index:</strong> Must reach your location's threshold (e.g., Kp 3+ for Reykjavik)</li>
+      <li><strong>Cloud coverage:</strong> Less than 50% clouds overhead</li>
+      <li><strong>Darkness:</strong> After nautical twilight ends (no sunlight interference)</li>
+      <li><strong>Moon phase:</strong> Optional filter for faint displays</li>
+    </ol>
+
+    <h3>Alert Timing</h3>
+    <p>
+      The best aurora alert systems use <strong>real-time monitoring</strong> (not scheduled checks). This means:
+    </p>
+    <ul>
+      <li>Alerts arrive within 5-15 minutes of conditions becoming favorable</li>
+      <li>No "false positives" from checking too early (during twilight)</li>
+      <li>Multiple alerts during long aurora events (as conditions evolve)</li>
+    </ul>
+  </section>
+
+  <section class="guide__section">
+    <h2>Setting Up Your First Aurora Alert</h2>
+    <p>
+      Here's how to configure aurora alerts in AuroraMe (similar process for other apps):
+    </p>
+
+    <h3>Step 1: Add Your Location</h3>
+    <ol>
+      <li>Open AuroraMe app</li>
+      <li>Tap "Add Location" (or + icon)</li>
+      <li>Search for your city or use current GPS location</li>
+      <li>Confirm your coordinates (important: use your viewing spot, not city center)</li>
+    </ol>
+
+    <h3>Step 2: Choose Notification Threshold</h3>
+    <p>
+      You can set different alert levels:
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Threshold</th>
+          <th>Alerts Per Year</th>
+          <th>Best For</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>All activity</strong> (any Kp)</td>
+          <td>50-200+</td>
+          <td>Aurora chasers in polar regions</td>
+        </tr>
+        <tr>
+          <td><strong>Low</strong> (Kp at threshold)</td>
+          <td>20-50</td>
+          <td>Most users — balanced alerts</td>
+        </tr>
+        <tr>
+          <td><strong>Medium</strong> (Kp +1 above)</td>
+          <td>10-30</td>
+          <td>Beginners, casual viewers</td>
+        </tr>
+        <tr>
+          <td><strong>High</strong> (Kp +2 above)</td>
+          <td>5-15</td>
+          <td>Only major displays</td>
+        </tr>
+        <tr>
+          <td><strong>Storm only</strong> (Kp 6+)</td>
+          <td>1-5</td>
+          <td>Mid/low latitude locations</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="guide__info-box guide__info-box--warning">
+      <h4>⚠️ Don't Set Threshold Too High</h4>
+      <p>
+        Beginners often set "high" threshold thinking they'll only get major alerts. Result: They miss 80% of visible aurora displays. Start with "low" threshold — you can always increase it if you get too many alerts.
+      </p>
+    </div>
+
+    <h3>Step 3: Configure Quiet Hours</h3>
+    <p>
+      Quiet hours prevent notifications during sleep. Recommended settings:
+    </p>
+    <ul>
+      <li><strong>Default:</strong> 11 PM - 7 AM (standard sleep schedule)</li>
+      <li><strong>Night owls:</strong> 2 AM - 10 AM</li>
+      <li><strong>Early risers:</strong> 9 PM - 5 AM</li>
+      <li><strong>Hardcore aurora hunters:</strong> No quiet hours (wake up for every event)</li>
+    </ul>
+
+    <p>
+      <strong>Override feature:</strong> Some apps (like AuroraMe) use "progressive urgency" — very strong aurora (Kp 7+) overrides quiet hours even when enabled.
+    </p>
+
+    <h3>Step 4: Test Your Alerts</h3>
+    <p>
+      After setup, verify alerts work:
+    </p>
+    <ol>
+      <li>Enable "test notifications" in app settings</li>
+      <li>Or wait for next moderate aurora event (check forecast)</li>
+      <li>Confirm you receive notification on phone</li>
+      <li>Check notification arrives while app is closed (background alerts)</li>
+    </ol>
+  </section>
+
+  <section class="guide__section">
+    <h2>Multiple Location Alerts Strategy</h2>
+    <p>
+      Premium aurora apps allow tracking multiple locations. Here's how to use this effectively:
+    </p>
+
+    <h3>Scenario 1: Home + Vacation Spots</h3>
+    <ul>
+      <li><strong>Home location:</strong> Normal threshold, quiet hours enabled</li>
+      <li><strong>Iceland trip:</strong> Lower threshold, no quiet hours (only during trip dates)</li>
+      <li><strong>Future Alaska trip:</strong> Add location in advance, adjust threshold when you arrive</li>
+    </ul>
+
+    <h3>Scenario 2: Multi-City Aurora Hunting</h3>
+    <p>
+      If you live within driving distance of multiple viewing spots:
+    </p>
+    <ul>
+      <li><strong>Home city:</strong> High threshold (only go out for strong displays)</li>
+      <li><strong>Dark sky spot 1 (30 min drive):</strong> Medium threshold</li>
+      <li><strong>Dark sky spot 2 (60 min drive):</strong> Low threshold (worth the drive)</li>
+    </ul>
+    <p>
+      When you get alert from dark sky spot but not home, you know it's worth driving.
+    </p>
+
+    <h3>Scenario 3: Backup Locations for Clouds</h3>
+    <ul>
+      <li>Add 2-3 locations within 50-100 miles</li>
+      <li>When home location has clouds, check if nearby locations are clear</li>
+      <li>Drive to clear spot when Kp is high enough</li>
+    </ul>
+  </section>
+
+  <section class="guide__section">
+    <h2>Advanced Alert Configuration</h2>
+
+    <h3>Cloud Coverage Filtering</h3>
+    <p>
+      Some apps let you set cloud coverage thresholds:
+    </p>
+    <ul>
+      <li><strong>Strict (0-20% clouds):</strong> Only crystal clear skies</li>
+      <li><strong>Moderate (0-50% clouds):</strong> Partially cloudy OK</li>
+      <li><strong>Lenient (0-80% clouds):</strong> Alert even with gaps in clouds</li>
+    </ul>
+    <p>
+      <strong>Recommendation:</strong> Start with moderate. Partially cloudy nights often have clear gaps where aurora is visible.
+    </p>
+
+    <h3>Moon Phase Filtering</h3>
+    <p>
+      Enable "moon filter" to only get alerts during:
+    </p>
+    <ul>
+      <li><strong>New moon period:</strong> 3 days before/after new moon (0% illumination)</li>
+      <li><strong>Moon-free hours:</strong> After moonset, before moonrise (even during full moon)</li>
+    </ul>
+    <p>
+      <strong>Trade-off:</strong> You'll see fewer faint displays but more dramatic ones. Good for photographers prioritizing dark skies.
+    </p>
+
+    <h3>Alert Cooldown Period</h3>
+    <p>
+      Prevents notification spam during long aurora events:
+    </p>
+    <ul>
+      <li><strong>15 minutes:</strong> Get updates during rapidly changing displays</li>
+      <li><strong>30 minutes (recommended):</strong> Balanced — not too many, not missing changes</li>
+      <li><strong>60 minutes:</strong> Only one alert per event (simpler)</li>
+    </ul>
+  </section>
+
+  <section class="guide__section">
+    <h2>Notification Delivery: Push vs SMS vs Email</h2>
+
+    <h3>Push Notifications (Recommended)</h3>
+    <p><strong>Advantages:</strong></p>
+    <ul>
+      <li>Instant delivery (5-15 seconds)</li>
+      <li>Free (no SMS costs)</li>
+      <li>Work with locked phone</li>
+      <li>Can wake phone with sound/vibration</li>
+    </ul>
+    <p><strong>Requirement:</strong> App must be installed, notifications enabled in iOS/Android settings</p>
+
+    <h3>SMS Alerts</h3>
+    <p><strong>Advantages:</strong></p>
+    <ul>
+      <li>No app required</li>
+      <li>Work without internet (cellular only)</li>
+      <li>Reliable delivery</li>
+    </ul>
+    <p><strong>Disadvantages:</strong></p>
+    <ul>
+      <li>Usually paid ($2-5/month)</li>
+      <li>Slower than push (30-60 seconds)</li>
+      <li>Limited message length</li>
+    </ul>
+
+    <h3>Email Alerts</h3>
+    <p><strong>Advantages:</strong></p>
+    <ul>
+      <li>Free</li>
+      <li>Can include detailed forecast info</li>
+      <li>Works across devices</li>
+    </ul>
+    <p><strong>Disadvantages:</strong></p>
+    <ul>
+      <li>Slow delivery (1-5 minutes)</li>
+      <li>Easily missed (email overload)</li>
+      <li>No sound/vibration wake-up</li>
+    </ul>
+
+    <p>
+      <strong>Best combination:</strong> Push notifications for real-time alerts + email for detailed weekly forecasts.
+    </p>
+  </section>
+
+  <section class="guide__section">
+    <h2>Troubleshooting: Why Am I Not Getting Alerts?</h2>
+
+    <h3>1. Notifications Disabled in Phone Settings</h3>
+    <p>
+      <strong>iOS:</strong> Settings → Notifications → AuroraMe → Allow Notifications (ON)<br />
+      <strong>Android:</strong> Settings → Apps → AuroraMe → Notifications (ON)
+    </p>
+
+    <h3>2. App Closed or Force-Quit</h3>
+    <p>
+      <strong>Solution:</strong> Keep app running in background. Don't swipe-close from app switcher. Modern iOS/Android preserve background processes automatically.
+    </p>
+
+    <h3>3. Low Battery Mode Enabled</h3>
+    <p>
+      Low battery mode restricts background app activity on both iOS and Android.
+      <strong>Solution:</strong> Disable low battery mode or add aurora app to "always allowed" list.
+    </p>
+
+    <h3>4. Threshold Set Too High</h3>
+    <p>
+      If you haven't received alerts in 2+ weeks during aurora season, your threshold is likely too high.
+      <strong>Solution:</strong> Lower threshold by one level and monitor for next event.
+    </p>
+
+    <h3>5. Location Coordinates Wrong</h3>
+    <p>
+      If using manual coordinates, verify latitude/longitude are correct.
+      <strong>Solution:</strong> Re-add location using GPS or search feature.
+    </p>
+
+    <h3>6. Quiet Hours Too Broad</h3>
+    <p>
+      Aurora often peaks 10 PM - 2 AM. If quiet hours are 9 PM - 8 AM, you'll miss everything.
+      <strong>Solution:</strong> Narrow quiet hours to 11 PM - 7 AM or disable for dedicated aurora viewing periods.
+    </p>
+  </section>
+
+  <section class="guide__section">
+    <h2>Best Practices for Alert-Based Aurora Viewing</h2>
+
+    <h3>1. Prepare Your Viewing Spot in Advance</h3>
+    <ul>
+      <li>Scout dark sky locations during daytime</li>
+      <li>Save coordinates in GPS app</li>
+      <li>Know driving time from home (10, 20, 30 minutes)</li>
+      <li>Have camera gear ready in car</li>
+    </ul>
+
+    <h3>2. Set Graduated Alerts</h3>
+    <ul>
+      <li><strong>Home location:</strong> Medium threshold (strong displays only)</li>
+      <li><strong>Nearby dark spot:</strong> Low threshold (worth the drive)</li>
+      <li><strong>Prime location:</strong> Any activity (go for every event)</li>
+    </ul>
+
+    <h3>3. Use Pre-Alerts</h3>
+    <p>
+      Some apps offer "forecast alerts" 1-3 hours before predicted aurora:
+    </p>
+    <ul>
+      <li>Get pre-alert at 8 PM: "Aurora likely 10 PM - 1 AM"</li>
+      <li>Prepare gear, check weather updates</li>
+      <li>Wait for real-time alert confirming aurora is active</li>
+      <li>Go outside immediately upon confirmation</li>
+    </ul>
+
+    <h3>4. Share Alerts with Friends</h3>
+    <p>
+      Create aurora viewing group chat:
+    </p>
+    <ul>
+      <li>Everyone uses same alert app</li>
+      <li>When someone gets alert, post in group</li>
+      <li>Coordinate carpooling to dark sky spots</li>
+      <li>Share live updates ("strong display now!")</li>
+    </ul>
+  </section>
+
+  <section class="guide__section">
+    <h2>FAQ: Aurora Alerts</h2>
+
+    <h3>Will aurora alerts drain my phone battery?</h3>
+    <p>
+      No. Modern apps use efficient background sync (~1-2% battery per day). Push notifications consume negligible power.
+    </p>
+
+    <h3>Can I get alerts for multiple cities?</h3>
+    <p>
+      Yes, most premium aurora apps support 3-10 locations. Free tiers usually limit to 1-2 locations.
+    </p>
+
+    <h3>How accurate are aurora alerts?</h3>
+    <p>
+      Alert accuracy depends on data sources:
+    </p>
+    <ul>
+      <li><strong>Kp-only alerts:</strong> 70% accuracy (miss cloud coverage)</li>
+      <li><strong>Multi-factor alerts (Kp + clouds + darkness):</strong> 85-90% accuracy</li>
+    </ul>
+
+    <h3>What if I get an alert but see nothing?</h3>
+    <p>
+      Common causes:
+    </p>
+    <ul>
+      <li>Light pollution (drive to darker spot)</li>
+      <li>Clouds moved in after alert sent</li>
+      <li>Aurora too faint (let eyes adjust 10-15 minutes)</li>
+      <li>Alert arrived during lull (stay outside 30 min)</li>
+    </ul>
+
+    <h3>Can I schedule alerts for specific dates only?</h3>
+    <p>
+      Some apps offer "trip mode" or date-based alerts. Example: Enable alerts only Oct 15-25 during Iceland trip, then auto-disable.
+    </p>
+  </section>
+
+  <section class="guide__section" style="text-align: center; margin-top: 4rem;">
+    <h2>Start Getting Aurora Alerts Tonight</h2>
+    <p style="font-size: 1.125rem; color: #C8C8C8; max-width: 600px; margin: 1rem auto 2rem;">
+      Download AuroraMe for free instant alerts when northern lights are visible. Multi-factor monitoring ensures you only get notified when all conditions align. Never miss aurora again.
+    </p>
+  </section>
+</GuideLayout>
+

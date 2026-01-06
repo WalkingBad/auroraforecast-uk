@@ -1,0 +1,114 @@
+/**
+ * How It Works Component Styles
+ * Used by: HowItWorks.astro
+ * Extracted from inline <style> block (97 lines)
+ * Date: 2025-11-24
+ * Features: Step-by-step guide section
+ */
+
+/* ==========================================================================
+   Container
+   ========================================================================== */
+
+.hiw {
+  padding: 3rem 0;
+  text-align: center;
+}
+
+.hiw h2 {
+  margin-bottom: 0.5rem;
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  font-weight: 700;
+  color: var(--aurora-text, #FFFFFF);
+}
+
+.hiw__subtitle {
+  margin: 0 0 2rem 0;
+  font-size: 1.125rem;
+  color: var(--aurora-text-secondary, #C8C8C8);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ==========================================================================
+   Factors Preview
+   ========================================================================== */
+
+.factors-preview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.factor-preview {
+  background: #111214;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: left;
+}
+
+.factor-preview h3 {
+  margin: 0 0 0.5rem 0;
+  color: #FFFFFF;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.factor-preview p {
+  margin: 0;
+  color: #A1A1AA;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+/* ==========================================================================
+   CTA Section
+   ========================================================================== */
+
+.hiw__cta {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 12px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hiw__cta p {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--aurora-text, #FFFFFF);
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .hiw {
+    padding: 2rem 0;
+  }
+
+  .hiw__subtitle {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .hiw__cta {
+    margin-top: 1.5rem;
+    padding: 1.25rem;
+  }
+
+  .hiw__cta p {
+    font-size: 0.9rem;
+  }
+}

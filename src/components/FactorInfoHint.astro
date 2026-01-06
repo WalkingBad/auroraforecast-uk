@@ -1,0 +1,93 @@
+---
+import '../styles/components/factor-hint.css';
+
+// Using tooltip data from API instead of hardcoded content
+const {
+  factorType,
+  title,
+  description,
+  statuses = [],
+  simple = false,
+  text,
+  i18n
+} = Astro.props as any;
+
+const baseId = Math.random().toString(36).slice(2, 9);
+const tooltipId = `${factorType || 'factor'}-${baseId}`;
+---
+
+{simple ? (
+  <span class="info-hint" role="note" tabindex="0">
+    <span class="info-hint__btn">
+      <svg class="info-icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M10 14V10M10 6H10.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>
+    <span class="info-hint__tooltip">
+      {text && <p class="tooltip-description" style="margin-bottom: 8px;">{text}</p>}
+      {statuses && statuses.length > 0 ? (
+        <div class="tooltip-statuses">
+          <h5 class="statuses-title">{i18n ? i18n.t('status_levels', 'Status Levels:') : 'Status Levels:'}</h5>
+          <div class="statuses-list">
+            {statuses.map((status: any) => (
+              <div class={`status-item status-${status.colorType}`}>
+                <div class="status-indicator"></div>
+                <div class="status-content">
+                  <span class="status-label">{status.label}</span>
+                  {status.description && (
+                    <span class="status-description">{status.description}</span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
+    </span>
+  </span>
+) : (
+  <span class="factor-info-hint" role="note" tabindex="0">
+    <span class="factor-info-hint__btn">
+      <svg class="info-icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M10 14V10M10 6H10.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>
+
+    <div class="factor-info-hint__tooltip">
+      <div class="tooltip-content">
+        <div class="tooltip-header">
+          <svg class="tooltip-icon" viewBox="0 0 20 20" fill="none">
+            <circle cx="10" cy="10" r="8" fill="currentColor" opacity="0.1"/>
+            <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M10 14V10M10 6H10.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <h4 class="tooltip-title">{title}</h4>
+        </div>
+
+        <p class="tooltip-description">{description}</p>
+
+        {statuses && statuses.length > 0 && (
+          <div class="tooltip-statuses">
+            <h5 class="statuses-title">{i18n ? i18n.t('status_levels', 'Status Levels:') : 'Status Levels:'}</h5>
+            <div class="statuses-list">
+              {statuses.map((status: any) => (
+                <div class={`status-item status-${status.colorType}`}>
+                  <div class="status-indicator"></div>
+                  <div class="status-content">
+                    <span class="status-label">{status.label}</span>
+                    {status.description && (
+                      <span class="status-description">{status.description}</span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  </span>
+)}
+

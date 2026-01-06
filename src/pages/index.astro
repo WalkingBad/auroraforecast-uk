@@ -1,0 +1,170 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import "../styles/components/store-badges.css";
+import StoreBadges from "../components/StoreBadges.astro";
+import SocialLinks from "../components/SocialLinks.astro";
+import Hero from "../components/Hero.astro";
+import LiveForecastBar from "../components/LiveForecastBar.astro";
+import AppHero from "../components/AppHero.astro";
+import FeaturesSection from "../components/FeaturesSection.astro";
+import SocialProofSection from "../components/SocialProofSection.astro";
+import ComparisonTable from "../components/ComparisonTable.astro";
+import FAQ from "../components/FAQ.astro";
+import CountryNav from "../components/CountryNav.astro";
+import RegionsNav from "../components/RegionsNav.astro";
+---
+
+<BaseLayout
+  title="Northern Lights Tonight | Live Aurora Forecast & Tracker"
+  description="Real-time northern lights forecast for tonight. Track aurora visibility with KP index, cloud cover & weather. Free alerts when northern lights are visible. 970 cities worldwide."
+  canonical="https://auroraforecast.me"
+>
+  <!-- Hero with parallax background and store badges -->
+  <Hero />
+
+  <!-- Live Forecast Bar: Global Kp, Search, Top 5 Cities -->
+  <LiveForecastBar />
+
+  <main>
+    <!-- App showcase with phone screens -->
+    <AppHero pageType="homepage" placement="hero" />
+
+    <!-- Why AuroraMe is Different (4 feature cards) -->
+    <FeaturesSection />
+
+    <!-- Social Proof: Stats + Testimonials -->
+    <SocialProofSection />
+
+    <!-- Comparison Table: AuroraMe vs Competitors -->
+    <ComparisonTable />
+
+    <!-- Navigation by country with search -->
+    <CountryNav showSearch={true} />
+
+    <!-- Navigation by regions -->
+    <RegionsNav />
+
+    <!-- FAQ section -->
+    <div class="container">
+      <FAQ />
+    </div>
+
+    <!-- Social links -->
+    <div class="social-footer">
+      <SocialLinks position="footer" />
+    </div>
+  </main>
+
+  <!-- Sticky footer with store badges (shows from AppHero onwards) -->
+  <StoreBadges pageType="homepage" placement="sticky_footer" sticky={true} enhanced={true} />
+
+  <!-- Real-time status sync for LiveForecastBar -->
+  <script src="/scripts/aurora-sync.js?v=3" defer></script>
+
+  <!-- Show sticky footer only after AppHero -->
+  <script>
+    // Intersection Observer to show sticky footer after AppHero
+    const observer = new IntersectionObserver((entries) => {
+      const stickyFooter = document.querySelector('.store-badges.sticky');
+      if (!stickyFooter) return;
+
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // AppHero is visible - hide footer (still on AppHero block)
+          stickyFooter.style.display = 'none';
+        } else {
+          // AppHero is not visible
+          if (entry.boundingClientRect.top < 0) {
+            // User has scrolled past AppHero - show footer
+            stickyFooter.style.display = 'flex';
+          } else {
+            // User hasn't reached AppHero yet - hide footer
+            stickyFooter.style.display = 'none';
+          }
+        }
+      });
+    }, {
+      threshold: 0,
+      rootMargin: '0px'
+    });
+
+    // Observe AppHero section
+    document.addEventListener('DOMContentLoaded', () => {
+      const appHero = document.querySelector('.app-hero');
+      if (appHero) {
+        observer.observe(appHero);
+      }
+    });
+  </script>
+
+  <!-- FAQ JSON-LD structured data -->
+  <script
+    type="application/ld+json"
+    set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What KP do I need?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Required KP depends on your magnetic latitude (MLAT). Higher MLAT needs lower KP. Check your local KP threshold on the city page — we calculate it from MLAT."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "When is the best time?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Use the 'best hour tonight' on each city page; it's based on KP, clouds and darkness window."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I see aurora in summer?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "You need darkness — twilight or bright moonlight reduces visibility considerably."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How accurate are aurora predictions?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "AuroraMe combines 4 reality factors: NOAA OVATION space weather, cloud coverage, moon phase, and darkness windows. Location-specific KP thresholds are calibrated from 3+ years of historical data (8,768+ measurements). This multi-factor approach is significantly more accurate than single-source KP predictions."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What's included in Aurora History?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Aurora History provides multi-year statistical analysis: best months algorithm showing top viewing months, calendar heatmap (12 months × 4 weeks), yesterday's observation windows, and location-calibrated frequency (e.g., Tromsø 200 nights/year vs Edinburgh 10 nights/year)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do quiet hours work?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Quiet hours prevent notifications during sleep (default 11 PM - 7 AM, customizable per location). Progressive urgency: strong aurora activity overrides quiet hours. Each location has independent settings with 30-minute cooldown between alerts."
+          }
+        }
+      ]
+    })}
+  ></script>
+</BaseLayout>
+
+<style is:global>
+  /* Hide sticky footer initially on homepage */
+  .store-badges.sticky {
+    display: none;
+  }
+
+  .social-footer {
+    padding: 2rem 0;
+    text-align: center;
+  }
+</style>

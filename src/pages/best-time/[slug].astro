@@ -1,0 +1,626 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import '../../styles/pages/best-time.css';
+import '../../styles/components/faq.css';
+import '../../styles/components/store-badges.css';
+import '../../styles/components/cross-links.css';
+import StoreBadges from '../../components/StoreBadges.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import RelatedLinks from '../../components/RelatedLinks.astro';
+import DataFreshness from '../../components/DataFreshness.astro';
+import citiesData from '../../data/cities.json';
+import { calculateKpBands, formatKpBands } from '../../utils/kp-bands.ts';
+import {
+  buildBestTimeRelatedLinks,
+  getCountrySlug,
+  getPremiumDestinations,
+  getSimilarCities
+} from '../../utils/cross-links.ts';
+import type { CityRecord, StateBestTimeRecord } from '../../utils/cross-links.ts';
+import { normalizeStateSlug } from '../../utils/slug-normalizer.ts';
+import { appendBrand } from '../../utils/geo-utils.ts';
+import { getViewingQuality } from '../../utils/viewing-quality.ts';
+import { getSeasonalPatterns, getHourlyPatterns } from '../../utils/seasonal-patterns.ts';
+import { createPageI18n } from '../../utils/i18n-page.ts';
+
+// Enable static generation for all best-time pages
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const paths = [];
+
+  // Generate best-time pages for all cities
+  citiesData.forEach(city => {
+    paths.push({
+      params: { slug: city.slug },
+      props: { cityData: city, pageType: 'city' }
+    });
+  });
+
+  // Generate best-time pages for states
+  const statesMap = new Map();
+  citiesData
+    .filter(city => city.state && ['US', 'CA'].includes(city.countryCode))
+    .forEach(city => {
+      const stateISO = normalizeStateSlug(city.state, city.countryCode);
+      if (!statesMap.has(stateISO)) {
+        statesMap.set(stateISO, {
+          slug: stateISO,
+          name: city.state,
+          country: city.country,
+          countryCode: city.countryCode,
+          cities: []
+        });
+      }
+      statesMap.get(stateISO).cities.push(city);
+    });
+
+  statesMap.forEach((stateData) => {
+    paths.push({
+      params: { slug: stateData.slug },
+      props: { cityData: stateData, pageType: 'state' }
+    });
+  });
+
+  return paths;
+}
+
+const { cityData, pageType = 'city' } = Astro.props;
+
+if (!cityData) {
+  throw new Error('Best-time page requires city or state data');
+}
+const isState = pageType === 'state';
+
+// Get location details
+const locationName = cityData.name;
+const magneticLat = isState
+  ? Math.round(cityData.cities.reduce((sum, c) => sum + (c.magneticLat || 0), 0) / cityData.cities.length)
+  : cityData.magneticLat;
+
+const originSlug = `best-time/${cityData.slug}`;
+
+const stateRecord: StateBestTimeRecord | null = isState
+  ? {
+      slug: cityData.slug,
+      name: cityData.name,
+      country: cityData.country,
+      countryCode: cityData.countryCode,
+      cities: cityData.cities ?? []
+    }
+  : null;
+
+const primaryCity: CityRecord | null = isState
+  ? (stateRecord?.cities.length
+      ? [...stateRecord.cities].sort((a, b) => (b.magneticLat ?? 0) - (a.magneticLat ?? 0))[0]
+      : null)
+  : {
+      slug: cityData.slug,
+      name: cityData.name,
+      country: cityData.country,
+      countryCode: cityData.countryCode,
+      magneticLat,
+      state: cityData.state,
+      description: cityData.description
+    };
+
+const relatedLinksSource = stateRecord ?? primaryCity;
+const bestTimeRelatedLinks = relatedLinksSource ? buildBestTimeRelatedLinks(relatedLinksSource) : [];
+
+const similarCities = primaryCity ? getSimilarCities(primaryCity, 3) : [];
+const premiumDestinations = primaryCity ? getPremiumDestinations(primaryCity, 3) : getPremiumDestinations(undefined, 3);
+const countrySlug = primaryCity ? getCountrySlug(primaryCity.country) : getCountrySlug(cityData.country);
+
+// Initialize English i18n
+const i18n = await createPageI18n('en');
+
+const viewingQuality = getViewingQuality(primaryCity?.magneticLat ?? magneticLat, i18n);
+
+// Calculate KP requirements
+const kpBands = calculateKpBands(magneticLat);
+
+// Use shared seasonal patterns function
+const seasonalPatterns = getSeasonalPatterns(magneticLat, i18n);
+const topMonths = seasonalPatterns.slice(0, 3);
+const challengingMonths = seasonalPatterns.filter(p => p.score < 50);
+
+// Use shared hourly patterns function
+const hourlyPatterns = getHourlyPatterns(magneticLat, i18n);
+
+// SEO optimization
+const now = new Date();
+const currentYear = now.getFullYear();
+const seasonStartYear = now.getMonth() >= 6 ? currentYear : currentYear - 1;
+const seasonEndYear = seasonStartYear + 1;
+const seasonLabel = `${seasonStartYear}/${String(seasonEndYear).slice(-2).padStart(2, '0')}`;
+
+const locationQualifier = cityData.country ? `${locationName}, ${cityData.country}` : locationName;
+const titleBase = `${locationName} aurora season ${seasonLabel} — best months`;
+const pageTitle = appendBrand(titleBase);
+const h1Title = `Best time to see the northern lights in ${locationQualifier}`;
+const topMonthNames = topMonths.slice(0, 3).map((m) => m.month).join(', ');
+const kpRange = formatKpBands(kpBands, 'range');
+const pageDescription = `Plan your ${locationName} aurora trip: top months (${topMonthNames}), peak window ${hourlyPatterns.peak}, up to ${topMonths[0].darkness}h darkness, requires ${kpRange}.`;
+const canonicalUrl = `https://auroraforecast.me/best-time/${cityData.slug}`;
+
+// Breadcrumbs - fix state URLs to include country prefix
+const stateUrl = isState ? `/${cityData.countryCode.toLowerCase()}/${cityData.slug}` : `/${cityData.slug}`;
+const breadcrumbs = [
+  { title: 'Home', href: '/' },
+  { title: locationName, href: stateUrl },
+  { title: 'Best Time' }
+];
+
+// Get current timestamp
+const dataTimestamp = new Date().toISOString();
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  canonical={canonicalUrl}
+>
+  <main class="container">
+    <Breadcrumbs items={breadcrumbs} />
+
+    <div class="best-time-header">
+      <h1>{h1Title}</h1>
+      <DataFreshness updatedAt={dataTimestamp} timezone="UTC" />
+      <p class="intro">
+        Based on {magneticLat}° magnetic latitude and historical aurora patterns,
+        the optimal viewing season in {locationName} runs from {topMonths[0].month} through {topMonths[2].month}.
+        Peak aurora activity occurs during the {topMonths[0].month} equinox with up to {topMonths[0].darkness} hours of darkness.
+        {primaryCity && (
+          <>
+            {' '}
+            <a
+              class="cross-link-inline"
+              href={`/${primaryCity.slug}`}
+              data-cross-link
+              data-slot="intro"
+              data-type="live"
+              data-target={primaryCity.slug}
+              data-position="1"
+            >
+              Check tonight's forecast for {primaryCity.name} →
+            </a>
+          </>
+        )}
+      </p>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="quick-stats">
+      <div class="stat-card">
+        <h3>👁️ Viewing Quality</h3>
+        <p class="stat-value">{viewingQuality.label}</p>
+        <p class="stat-detail">
+          {viewingQuality.description}
+          {primaryCity && (
+            <>
+              {' '}
+              <a
+                class="cross-link-inline"
+                href={`/country/${countrySlug}`}
+                data-cross-link
+                data-slot="quick_stat"
+                data-type="compare"
+                data-target={`country/${countrySlug}`}
+                data-position="1"
+              >
+                Compare with {primaryCity.country}
+              </a>
+            </>
+          )}
+        </p>
+      </div>
+      <div class="stat-card">
+        <h3>🌟 Best Month</h3>
+        <p class="stat-value">{topMonths[0].month}</p>
+        <p class="stat-detail">{topMonths[0].reason}</p>
+      </div>
+      <div class="stat-card">
+        <h3>🌙 Peak Hours</h3>
+        <p class="stat-value">{hourlyPatterns.peak}</p>
+        <p class="stat-detail">Magnetic midnight</p>
+      </div>
+      <div class="stat-card">
+        <h3>⚡ Required Kp</h3>
+        <p class="stat-value">{formatKpBands(kpBands, 'range')}</p>
+        <p class="stat-detail">For visibility</p>
+      </div>
+      <div class="stat-card">
+        <h3>🌑 Max Darkness</h3>
+        <p class="stat-value">{topMonths[0].darkness}h</p>
+        <p class="stat-detail">In {topMonths[0].month}</p>
+      </div>
+    </div>
+
+    <!-- Monthly Aurora Calendar -->
+    <section class="monthly-calendar">
+      <h2>Aurora Activity by Month</h2>
+      <div class="calendar-chart">
+        {seasonalPatterns.map((pattern) => (
+          <div class={`month-bar score-${Math.floor(pattern.score / 20) * 20}`}>
+            <div class="month-header">
+              <div class="month-label">{pattern.month}</div>
+              <div class="activity-bar">
+                <div
+                  class={`bar-fill score-${Math.floor(pattern.score / 20) * 20}`}
+                  style={`width: ${pattern.score}%`}
+                >
+                  <span class="score">{pattern.score}%</span>
+                </div>
+              </div>
+            </div>
+            <div class="month-details">
+              <span class="darkness-hours">{pattern.darkness}h dark</span>
+              <span class="reason">{pattern.reason}</span>
+            </div>
+            {pattern.highlights && pattern.highlights.length > 0 && (
+              <div class="month-highlights">
+                {pattern.highlights.map(highlight => (
+                  <div class="highlight-item">
+                    <span class="highlight-bullet">•</span>
+                    <span class="highlight-text">{highlight}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Top Viewing Months Details -->
+    <section class="top-months">
+      <h2>Peak Aurora Months in {locationName}</h2>
+      <div class="months-grid">
+        {topMonths.map((month, index) => (
+          <div class={`month-card rank-${index + 1}`}>
+            <div class="month-header">
+              <h3>{month.month}</h3>
+              <span class="activity-badge">{month.score}% activity</span>
+            </div>
+            <p class="month-reason">{month.reason}</p>
+            <ul class="month-highlights">
+              {month.highlights.map(highlight => (
+                <li>{highlight}</li>
+              ))}
+            </ul>
+            <div class="month-stats">
+              <span class="darkness-stat">🌑 {month.darkness}h darkness</span>
+              <span class="kp-stat">⚡ Kp {kpBands.horizon.toFixed(1)}+ needed</span>
+            </div>
+            {index === 0 && similarCities.length > 0 && (
+              <p class="month-related">
+                Similar timing:
+                {similarCities.map((city, idx) => (
+                  <span>
+                    {idx > 0 ? ', ' : ' '}
+                    <a
+                      class="cross-link-inline"
+                      href={`/best-time/${city.slug}`}
+                      data-cross-link
+                      data-slot="best_month"
+                      data-type="guide"
+                      data-target={`best-time/${city.slug}`}
+                      data-position={`${idx + 1}`}
+                    >
+                      {city.name}
+                    </a>
+                  </span>
+                ))}
+              </p>
+            )}
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Hourly Patterns -->
+    <section class="hourly-patterns">
+      <h2>Best Time of Night</h2>
+      <div class="time-visualization">
+        <div class="clock-diagram">
+          <div class="time-blocks">
+            {[18,19,20,21,22,23,0,1,2,3,4,5,6].map(hour => (
+              <div class={`hour-block ${(hour >= 22 || hour <= 2) ? 'peak' : (hour >= 21 || hour <= 3) ? 'good' : 'low'}`}>
+                <span class="hour">{hour}:00</span>
+                <div class="activity-indicator"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div class="time-explanation">
+          <h3>Peak Hours: {hourlyPatterns.peak}</h3>
+          <p>{hourlyPatterns.description}</p>
+          <h4>Why these hours?</h4>
+          <ul>
+            {hourlyPatterns.factors.map(factor => (
+              <li>{factor}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Seasonal Breakdown -->
+    <section class="seasonal-breakdown">
+      <h2>Seasonal Aurora Guide</h2>
+      <div class="seasons-grid">
+        <div class="season-card autumn">
+          <h3>🍂 Autumn (Sep-Nov)</h3>
+          <div class="season-score">Best Season</div>
+          <p>The autumn equinox brings the year's strongest aurora activity.
+             September and October offer the perfect combination of high geomagnetic activity,
+             increasing darkness, and relatively mild weather.</p>
+          <ul>
+            <li>Equinox effect: +35% activity</li>
+            <li>Darkness: {magneticLat > 60 ? '14-18' : '10-12'} hours</li>
+            <li>Weather: Generally stable</li>
+          </ul>
+        </div>
+
+        <div class="season-card winter">
+          <h3>❄️ Winter (Dec-Feb)</h3>
+          <div class="season-score">Maximum Darkness</div>
+          <p>Winter provides the longest nights and clearest skies, ideal for aurora photography.
+             While activity is slightly lower than equinox months, the extended darkness offers
+             more viewing opportunities.</p>
+          <ul>
+            <li>Darkness: {magneticLat > 65 ? '20' : magneticLat > 55 ? '15-17' : '12-14'} hours</li>
+            <li>Sky clarity: Excellent in cold</li>
+            <li>Activity: Moderate but consistent</li>
+          </ul>
+        </div>
+
+        <div class="season-card spring">
+          <h3>🌸 Spring (Mar-May)</h3>
+          <div class="season-score">Equinox Boost</div>
+          <p>The spring equinox in March brings another activity peak. April still offers
+             good viewing before the summer twilight begins. May marks the transition to
+             challenging summer conditions.</p>
+          <ul>
+            <li>March peak: Russell-McPherron effect</li>
+            <li>Darkness: Decreasing rapidly</li>
+            <li>Last chance before summer</li>
+          </ul>
+        </div>
+
+        <div class="season-card summer">
+          <h3>☀️ Summer (Jun-Aug)</h3>
+          <div class="season-score">Most Challenging</div>
+          <p>{magneticLat > 66
+            ? 'The midnight sun makes aurora viewing impossible from mid-May to late July. Focus on planning autumn trips.'
+            : 'Limited darkness and white nights make summer aurora viewing extremely challenging. Only the strongest storms may be visible.'
+          }</p>
+          <ul>
+            <li>Darkness: {magneticLat > 66 ? '0-4' : '4-8'} hours</li>
+            <li>Viewing: Only extreme storms</li>
+            <li>Season returns: Late August</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Planning Tips -->
+    <section class="planning-tips">
+      <h2>Planning Your Aurora Trip to {locationName}</h2>
+      <div class="tips-grid">
+        <div class="tip-card">
+          <h3>📅 Booking Strategy</h3>
+          <ul>
+            <li>Book for {topMonths[0].month} or {topMonths[1].month} for best odds</li>
+            <li>Plan minimum 3-5 nights for weather flexibility</li>
+            <li>Avoid full moon periods for darker skies</li>
+            <li>Check local weather patterns and cloud statistics</li>
+          </ul>
+        </div>
+
+        <div class="tip-card">
+          <h3>🌡️ Weather Considerations</h3>
+          <ul>
+            <li>Clear skies essential - clouds block aurora</li>
+            <li>{magneticLat > 60 ? 'Arctic weather can change rapidly' : 'Coastal areas may have more clouds'}</li>
+            <li>Inland locations often have clearer skies</li>
+            <li>Check 3-day weather forecasts before traveling</li>
+          </ul>
+        </div>
+
+        <div class="tip-card">
+          <h3>📸 Photography Planning</h3>
+          <ul>
+            <li>Scout locations during daylight</li>
+            <li>New moon periods offer darkest skies</li>
+            <li>Winter provides snow foregrounds</li>
+            <li>Arrive before {hourlyPatterns.good.split('-')[0]} for setup</li>
+          </ul>
+        </div>
+
+        <div class="tip-card">
+          <h3>🎯 Success Factors</h3>
+          <ul>
+            <li>Current Kp needs to reach {kpBands.horizon.toFixed(1)}+</li>
+            <li>Stay awake during {hourlyPatterns.peak}</li>
+            <li>Monitor real-time forecasts</li>
+            <li>Be ready to move for clear skies</li>
+          </ul>
+          {premiumDestinations.length > 0 && (
+            <p class="tip-related">
+              For guaranteed shows consider:
+              {premiumDestinations.slice(0, 3).map((city, idx) => (
+                <span>
+                  {idx > 0 ? ', ' : ' '}
+                  <a
+                    class="cross-link-inline"
+                    href={`/best-time/${city.slug}`}
+                    data-cross-link
+                    data-slot="planning"
+                    data-type="premium"
+                    data-target={`best-time/${city.slug}`}
+                    data-position={`${idx + 1}`}
+                  >
+                    {city.name}
+                  </a>
+                </span>
+              ))}
+            </p>
+          )}
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section faq-section--wide best-time-faq">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-grid">
+        <div class="faq-item faq-theme-primary">
+          <h3>What is the absolute best month to see aurora in {locationName}?</h3>
+          <p>
+            {topMonths[0].month} is statistically the best month with {topMonths[0].score}% activity rate
+            and {topMonths[0].darkness} hours of darkness. The autumn equinox effect creates a significant
+            spike in geomagnetic activity, giving you the highest chances of witnessing the northern lights.
+          </p>
+        </div>
+
+        <div class="faq-item faq-theme-secondary">
+          <h3>Can I see northern lights in {locationName} during summer?</h3>
+          <p>
+            {magneticLat > 66
+              ? `No, the midnight sun from mid-May to late July makes aurora viewing impossible. The sun doesn't set during this period, eliminating the darkness needed to see aurora.`
+              : `Summer viewing is extremely challenging due to white nights and limited darkness (only ${challengingMonths.find(m => m.month === 'June')?.darkness || 4} hours in June). Only the strongest geomagnetic storms might be visible.`
+            }
+          </p>
+        </div>
+
+        <div class="faq-item faq-theme-tertiary">
+          <h3>What time should I go outside to look for aurora?</h3>
+          <p>
+            The best viewing window is {hourlyPatterns.peak} local time, centered around magnetic midnight.
+            However, aurora can appear anytime after dark. Start watching from {hourlyPatterns.good.split('-')[0]}
+            and stay alert until {hourlyPatterns.good.split('-')[1]} for the best chances.
+          </p>
+        </div>
+
+        <div class="faq-item faq-theme-primary">
+          <h3>How many nights should I plan for an aurora trip?</h3>
+          <p>
+            Plan for at least 3-5 nights in {locationName} to account for weather and aurora activity variations.
+            With a 5-night stay during {topMonths[0].month} or {topMonths[1].month}, you have approximately
+            80-90% chance of seeing aurora if Kp reaches {kpBands.horizon.toFixed(1)} or higher.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="cta-app">
+      <h2>Never Miss the Aurora</h2>
+      <p>Get instant alerts when northern lights are visible in {locationName}.
+         Track real-time activity and receive notifications 30 minutes before aurora appears.</p>
+      <StoreBadges
+        pageType="best_time"
+        citySlug={cityData.slug}
+        placement="cta"
+        enhanced={true}
+        size="large"
+      />
+      {primaryCity && (
+        <p class="cta-secondary">
+          <a
+            class="cross-link-inline"
+            href={`/country/${countrySlug}`}
+            data-cross-link
+            data-slot="cta"
+            data-type="guide"
+            data-target={`country/${countrySlug}`}
+            data-position="1"
+          >
+            Explore other {primaryCity.country} destinations →
+          </a>
+        </p>
+      )}
+    </section>
+
+    <RelatedLinks
+      title="Related aurora resources"
+      links={bestTimeRelatedLinks}
+      originSlug={originSlug}
+      slot="related_block"
+    />
+  </main>
+
+  <!-- Schema.org markup -->
+  <script
+    type="application/ld+json"
+    set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'TravelGuide',
+      'name': `Best Time to See Northern Lights in ${locationName}`,
+      'description': pageDescription,
+      'about': {
+        '@type': 'Thing',
+        'name': 'Aurora Borealis',
+        'alternateName': 'Northern Lights'
+      },
+      'temporalCoverage': topMonths.map(m => m.month).join('/'),
+      'spatialCoverage': {
+        '@type': 'Place',
+        'name': locationName,
+        'geo': cityData.lat
+          ? {
+              '@type': 'GeoCoordinates',
+              'latitude': cityData.lat,
+              'longitude': cityData.lon
+            }
+          : undefined
+      },
+      'mainEntity': {
+        '@type': 'FAQPage',
+        'mainEntity': [
+          {
+            '@type': 'Question',
+            'name': `What is the best month to see aurora in ${locationName}?`,
+            'acceptedAnswer': {
+              '@type': 'Answer',
+              'text': `${topMonths[0].month} is the best month with ${topMonths[0].score}% activity rate and ${topMonths[0].darkness} hours of darkness.`
+            }
+          },
+          {
+            '@type': 'Question',
+            'name': `What time should I look for northern lights in ${locationName}?`,
+            'acceptedAnswer': {
+              '@type': 'Answer',
+              'text': `The best viewing window is ${hourlyPatterns.peak} local time, centered around magnetic midnight.`
+            }
+          }
+        ]
+      }
+    })}
+  ></script>
+
+  <script type="module">
+  import { trackCrossLink } from '../../utils/analytics-helper.js';
+
+    const originSlug = `${originSlug}`;
+
+    document.querySelectorAll('[data-cross-link]').forEach((anchor) => {
+      anchor.addEventListener('click', () => {
+        const slot = anchor.getAttribute('data-slot') ?? 'related_block';
+        const target = anchor.getAttribute('data-target') ?? '';
+        const type = (anchor.getAttribute('data-type') ?? 'guide');
+        const positionAttr = Number(anchor.getAttribute('data-position') ?? '1');
+        const position = Number.isNaN(positionAttr) ? 1 : positionAttr;
+
+        trackCrossLink({
+          slot,
+          originSlug,
+          targetSlug: target,
+          linkType: type,
+          position
+        });
+      });
+    });
+  </script>
+</BaseLayout>

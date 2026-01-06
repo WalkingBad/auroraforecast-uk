@@ -1,0 +1,192 @@
+---
+/**
+ * City FAQ Component - SEO-optimized FAQ section for city pages
+ * Adds 150-200 words of unique content per city without looking like doorway spam
+ */
+
+interface Props {
+  name: string;
+  country: string;
+  magneticLatitude: number;
+  lat: number;
+  kpIndex?: number;
+  probability?: number;
+  statusLevel: string;
+  statusText: string;
+  cloudCover?: number;
+  i18n?: any;
+}
+
+const {
+  name,
+  country,
+  magneticLatitude,
+  lat,
+  kpIndex = 0,
+  probability = 0,
+  statusLevel,
+  statusText,
+  cloudCover = 50,
+  i18n
+} = Astro.props;
+
+// Helper for translation with fallback
+const t = (key: string, fallback: string) => i18n ? i18n.t(key, fallback) : fallback;
+const tpl = (str: string, vars: Record<string, string | number>) => {
+  if (i18n) return i18n.tpl(str, vars);
+  return str.replace(/\{(\w+)\}/g, (_, k) => String(vars[k] ?? '{'+k+'}'));
+};
+
+// Calculate viewing frequency based on magnetic latitude
+function getFrequencyText(magLat: number): string {
+  const abs = Math.abs(magLat);
+  if (abs >= 67) return t('freq_frequent', "frequent (100+ nights during solar maximum)");
+  if (abs >= 65) return t('freq_very_frequent', "very frequent (50-100+ nights per year)");
+  if (abs >= 60) return t('freq_regular', "regular (30-80 nights per year)");
+  if (abs >= 55) return t('freq_occasional', "occasional (10-40 nights per year)");
+  if (abs >= 50) return t('freq_rare', "rare (5-15 nights per year, mainly during strong storms)");
+  if (abs >= 45) return t('freq_very_rare', "very rare (1-5 nights per year during major storms)");
+  return t('freq_extremely_rare', "extremely rare (visible only during exceptional geomagnetic storms)");
+}
+
+// Calculate minimum Kp threshold
+function getKpThreshold(magLat: number): number {
+  const abs = Math.abs(magLat);
+  if (abs >= 67) return 3.0;
+  if (abs >= 65) return 3.0;
+  if (abs >= 60) return 4.0;
+  if (abs >= 55) return 5.0;
+  if (abs >= 50) return 6.0;
+  if (abs >= 45) return 7.0;
+  return 8.0;
+}
+
+// Best viewing season
+function getBestSeason(lat: number): string {
+  if (lat >= 0) {
+    return t('season_north', "September to March, with peak activity during equinoxes (September and March)");
+  } else {
+    return t('season_south', "March to September, with peak activity during equinoxes (March and September)");
+  }
+}
+
+// Viewing direction guidance
+function getViewingDirection(lat: number, magLat: number): string {
+  const abs = Math.abs(magLat);
+
+  if (lat >= 0) { // Northern hemisphere
+    if (abs > 65) return t('view_north_high', "Aurora often appears directly overhead or across the entire sky during active periods. Best viewing in all directions.");
+    if (abs > 60) return t('view_north_mid', "Focus on the northern sky, typically 30-60° above the horizon. During strong activity, aurora may spread across the sky.");
+    if (abs > 55) return t('view_north_low', "Watch the northern horizon. Aurora appears as green or red bands low on the horizon, occasionally rising higher during strong storms.");
+    return t('view_north_very_low', "Aurora is rarely visible this far south. When it does appear during extreme storms (Kp 7+), look for a faint glow on the northern horizon.");
+  } else { // Southern hemisphere
+    if (abs > 65) return t('view_south_high', "Aurora often appears overhead or across the entire sky. Best viewing in all directions.");
+    if (abs > 60) return t('view_south_mid', "Focus on the southern sky, typically 30-60° above the horizon. During strong activity, aurora may spread across the sky.");
+    return t('view_south_low', "Watch the southern horizon for aurora during strong geomagnetic storms.");
+  }
+}
+
+// Tonight's verdict
+function getTonightVerdict(status: string, prob: number, clouds: number, kp: number, threshold: number): string {
+  const clearSky = clouds < 30;
+  const partlyCloudy = clouds < 60;
+
+  if (status === 'high' && clearSky) {
+    return tpl(t('verdict_high_clear', "Excellent viewing conditions expected! Aurora probability is {prob}% with clear skies and Kp {kp}."), { prob, kp: kp.toFixed(1) });
+  }
+  if (status === 'high' && partlyCloudy) {
+    return tpl(t('verdict_high_cloudy', "Good viewing potential tonight with {prob}% probability. Some clouds ({clouds}%) may partially obstruct the view, but breaks are likely."), { prob, clouds });
+  }
+  if (status === 'medium') {
+    return tpl(t('verdict_medium', "Moderate aurora activity possible ({prob}% probability). Check updates regularly as conditions can improve rapidly. Current Kp: {kp}."), { prob, kp: kp.toFixed(1) });
+  }
+  if (status === 'low' && kp >= threshold) {
+    return tpl(t('verdict_low_visible', "Low probability tonight ({prob}%), but Kp {kp} is above the minimum threshold for {name}. Faint aurora may be visible with good dark sky conditions."), { prob, kp: kp.toFixed(1), name });
+  }
+  return tpl(t('verdict_low', "Aurora unlikely tonight with Kp {kp} (below {threshold} threshold for {name}). Enable alerts to catch future opportunities."), { kp: kp.toFixed(1), threshold: threshold.toFixed(1), name });
+}
+
+const frequency = getFrequencyText(magneticLatitude);
+const kpThreshold = getKpThreshold(magneticLatitude);
+const bestSeason = getBestSeason(lat);
+const viewingDirection = getViewingDirection(lat, magneticLatitude);
+const tonightVerdict = getTonightVerdict(statusLevel, probability, cloudCover, kpIndex, kpThreshold);
+
+const solarMaxText = new Date().getFullYear() >= 2024 && new Date().getFullYear() <= 2026
+  ? t('solar_max_active', 'We are currently near solar maximum (2024-2025), so expect higher-than-average activity.')
+  : t('solar_max_normal', 'Actual frequency varies with the 11-year solar cycle.');
+
+const highLatText = Math.abs(magneticLatitude) > 60
+  ? tpl(t('view_high_lat', "At {name}'s high latitude, aurora can fill the entire sky during strong activity."), { name })
+  : tpl(t('view_low_lat', "From {name}, aurora typically remains closer to the horizon, so elevated viewing locations help."), { name });
+
+---
+
+<section class="faq-section faq-section--wide city-faq">
+  <h2>{tpl(t('faq_quick_guide_title', "Northern Lights in {name}: Quick Guide"), { name })}</h2>
+
+  <div class="faq-stats">
+    <div class="stat-card">
+      <div class="stat-label">{t('stat_min_kp', "Minimum Kp Needed")}</div>
+      <div class="stat-value">{kpThreshold.toFixed(1)}+</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">{t('stat_frequency', "Viewing Frequency")}</div>
+      <div class="stat-value">{frequency.includes('(') ? frequency.split('(')[0].trim() : frequency}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">{t('stat_current_kp', "Current Kp Index")}</div>
+      <div class="stat-value">{kpIndex?.toFixed(1) || '—'}</div>
+    </div>
+  </div>
+
+  <div class="faq-grid">
+    <div class="faq-item faq-theme-primary">
+      <h3>{tpl(t('faq_q1_frequency', "How often can you see northern lights in {name}?"), { name })}</h3>
+      <p>
+        {tpl(t('faq_a1_frequency', "Based on its magnetic latitude of <strong>{magLat}°</strong>, aurora viewing in {name} is <strong>{frequency}</strong>."), { magLat: magneticLatitude.toFixed(1), frequency, name })}
+        {solarMaxText}
+      </p>
+      <p>
+        {t('faq_best_season', "Best viewing season:")} <strong>{bestSeason}</strong>.
+      </p>
+    </div>
+
+    <div class="faq-item faq-theme-secondary">
+      <h3>{tpl(t('faq_q2_kp', "What Kp index do I need to see aurora in {name}?"), { name })}</h3>
+      <p>
+        {tpl(t('faq_a2_kp', "For {name}, you need a minimum Kp index of <strong>{threshold}</strong> for aurora to be visible. This threshold is calculated based on the city's magnetic latitude ({magLat}°)."), { name, threshold: kpThreshold.toFixed(1), magLat: magneticLatitude.toFixed(1) })}
+      </p>
+      <p>
+        {t('faq_kp_levels_intro', "Higher Kp values produce brighter, more active displays:")}
+      </p>
+      <ul>
+        <li><strong>Kp {kpThreshold.toFixed(1)}-{(kpThreshold + 1).toFixed(1)}:</strong> {t('kp_level_low', "Faint aurora visible in dark skies")}</li>
+        <li><strong>Kp {(kpThreshold + 1).toFixed(1)}-{(kpThreshold + 2).toFixed(1)}:</strong> {t('kp_level_med', "Moderate aurora with dancing patterns")}</li>
+        <li><strong>Kp {(kpThreshold + 2).toFixed(1)}+:</strong> {t('kp_level_high', "Strong, colorful displays visible even with some light pollution")}</li>
+      </ul>
+      <p>{t('faq_current_kp', "Current Kp index:")} <strong>{kpIndex?.toFixed(1) || t('loading', 'updating...')}</strong></p>
+    </div>
+
+    <div class="faq-item faq-theme-tertiary">
+      <h3>{tpl(t('faq_q3_where', "Where should I look for aurora in {name}?"), { name })}</h3>
+      <p>{viewingDirection}</p>
+      <p>
+        {t('faq_viewing_tips', "For best results, seek locations with minimal light pollution and unobstructed views of the sky.")}
+        {highLatText}
+      </p>
+    </div>
+
+    <div class="faq-item faq-theme-primary">
+      <h3>{tpl(t('faq_q4_tonight', "Can I see northern lights tonight in {name}?"), { name })}</h3>
+      <p class={`tonight-verdict status-${statusLevel}`}>
+        <strong>{statusText}:</strong> {tonightVerdict}
+      </p>
+      <p>
+        {t('faq_real_time', "Real-time conditions:")} <strong>{cloudCover}% {t('cloud_cover', "cloud cover")}</strong>,
+        {t('aurora_probability', "aurora probability")} <strong>{probability}%</strong>.
+        {t('check_forecast_above', "Check the live forecast above for the latest updates.")}
+      </p>
+    </div>
+  </div>
+</section>

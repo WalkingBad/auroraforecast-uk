@@ -1,0 +1,69 @@
+---
+/**
+ * App Features List Component
+ * Displays feature list with SVG icons for EnhancedMobileAppCTA
+ */
+export interface Props {
+  i18n?: any;
+  webStrings?: any;
+}
+
+const { i18n, webStrings } = Astro.props;
+
+// Get translated strings
+const smartAlerts = i18n?.t('feature_smart_alerts', 'Smart Alerts before spikes')
+  || webStrings?.feature_smart_alerts
+  || 'Smart Alerts before spikes';
+
+const shortTermOutlook = i18n?.t('feature_short_term', 'Short-term outlook for the next few days')
+  || webStrings?.feature_short_term_outlook
+  || 'Short-term outlook for the next few days';
+
+const multipleLocations = i18n?.t('feature_multiple_loc', 'Multiple locations')
+  || webStrings?.feature_multiple_locations
+  || 'Multiple locations';
+
+const tripPlanner = i18n?.t('feature_trip_planner', 'Trip planner: month, year')
+  || webStrings?.feature_trip_planner
+  || 'Trip planner: month, year';
+---
+
+<div class="app-features-list">
+  <div class="feature-item">
+    <span class="feature-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+      </svg>
+    </span>
+    <span>{smartAlerts}</span>
+  </div>
+  <div class="feature-item">
+    <span class="feature-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <polyline points="12 6 12 12 16 14"/>
+      </svg>
+    </span>
+    <span>{shortTermOutlook}</span>
+  </div>
+  <div class="feature-item">
+    <span class="feature-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+        <circle cx="12" cy="10" r="3"/>
+      </svg>
+    </span>
+    <span>{multipleLocations}</span>
+  </div>
+  <div class="feature-item">
+    <span class="feature-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+        <line x1="16" y1="2" x2="16" y2="6"/>
+        <line x1="8" y1="2" x2="8" y2="6"/>
+        <line x1="3" y1="10" x2="21" y2="10"/>
+      </svg>
+    </span>
+    <span>{tripPlanner}</span>
+  </div>
+</div>

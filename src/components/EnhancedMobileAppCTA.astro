@@ -1,0 +1,171 @@
+---
+import StoreBadges from './StoreBadges.astro';
+import { texts } from '../data/texts.ts';
+import screenshot01 from '../../assets/iPhone-6-9-V01-01.webp';
+import screenshot03 from '../../assets/iPhone-6-9-V01-03.webp';
+import screenshot04 from '../../assets/iPhone-6-9-V01-04.webp';
+import '../styles/components/store-badges.css';
+import '../styles/components/enhanced-mobile-cta.css';
+import type { PageType } from '../utils/utm-builder';
+
+const screenshots = [
+  { src: screenshot01, alt: 'AuroraMe app showing tonight aurora visibility' },
+  { src: screenshot03, alt: 'AuroraMe app best months calendar' },
+  { src: screenshot04, alt: 'AuroraMe app best days planner' }
+];
+
+export interface Props {
+  // UTM parameters (new dynamic system)
+  pageType?: PageType;
+  citySlug?: string;
+  countryCode?: string;
+  placement?: string;
+
+  // Legacy utm prop for backwards compatibility
+  utm?: string;
+
+  // Display options
+  cityName?: string;
+  context?: 'hero' | 'timeline' | 'travel' | 'general';
+  showSocialProof?: boolean;
+  i18n?: any; // i18n helper for localization
+}
+
+const {
+  pageType = 'city_page',
+  citySlug,
+  countryCode,
+  placement = 'enhanced_cta',
+  utm = 'enhanced_cta', // legacy fallback
+  cityName = '',
+  context = 'general',
+  showSocialProof = true,
+  i18n
+} = Astro.props;
+
+// New title and subtitle with proper fallbacks
+const title = i18n?.t('app_title', 'AuroraMe app') || 'AuroraMe app';
+const subtitle = (() => {
+  if (!i18n) return 'See the full aurora-forecast';
+  if (cityName) {
+    const template = i18n.t('app_subtitle_city', 'See the full aurora-forecast in {city}');
+    return i18n.tpl(template, { city: cityName });
+  }
+  return i18n.t('app_subtitle', 'See the full aurora-forecast');
+})();
+---
+
+<section class="enhanced-mobile-cta">
+  <div class="enhanced-mobile-cta__container">
+    <div class="enhanced-mobile-cta__content">
+      <div class="enhanced-mobile-cta__text">
+        <h2 class="enhanced-mobile-cta__title">{title}</h2>
+        <p class="enhanced-mobile-cta__subtitle">{subtitle}</p>
+        
+        <slot name="features-list" />
+
+        <div class="enhanced-mobile-cta__stores">
+          <slot name="store-badges">
+            <StoreBadges
+              pageType={pageType}
+              citySlug={citySlug}
+              countryCode={countryCode}
+              placement={placement}
+              utm={utm}
+              enhanced={true}
+              size="large"
+              showRatings={true}
+            />
+          </slot>
+        </div>
+      </div>
+      <div class="enhanced-mobile-cta__visual">
+        <div class="enhanced-mobile-cta__screenshots">
+          {screenshots.map((shot, index) => (
+            <img
+              class={`enhanced-mobile-cta__screenshot enhanced-mobile-cta__screenshot--${index + 1}`}
+              src={shot.src.src}
+              alt={i18n?.t('app_screenshot_alt', shot.alt)}
+              width={shot.src.width}
+              height={shot.src.height}
+              loading="lazy"
+              decoding="async"
+            />
+          ))}
+        </div>
+        <!-- Mobile slider -->
+        <div class="enhanced-mobile-cta__slider" data-cta-slider>
+          <div class="enhanced-mobile-cta__slider-track">
+            {screenshots.map((shot) => (
+              <div class="enhanced-mobile-cta__slider-item">
+                <img
+                  src={shot.src.src}
+                  alt={shot.alt}
+                  width={shot.src.width}
+                  height={shot.src.height}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+            ))}
+          </div>
+          <div class="enhanced-mobile-cta__slider-dots">
+            {screenshots.map((_, index) => (
+              <button class={`enhanced-mobile-cta__dot ${index === 0 ? 'active' : ''}`} data-index={index} aria-label={`Slide ${index + 1}`}></button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  // Mobile slider for enhanced-mobile-cta
+  (function() {
+    const slider = document.querySelector('.enhanced-mobile-cta__slider');
+    if (!slider) return;
+
+    const track = slider.querySelector('.enhanced-mobile-cta__slider-track');
+    const dots = slider.querySelectorAll('.enhanced-mobile-cta__dot');
+    if (!track || !dots.length) return;
+
+    let currentIndex = 0;
+
+    function goToSlide(index) {
+      currentIndex = index;
+      track.style.transform = `translateX(-${index * 100}%)`;
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === index);
+      });
+    }
+
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => goToSlide(index));
+    });
+
+    // Touch swipe
+    let startX = 0;
+    let isDragging = false;
+
+    track.addEventListener('touchstart', (e) => {
+      startX = e.touches[0].clientX;
+      isDragging = true;
+    }, { passive: true });
+
+    track.addEventListener('touchend', (e) => {
+      if (!isDragging) return;
+      isDragging = false;
+      const endX = e.changedTouches[0].clientX;
+      const diff = startX - endX;
+
+      if (Math.abs(diff) > 50) {
+        if (diff > 0 && currentIndex < dots.length - 1) {
+          goToSlide(currentIndex + 1);
+        } else if (diff < 0 && currentIndex > 0) {
+          goToSlide(currentIndex - 1);
+        }
+      }
+    }, { passive: true });
+  })();
+</script>

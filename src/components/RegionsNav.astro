@@ -1,0 +1,91 @@
+---
+import '../styles/components/regions-nav.css';
+import { REGIONS } from '../utils/slug-normalizer.ts';
+import citiesData from '../data/cities.json';
+import type { I18nPageHelper } from '../utils/i18n-page';
+import { getTranslatedRegion, getTranslatedCountry } from '../utils/country-region-names';
+import { getLocalizedCitySlugs } from '../utils/state-pages';
+import type { SupportedLanguage } from '@config/language-targeting';
+
+export interface Props {
+  i18n?: I18nPageHelper;
+  lang?: string;
+}
+
+const { i18n, lang = 'en' } = Astro.props;
+
+// Country flags
+const countryFlags: Record<string, string> = {
+  us: '🇺🇸',
+  ca: '🇨🇦'
+};
+
+// Translation with fallback to English
+const title = i18n ? i18n.t('regions_nav_title') : 'Popular Aurora Regions';
+const intro = i18n ? i18n.t('regions_nav_intro') : 'Explore multi-state aurora viewing regions with comprehensive coverage across prime northern lights zones.';
+const locationSingular = i18n ? i18n.t('country_nav_location') : 'location';
+const locationPlural = i18n ? i18n.t('country_nav_locations') : 'locations';
+
+// Get localized city slugs for non-English languages
+const localizedCitySlugs = lang !== 'en' ? getLocalizedCitySlugs(lang as SupportedLanguage) : null;
+
+// Calculate city count for each region
+const regionsWithCounts = Object.entries(REGIONS).map(([slug, region]) => {
+  const regionCities = citiesData.filter(city => {
+    if (city.countryCode !== region.country.toUpperCase()) return false;
+    const stateSlug = city.state?.toLowerCase().replace(/\s+/g, '-');
+    return region.states.includes(stateSlug);
+  });
+
+  // For non-English languages, check if any city in the region is localized
+  const hasLocalizedCities = lang === 'en' || regionCities.some(city => localizedCitySlugs?.has(city.slug));
+
+  const countryName = region.country === 'us' ? 'United States' : 'Canada';
+
+  return {
+    slug,
+    name: region.name,
+    translatedName: getTranslatedRegion(region.name, slug, i18n),
+    country: region.country,
+    countryName: getTranslatedCountry(countryName, i18n),
+    flag: countryFlags[region.country] || '🌍',
+    cityCount: regionCities.length,
+    hasLocalizedCities
+  };
+}).filter(r => r.cityCount > 0 && r.hasLocalizedCities)  // Filter out regions without localized cities
+  .sort((a, b) => b.cityCount - a.cityCount); // Sort by city count
+
+// Build language-aware href for state pages
+const buildStateHref = (country: string, stateSlug: string) => {
+  if (lang === 'en') {
+    return `/${country}/${stateSlug}`;
+  }
+  return `/${lang}/state/${country}/${stateSlug}`;
+};
+---
+
+<section class="regions-nav" id="regions">
+  <div class="regions-nav__container">
+    <h2>{title}</h2>
+    <p class="nav-intro">{intro}</p>
+
+    <div class="regions-grid">
+      {regionsWithCounts.map(region => (
+        <a href={buildStateHref(region.country, region.slug)} class="region-card">
+          <div class="region-flag">{region.flag}</div>
+          <div class="region-info">
+            <h3>{region.translatedName}</h3>
+            <span class="region-country">{region.countryName}</span>
+            <span class="city-count">{region.cityCount} {region.cityCount === 1 ? locationSingular : locationPlural}</span>
+          </div>
+          <div class="region-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+            </svg>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+

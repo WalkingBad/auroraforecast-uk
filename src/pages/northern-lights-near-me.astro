@@ -1,0 +1,276 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/components/live-forecast-bar.css';
+import '../styles/pages/near-me.css';
+import '../styles/bundles/city-page.css';
+import '../styles/pages/city-page-inline.css';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import StoreBadges from '../components/StoreBadges.astro';
+import citiesData from '../data/cities.json';
+
+// Enable static generation
+export const prerender = true;
+
+const title = "Northern Lights Near Me - Find Aurora Borealis Nearby";
+const description = "Find the best northern lights viewing spots near your location. Instant aurora forecast for your area. Check visibility, KP index, and cloud cover.";
+const canonical = "https://auroraforecast.me/northern-lights-near-me";
+
+// Pass city metadata to client-side for distance calculation
+const cityMetadata = citiesData.map(city => ({
+  name: city.name,
+  slug: city.slug,
+  lat: city.lat,
+  lon: city.lon,
+  country: city.country,
+  state: city.stateName || city.state, // Added for search consistency
+  searchText: `${city.name} ${city.country} ${city.stateName || ''}`.toLowerCase() // Pre-compute for search
+}));
+
+const breadcrumbs = [
+  { title: 'Home', href: '/' },
+  { title: 'Northern Lights Near Me', href: '/northern-lights-near-me' },
+];
+---
+
+<BaseLayout title={title} description={description} canonical={canonical}>
+  <!-- Full Width Header with Aurora Animation (City Page Style) -->
+  <div class="city-header-full-width">
+    <div class="aurora-background">
+      <div class="aurora-light"></div>
+      <div class="aurora-light-2"></div>
+      <div class="aurora-light-3"></div>
+      <div class="aurora-overlay"></div>
+    </div>
+    <div class="container city-header-content">
+      <h1>Find Northern Lights Near Me</h1>
+      <div class="live-status-subtitle" style="text-align: center;">Locate the best aurora viewing spots in your area instantly</div>
+    </div>
+  </div>
+
+  <main class="near-me-page">
+    <div class="container">
+      <div class="breadcrumbs-wrapper">
+        <Breadcrumbs items={breadcrumbs} />
+      </div>
+
+      <section class="hero-section-content">
+        <div class="location-action-area">
+          <button id="locate-btn" class="locate-button">
+            <span class="icon">📍</span>
+            <span class="text">Use My Location</span>
+          </button>
+          <p class="location-status" id="location-status"></p>
+        </div>
+
+        <div class="manual-search">
+          <p>Or search your city manually:</p>
+          <!-- Reusing Search Box Structure from LiveForecastBar -->
+          <div class="search-box" style="margin: 0 auto;">
+            <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+            </svg>
+            <input
+              type="text"
+              placeholder="Search city..."
+              id="city-search-input"
+              class="search-input"
+              autocomplete="off"
+            />
+            <div id="search-results" class="search-results hidden"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="info-section">
+        <h2>Can I see the Northern Lights from my location?</h2>
+        <div class="info-grid">
+          <div class="info-card">
+            <h3>1. Magnetic Latitude</h3>
+            <p>Aurora visibility depends on your magnetic latitude, not just geographic latitude. Our app calculates this automatically for your exact position.</p>
+          </div>
+          <div class="info-card">
+            <h3>2. Light Pollution</h3>
+            <p>To see the aurora, you need dark skies. Even if activity is high, city lights can wash out the view. Drive 15-30 minutes away from city centers.</p>
+          </div>
+          <div class="info-card">
+            <h3>3. Clear Skies</h3>
+            <p>Clouds are the biggest enemy of aurora hunters. Check our real-time cloud cover maps before heading out.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="regions-section">
+        <h2>Popular Aurora Regions</h2>
+        <div class="regions-grid">
+          <a href="/country/united-states" class="region-card">United States</a>
+          <a href="/country/canada" class="region-card">Canada</a>
+          <a href="/country/united-kingdom" class="region-card">United Kingdom</a>
+          <a href="/country/iceland" class="region-card">Iceland</a>
+          <a href="/country/norway" class="region-card">Norway</a>
+          <a href="/country/finland" class="region-card">Finland</a>
+          <a href="/country/sweden" class="region-card">Sweden</a>
+          <a href="/country/new-zealand" class="region-card">New Zealand</a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Sticky Store Badges -->
+  <StoreBadges pageType="near_me" placement="sticky_footer" sticky={true} enhanced={true} />
+</BaseLayout>
+
+<script define:vars={{ cityMetadata }}>
+  // Export city metadata for client-side logic
+  window.AURORA_CITY_METADATA = cityMetadata;
+</script>
+
+<script>
+  const locateBtn = document.getElementById('locate-btn');
+  const statusText = document.getElementById('location-status');
+
+  // Haversine formula to calculate distance
+  function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Radius of the earth in km
+    const dLat = deg2rad(lat2 - lat1);
+    const dLon = deg2rad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }
+
+  function deg2rad(deg) {
+    return deg * (Math.PI / 180);
+  }
+
+  function findNearestCity(userLat, userLon) {
+    let nearestCity = null;
+    let minDistance = Infinity;
+
+    window.AURORA_CITY_METADATA.forEach(city => {
+      if (city.lat && city.lon) {
+        const dist = getDistanceFromLatLonInKm(userLat, userLon, city.lat, city.lon);
+        if (dist < minDistance) {
+          minDistance = dist;
+          nearestCity = city;
+        }
+      }
+    });
+
+    return { city: nearestCity, distance: minDistance };
+  }
+
+  if (locateBtn) {
+    locateBtn.addEventListener('click', () => {
+      if (!navigator.geolocation) {
+        statusText.textContent = "Geolocation is not supported by your browser";
+        return;
+      }
+
+      statusText.textContent = "Locating...";
+      locateBtn.disabled = true;
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          const result = findNearestCity(latitude, longitude);
+
+          if (result.city) {
+            statusText.textContent = `Found nearest location: ${result.city.name} (${Math.round(result.distance)}km)`;
+            // Redirect to city page
+            setTimeout(() => {
+              window.location.href = `/${result.city.slug}`;
+            }, 1000);
+          } else {
+            statusText.textContent = "Could not find a nearby city in our database.";
+            locateBtn.disabled = false;
+          }
+        },
+        (error) => {
+          console.error("Geolocation error:", error);
+          statusText.textContent = "Unable to retrieve your location. Please search manually.";
+          locateBtn.disabled = false;
+        }
+      );
+    });
+  }
+  
+  // Search Logic (Replicated from LiveForecastBar)
+  const searchInput = document.getElementById('city-search-input');
+  const searchResults = document.getElementById('search-results');
+  
+  // Normalize search text for special characters
+  const normalizeSearchText = (text) => {
+    return text
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/ø/g, 'o')
+      .replace(/ö/g, 'o')
+      .replace(/å/g, 'a')
+      .replace(/ä/g, 'a')
+      .replace(/æ/g, 'ae')
+      .replace(/ü/g, 'u')
+      .replace(/ñ/g, 'n')
+      .replace(/ç/g, 'c')
+      .replace(/ß/g, 'ss')
+      .replace(/þ/g, 'th')
+      .replace(/ð/g, 'd');
+  };
+
+  if (searchInput && searchResults) {
+    let debounceTimer;
+
+    searchInput.addEventListener('input', (e) => {
+      clearTimeout(debounceTimer);
+
+      debounceTimer = setTimeout(() => {
+        const query = normalizeSearchText(e.target.value.trim());
+
+        if (query.length < 2) {
+          searchResults.classList.add('hidden');
+          return;
+        }
+
+        // Use the pre-computed searchText if available, or fallback to name
+        const matches = window.AURORA_CITY_METADATA
+          .filter(city => {
+             const searchTarget = city.searchText || city.name.toLowerCase();
+             return normalizeSearchText(searchTarget).includes(query);
+          })
+          .slice(0, 8);
+        
+        if (matches.length > 0) {
+          searchResults.innerHTML = matches.map(city => `
+            <a href="/${city.slug}" class="search-result-item">
+              <div class="result-main">
+                <span class="result-name">${city.name}</span>
+                <span class="result-location">${city.country}${city.state ? `, ${city.state}` : ''}</span>
+              </div>
+            </a>
+          `).join('');
+          searchResults.classList.remove('hidden');
+        } else {
+          searchResults.innerHTML = '<div class="no-results">No cities found</div>';
+          searchResults.classList.remove('hidden');
+        }
+      }, 200);
+    });
+
+    // Close search results when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+        searchResults.classList.add('hidden');
+      }
+    });
+    
+    // Show results on focus
+    searchInput.addEventListener('focus', () => {
+      if (searchInput.value.length >= 2) {
+        searchResults.classList.remove('hidden');
+      }
+    });
+  }
+</script>

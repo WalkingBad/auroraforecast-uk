@@ -1,0 +1,291 @@
+/**
+ * Factor Info Hint Component Styles
+ * Used by: components/FactorInfoHint.astro
+ * Extracted from inline <style> block (229 lines)
+ * Date: 2025-11-24
+ * Features: Tooltip with status indicators, hover/focus interactions
+ */
+
+/* ==========================================================================
+   Wrapper
+   ========================================================================== */
+
+.factor-info-hint,
+.info-hint {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20; /* Ensure icon is above card content */
+  outline: none;
+}
+
+/* ==========================================================================
+   Button/Icon
+   ========================================================================== */
+
+.info-hint__btn,
+.factor-info-hint__btn {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--aurora-text-secondary);
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.factor-info-hint:hover .factor-info-hint__btn,
+.factor-info-hint:focus .factor-info-hint__btn,
+.info-hint:hover .info-hint__btn,
+.info-hint:focus .info-hint__btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: #FFFFFF;
+  transform: scale(1.1);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.info-icon {
+  width: 14px;
+  height: 14px;
+  color: currentColor;
+}
+
+/* ==========================================================================
+   Tooltip Popup
+   ========================================================================== */
+
+.factor-info-hint__tooltip,
+.info-hint__tooltip {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: max-content;
+  max-width: 380px;
+  min-width: 320px;
+  background: rgba(20, 20, 24, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+
+  /* Hidden state */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px) scale(0.95);
+  transform-origin: top right;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  z-index: 1000;
+
+  /* Prevent text selection */
+  user-select: text;
+  text-align: left;
+  margin-top: 8px;
+}
+
+/* ==========================================================================
+   Show Tooltip on Hover/Focus
+   ========================================================================== */
+
+.factor-info-hint:hover .factor-info-hint__tooltip,
+.factor-info-hint:focus .factor-info-hint__tooltip,
+.info-hint:hover .info-hint__tooltip,
+.info-hint:focus .info-hint__tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+/* ==========================================================================
+   Tooltip Internal Content
+   ========================================================================== */
+
+.tooltip-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tooltip-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tooltip-icon {
+  width: 16px;
+  height: 16px;
+  color: #34C97B;
+  flex-shrink: 0;
+}
+
+.tooltip-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin: 0;
+  letter-spacing: 0.3px;
+}
+
+.tooltip-description {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   Status List
+   ========================================================================== */
+
+.tooltip-statuses {
+  margin-top: 4px;
+}
+
+.statuses-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  margin: 0 0 8px 0;
+  letter-spacing: 0.5px;
+}
+
+.statuses-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.status-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+
+.status-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.status-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.status-description {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.4;
+}
+
+/* ==========================================================================
+   Status Colors - Row Styling
+   ========================================================================== */
+
+.status-success {
+  background: rgba(52, 201, 123, 0.1);
+  border-color: rgba(52, 201, 123, 0.3);
+}
+.status-success .status-indicator { background-color: #34C97B; box-shadow: 0 0 8px rgba(52, 201, 123, 0.4); }
+.status-success .status-label { color: #34C97B; }
+
+.status-yellow {
+  background: rgba(255, 215, 0, 0.1);
+  border-color: rgba(255, 215, 0, 0.3);
+}
+.status-yellow .status-indicator { background-color: #FFD700; box-shadow: 0 0 8px rgba(255, 215, 0, 0.4); }
+.status-yellow .status-label { color: #FFD700; }
+
+.status-orange {
+  background: rgba(255, 140, 0, 0.1);
+  border-color: rgba(255, 140, 0, 0.3);
+}
+.status-orange .status-indicator { background-color: #FF8C00; box-shadow: 0 0 8px rgba(255, 140, 0, 0.4); }
+.status-orange .status-label { color: #FF8C00; }
+
+.status-danger {
+  background: rgba(255, 71, 71, 0.1);
+  border-color: rgba(255, 71, 71, 0.3);
+}
+.status-danger .status-indicator { background-color: #FF4747; box-shadow: 0 0 8px rgba(255, 71, 71, 0.4); }
+.status-danger .status-label { color: #FF4747; }
+
+.status-blue {
+  background: rgba(33, 150, 243, 0.1);
+  border-color: rgba(33, 150, 243, 0.3);
+}
+.status-blue .status-indicator { background-color: #2196F3; box-shadow: 0 0 8px rgba(33, 150, 243, 0.4); }
+.status-blue .status-label { color: #2196F3; }
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+/* Mobile adjustment: tooltip opens centered, full width */
+@media (max-width: 400px) {
+  .factor-info-hint__tooltip,
+  .info-hint__tooltip,
+  div.factor-info-hint__tooltip,
+  span.info-hint__tooltip,
+  .factor-app .factor-info-hint__tooltip,
+  .factor-app .info-hint__tooltip,
+  .status-info-icon .info-hint__tooltip,
+  .status-info-icon .factor-info-hint__tooltip,
+  .methodology .factor-info-hint__tooltip,
+  .methodology .info-hint__tooltip {
+    position: fixed !important;
+    top: 50% !important;
+    bottom: auto !important;
+    left: 12px !important;
+    right: 12px !important;
+    width: calc(100vw - 24px) !important;
+    max-width: calc(100vw - 24px) !important;
+    min-width: calc(100vw - 24px) !important;
+    box-sizing: border-box !important;
+    transform: translateY(-50%) scale(0.95) !important;
+    transform-origin: center center !important;
+    z-index: 10000 !important;
+  }
+
+  .factor-info-hint:hover .factor-info-hint__tooltip,
+  .factor-info-hint:focus .factor-info-hint__tooltip,
+  .info-hint:hover .info-hint__tooltip,
+  .info-hint:focus .info-hint__tooltip,
+  .factor-app .factor-info-hint:hover .factor-info-hint__tooltip,
+  .factor-app .info-hint:hover .info-hint__tooltip,
+  .status-info-icon .info-hint:hover .info-hint__tooltip,
+  .status-info-icon .factor-info-hint:hover .factor-info-hint__tooltip,
+  .methodology .factor-info-hint:hover .factor-info-hint__tooltip,
+  .methodology .info-hint:hover .info-hint__tooltip {
+    transform: translateY(-50%) scale(1) !important;
+  }
+}

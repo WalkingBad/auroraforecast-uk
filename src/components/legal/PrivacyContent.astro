@@ -1,0 +1,146 @@
+---
+import '../../styles/components/legal.css';
+import type { PageI18nContext } from '../../utils/i18n-page';
+import type { SupportedLanguage } from '@config/language-targeting';
+
+export interface Props {
+  i18n: PageI18nContext;
+  currentDate: string;
+  lang?: SupportedLanguage;
+}
+
+const { i18n, currentDate, lang = 'en' } = Astro.props;
+const cookieHref = lang === 'en' ? '/cookie-policy' : `/${lang}/cookie-policy`;
+
+const dataItems = [
+  { title: i18n.t('privacy_data_item1_title'), body: i18n.t('privacy_data_item1_body') },
+  { title: i18n.t('privacy_data_item2_title'), body: i18n.t('privacy_data_item2_body') },
+  { title: i18n.t('privacy_data_item3_title'), body: i18n.t('privacy_data_item3_body') },
+  { title: i18n.t('privacy_data_item4_title'), body: i18n.t('privacy_data_item4_body') },
+  { title: i18n.t('privacy_data_item5_title'), body: i18n.t('privacy_data_item5_body') }
+];
+
+const usageItems = [
+  { title: i18n.t('privacy_usage_item1_title'), body: i18n.t('privacy_usage_item1_body') },
+  { title: i18n.t('privacy_usage_item2_title'), body: i18n.t('privacy_usage_item2_body') },
+  { title: i18n.t('privacy_usage_item3_title'), body: i18n.t('privacy_usage_item3_body') },
+  { title: i18n.t('privacy_usage_item4_title'), body: i18n.t('privacy_usage_item4_body') }
+];
+
+const sharingItems = [
+  i18n.t('privacy_sharing_item1'),
+  i18n.t('privacy_sharing_item2'),
+  i18n.t('privacy_sharing_item3'),
+  i18n.t('privacy_sharing_item4'),
+  i18n.t('privacy_sharing_item5')
+];
+
+const rightsItems = [
+  i18n.t('privacy_rights_item1'),
+  i18n.t('privacy_rights_item2'),
+  i18n.t('privacy_rights_item3'),
+  i18n.t('privacy_rights_item4'),
+  i18n.t('privacy_rights_item5'),
+  i18n.t('privacy_rights_item6')
+];
+
+const cookiesParagraph = i18n.tpl(i18n.t('privacy_cookies_body'), {
+  cookieLink: `<a href="${cookieHref}">${i18n.t('privacy_cookie_link_label')}</a>`
+});
+
+const contactParagraph = i18n.tpl(i18n.t('privacy_contact_body'), {
+  emailLink: `<a href="mailto:${i18n.t('privacy_contact_email_label')}">${i18n.t('privacy_contact_email_label')}</a>`,
+  address: i18n.t('privacy_contact_address')
+});
+---
+
+<main class="legal-container">
+  <h1>{i18n.t('privacy_title')}</h1>
+  <p class="legal-updated">{i18n.t('privacy_last_updated')} {currentDate}</p>
+
+  <section>
+    <h2>{i18n.t('privacy_intro_title')}</h2>
+    <p>{i18n.t('privacy_intro_body1')}</p>
+    <p>{i18n.t('privacy_intro_body2')}</p>
+  </section>
+
+  <section>
+    <h2>{i18n.t('privacy_mor_title')}</h2>
+    <p>{i18n.t('privacy_mor_body')}</p>
+  </section>
+
+  <section>
+    <h2>{i18n.t('privacy_data_title')}</h2>
+    <p>{i18n.t('privacy_data_description')}</p>
+    <ul>
+      {dataItems.map(item => (
+        <li>
+          <strong>{item.title}:</strong> {item.body}
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section>
+    <h2>{i18n.t('privacy_usage_title')}</h2>
+    <p>{i18n.t('privacy_usage_description')}</p>
+    <ul>
+      {usageItems.map(item => (
+        <li>
+          <strong>{item.title}:</strong> {item.body}
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section>
+    <h2>{i18n.t('privacy_cookies_title')}</h2>
+    <p set:html={cookiesParagraph}></p>
+  </section>
+
+  <section>
+    <h2>{i18n.t('privacy_sharing_title')}</h2>
+    <p>{i18n.t('privacy_sharing_body')}</p>
+    <ul>
+      {sharingItems.map(item => (
+        <li>{item}</li>
+      ))}
+    </ul>
+  </section>
+
+  <section>
+    <h2>{i18n.t('privacy_transfers_title')}</h2>
+    <p>{i18n.t('privacy_transfers_body')}</p>
+  </section>
+
+  <section>
+    <h2>{i18n.t('privacy_rights_title')}</h2>
+    <p>{i18n.t('privacy_rights_body')}</p>
+    <ul>
+      {rightsItems.map(item => (
+        <li>{item}</li>
+      ))}
+    </ul>
+  </section>
+
+  <section>
+    <h2>{i18n.t('privacy_children_title')}</h2>
+    <p>{i18n.t('privacy_children_body')}</p>
+  </section>
+
+  <section>
+    <h2>{i18n.t('privacy_security_title')}</h2>
+    <p>{i18n.t('privacy_security_body')}</p>
+  </section>
+
+  <section>
+    <h2>{i18n.t('privacy_changes_title')}</h2>
+    <p>{i18n.t('privacy_changes_body')}</p>
+  </section>
+
+  <section>
+    <h2>{i18n.t('privacy_contact_title')}</h2>
+    <p set:html={contactParagraph}></p>
+  </section>
+</main>
+

@@ -1,0 +1,85 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import '../styles/bundles/city-page.css';
+import '../styles/pages/city-page-inline.css';
+
+interface Props {
+  title: string;
+  description: string;
+  canonical: string;
+  keywords?: string;
+  lang?: string;
+  hreflangTags?: any[];
+  i18n?: any;
+  cityData: any;
+  breadcrumbs: any[];
+  h1: string;
+  subtitle: string;
+}
+
+const {
+  title,
+  description,
+  canonical,
+  keywords,
+  lang = 'en',
+  hreflangTags,
+  i18n,
+  cityData,
+  breadcrumbs,
+  h1,
+  subtitle
+} = Astro.props;
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonical}
+  keywords={keywords}
+  lang={lang}
+  hreflangTags={hreflangTags}
+  i18n={i18n}
+  city={cityData.name}
+  lat={cityData.lat}
+  lon={cityData.lon}
+>
+  <!-- Full Width Header with Aurora Animation -->
+  <div class="city-header-full-width">
+    <div class="aurora-background">
+      <div class="aurora-light"></div>
+      <div class="aurora-light-2"></div>
+      <div class="aurora-light-3"></div>
+      <div class="aurora-overlay"></div> <!-- Noise/Texture overlay -->
+    </div>
+    <div class="container city-header-content">
+      <h1>{h1}</h1>
+      <div class="live-status-subtitle">{subtitle}</div>
+    </div>
+  </div>
+
+  <main>
+    <div class="container">
+      <div class="breadcrumbs-wrapper">
+        <Breadcrumbs items={breadcrumbs} i18n={i18n} />
+      </div>
+
+      <slot name="aurora-now" />
+      <slot name="intro" />
+      <slot name="methodology" />
+      <slot name="forecast" />
+    </div>
+
+    <!-- Full-width sections -->
+    <slot name="app-cta" />
+    <slot name="related" />
+
+    <div class="container">
+      <slot name="faq" />
+      <slot name="travel-cta" />
+    </div>
+  </main>
+
+  <slot name="sticky-footer" />
+</BaseLayout>

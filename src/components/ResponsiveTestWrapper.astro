@@ -1,0 +1,33 @@
+---
+import '../styles/components/responsive-test-wrapper.css';
+
+/**
+ * Responsive Test Wrapper Component
+ * Provides error boundaries and responsive testing for new sections
+ */
+
+export interface Props {
+  testId?: string;
+  fallbackMessage?: string;
+  minHeight?: string;
+}
+
+const { testId, fallbackMessage = "Content temporarily unavailable", minHeight = "auto" } = Astro.props;
+---
+
+<div 
+  class="responsive-test-wrapper" 
+  data-testid={testId}
+  style={`min-height: ${minHeight}`}
+>
+  <div class="responsive-content">
+    <slot />
+  </div>
+  
+  <!-- Fallback content for error states -->
+  <div class="fallback-content" style="display: none;">
+    <div class="fallback-message">
+      <p>{fallbackMessage}</p>
+    </div>
+  </div>
+</div>

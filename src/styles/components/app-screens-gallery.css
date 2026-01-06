@@ -1,0 +1,109 @@
+/* AuroraMe App Screens Slider Component */
+/* Uses Aurora design tokens defined in global.css */
+
+.app-screens-slider {
+  margin-top: var(--aurora-spacing-xxl);
+  width: 100%;
+  position: relative;
+}
+
+.app-screens-slider__surface {
+  position: relative;
+  overflow: hidden;
+  padding: var(--aurora-spacing-xl);
+  border-radius: var(--aurora-radius-card);
+  border: 1px solid var(--aurora-border-light);
+  background: linear-gradient(135deg, rgba(107, 231, 160, 0.08) 0%, rgba(17, 18, 20, 0.94) 45%, rgba(17, 18, 20, 1) 100%);
+  box-shadow: var(--aurora-elevation-e1);
+}
+
+.app-screens-slider__surface::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, rgba(107, 231, 160, 0.15), transparent 58%);
+  pointer-events: none;
+}
+
+.app-screens-slider__content {
+  position: relative;
+  z-index: 1;
+}
+
+.app-screens-slider__heading {
+  text-align: center;
+  margin-bottom: var(--aurora-spacing-l);
+}
+
+.app-screens-slider__title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: var(--aurora-spacing-xs);
+}
+
+.app-screens-slider__subtitle {
+  font-size: 0.9rem;
+  color: var(--aurora-text-secondary);
+}
+
+.app-screens-slider__viewport {
+  display: flex;
+  gap: var(--aurora-spacing-l);
+  overflow-x: auto;
+  padding: var(--aurora-spacing-m) 0 var(--aurora-spacing-s);
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  justify-content: center;
+}
+
+.app-screens-slider__viewport::-webkit-scrollbar {
+  display: none;
+}
+
+.app-screens-slider__item {
+  flex: 0 0 auto;
+  width: clamp(150px, 24vw, 220px);
+  scroll-snap-align: center;
+}
+
+.app-screens-slider__image {
+  width: 100%;
+  height: auto;
+  border-radius: calc(var(--aurora-radius-card) * 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--aurora-bg-fullscreen);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.45);
+  transition: transform var(--aurora-timing-base) ease, box-shadow var(--aurora-timing-base) ease;
+}
+
+.app-screens-slider__image:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.55);
+}
+
+.app-screens-slider__controls {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .app-screens-slider__surface {
+    padding: var(--aurora-spacing-l);
+  }
+}
+
+@media (max-width: 520px) {
+  .app-screens-slider__viewport {
+    gap: var(--aurora-spacing-m);
+  }
+
+  .app-screens-slider__item {
+    width: clamp(160px, 70vw, 210px);
+  }
+}
+
+@media (max-width: 360px) {
+  .app-screens-slider__item {
+    width: 85vw;
+  }
+}

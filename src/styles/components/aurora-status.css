@@ -1,0 +1,114 @@
+/*
+  Aurora Status Cards - Live Aurora Visibility Status
+  Extracted from [city].astro for better modularity
+  @sync app/lib/constants/design_system.dart
+*/
+@import '../shared/status-theming.css';
+
+/* Aurora Status Card - Main Container */
+.aurora-now .status-card {
+  background: var(--aurora-surface);
+  border: 1px solid var(--aurora-border-light);
+  border-left: 6px solid var(--status-color, var(--aurora-status-high));
+  border-radius: 24px;
+  padding: 24px;
+  margin: var(--aurora-spacing-l) 0;
+  box-shadow: var(--aurora-elevation-e2);
+  position: relative;
+  min-height: 180px;
+  /* enable tinted overlay */
+}
+
+/* Subtle tinted overlay using current status color without hardcoded rgba */
+.aurora-now .status-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--status-color, var(--aurora-status-high));
+  opacity: 0.12;
+  /* subtle tint similar to previous rgba fills */
+  pointer-events: none;
+}
+
+/* Ensure content sits above the tint */
+.aurora-now .status-card>* {
+  position: relative;
+  z-index: 1;
+}
+
+/* Status theming applied via shared/status-theming.css */
+/* Border color uses --status-color variable from shared theming */
+.aurora-now .status-card.level-very_low,
+.aurora-now .status-card.level-low,
+.aurora-now .status-card.level-medium,
+.aurora-now .status-card.level-high {
+  border-left-color: var(--status-color);
+}
+
+/* Status Card Header */
+/* Specificity boost to override .aurora-now .status-card > * */
+.aurora-now .status-card .status-header {
+  text-align: center;
+  margin-bottom: 12px;
+  position: relative !important;
+  /* Context for icon */
+  z-index: 20 !important;
+}
+
+.status-title-large {
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  background: transparent;
+}
+
+.status-sub {
+  font-size: 20px;
+  color: var(--aurora-text-primary);
+  opacity: 0.95;
+  background: transparent;
+  position: relative;
+}
+
+/* Position the info icon in the top-right corner of the header */
+.status-info-icon {
+  position: absolute !important;
+  top: 0px !important;
+  right: 0px !important;
+  z-index: 25 !important;
+  /* Above header text and pill */
+}
+
+/* Ensure tooltip works correctly from the corner */
+.status-info-icon .info-hint__tooltip,
+.status-info-icon .factor-info-hint__tooltip {
+  top: 100%;
+  right: 0;
+  left: auto;
+  /* Reset left */
+  transform: translateY(10px) scale(0.95);
+  transform-origin: top right;
+  text-align: left;
+  white-space: normal;
+  min-width: 260px;
+  z-index: 1000 !important;
+}
+
+.status-info-icon .info-hint:hover .info-hint__tooltip,
+.status-info-icon .factor-info-hint:hover .factor-info-hint__tooltip {
+  transform: translateY(0) scale(1);
+}
+
+/* Status Pills - Ensure lower z-index than header */
+.status-pill {
+  display: block;
+  margin: 16px auto 0 auto;
+  padding: 8px 14px;
+  border-radius: 28px;
+  font-weight: 600;
+  text-align: center;
+  width: fit-content;
+  position: relative;
+  z-index: 5 !important;
+}

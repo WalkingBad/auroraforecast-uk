@@ -1,0 +1,35 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PrivacyContent from '../../components/legal/PrivacyContent.astro';
+import type { SupportedLanguage } from '@config/language-targeting';
+import { SUPPORTED_LANGUAGES } from '@config/language-targeting';
+import { generatePageHreflangTags, getPageCanonicalUrl } from '../../utils/hreflang';
+import { createPageI18n } from '../../utils/i18n-page';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  return SUPPORTED_LANGUAGES
+    .filter(lang => lang !== 'en')
+    .map(lang => ({
+      params: { lang },
+      props: { lang }
+    }));
+}
+
+const { lang } = Astro.props as { lang: SupportedLanguage };
+const i18n = await createPageI18n(lang);
+const currentDate = new Date().toISOString().split('T')[0];
+const hreflangTags = generatePageHreflangTags('privacy', SUPPORTED_LANGUAGES);
+const canonicalUrl = getPageCanonicalUrl('privacy', lang);
+---
+
+<BaseLayout
+  title={i18n.t('privacy_meta_title')}
+  description={i18n.t('privacy_meta_description')}
+  canonical={canonicalUrl}
+  lang={lang}
+  hreflangTags={hreflangTags}
+>
+  <PrivacyContent i18n={i18n} currentDate={currentDate} lang={lang} />
+</BaseLayout>

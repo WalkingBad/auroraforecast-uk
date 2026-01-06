@@ -1,0 +1,236 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import FooterLinks from '../components/FooterLinks.astro';
+import type { HreflangTag } from '../utils/hreflang';
+import type { I18nPageHelper } from '../utils/i18n-page';
+
+export interface Props {
+  title: string;
+  description: string;
+  canonical?: string;
+  ogImage?: string;
+  city?: string;
+  lat?: number;
+  lon?: number;
+  lang?: string;
+  hreflangTags?: HreflangTag[];
+  i18n?: I18nPageHelper;
+}
+
+const {
+  title,
+  description,
+  canonical = 'https://auroraforecast.me',
+  ogImage = 'https://auroraforecast.me/og-screenshot.webp',
+  city,
+  lat,
+  lon,
+  lang = 'en',
+  hreflangTags = [],
+  i18n
+} = Astro.props;
+const gaId = import.meta.env.PUBLIC_GA_TRACKING_ID;
+const hasGa = typeof gaId === 'string' && gaId.length > 0;
+---
+
+<!DOCTYPE html>
+<html lang={lang}>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://*.firebaseio.com https://*.googleapis.com https://www.googletagmanager.com https://fonts.gstatic.com https://fonts.googleapis.com https://mc.yandex.ru https://mc.yandex.com; connect-src 'self' https://*.googleapis.com https://*.google-analytics.com https://*.firebaseapp.com https://*.cloudfunctions.net https://*.a.run.app https://auroraforecast.me https://mc.yandex.ru https://mc.yandex.com wss://mc.yandex.ru wss://mc.yandex.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; frame-src 'self' https://www.google.com https://*.google.com; media-src 'self' data: https:;">
+
+  <!-- Google tag (gtag.js) -->
+  {hasGa && (
+    <>
+      <script async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} data-cfasync="false"></script>
+      <script data-cfasync="false" define:vars={{ gaId }}>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        window.gtag = window.gtag || gtag;
+        window.gtag('js', new Date());
+
+        // Configure with platform identifier
+        window.gtag('config', gaId, {
+          custom_map: {
+            'dimension1': 'platform_type',
+            'dimension2': 'platform_source',
+            'dimension3': 'environment'
+          },
+          platform_type: 'web',
+          platform_source: 'website',
+          environment: 'production'
+        });
+
+        // Set default event parameters for all events
+        window.gtag('set', {
+          platform_type: 'web',
+          platform_source: 'website',
+          environment: 'production'
+        });
+      </script>
+    </>
+  )}
+
+  <!-- Yandex.Metrika counter -->
+  <script is:inline>
+    (function(m,e,t,r,i,k,a){
+      m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+      m[i].l=1*new Date();
+      for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+      k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=105603339', 'ym');
+
+    ym(105603339, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
+  </script>
+  <noscript><div><img src="https://mc.yandex.ru/watch/105603339" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+  <!-- /Yandex.Metrika counter -->
+
+  <title>{title}</title>
+  <meta name="description" content={description}>
+  <link rel="canonical" href={canonical}>
+
+  <!-- Google Search Console Verification -->
+  {import.meta.env.PUBLIC_GSC_VERIFICATION_CODE && (
+    <meta name="google-site-verification" content={import.meta.env.PUBLIC_GSC_VERIFICATION_CODE}>
+  )}
+
+  <!-- Hreflang tags for multilingual SEO -->
+  {hreflangTags.length > 0 ? (
+    <>
+      {hreflangTags.map(tag => (
+        <link rel="alternate" hreflang={tag.hreflang} href={tag.href} />
+      ))}
+    </>
+  ) : (
+    <>
+      <!-- Fallback: EN only -->
+      <link rel="alternate" hreflang="en" href={canonical}>
+      <link rel="alternate" hreflang="x-default" href={canonical}>
+    </>
+  )}
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" href="/favicon-96.png" sizes="96x96">
+  <link rel="icon" type="image/png" href="/icon-192.png" sizes="192x192">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.json">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content={title}>
+  <meta property="og:description" content={description}>
+  <meta property="og:type" content="website">
+  <meta property="og:url" content={canonical}>
+  <meta property="og:image" content={ogImage}>
+  <meta property="og:site_name" content="Aurora Forecast">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content={title}>
+  <meta name="twitter:description" content={description}>
+  <meta name="twitter:image" content={ogImage}>
+  
+  <!-- Store click tracking -->
+  <script src="/scripts/store-tracking.js" defer></script>
+
+  <!-- Schema.org: WebSite with SearchAction -->
+  <script
+    type="application/ld+json"
+    set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Aurora Forecast",
+      "alternateName": "AuroraMe",
+      "url": "https://auroraforecast.me",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://auroraforecast.me/{search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    })}
+  ></script>
+
+  <!-- Schema.org: Place for city pages OR MobileApplication for other pages -->
+  <script
+    type="application/ld+json"
+    set:html={JSON.stringify(
+      city && typeof lat === 'number' && typeof lon === 'number'
+        ? {
+            "@context": "https://schema.org",
+            "@type": "Place",
+            "name": city,
+            "geo": {
+              "@type": "GeoCoordinates",
+              "latitude": lat,
+              "longitude": lon
+            }
+          }
+        : {
+            "@context": "https://schema.org",
+            "@type": "MobileApplication",
+            "name": "Aurora Forecast",
+            "alternateName": "AuroraMe",
+            "description": "Real-time aurora borealis predictions and alerts for 970+ cities worldwide",
+            "applicationCategory": "WeatherApplication",
+            "operatingSystem": ["iOS", "Android"],
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": "4.8",
+              "ratingCount": "1250",
+              "bestRating": "5",
+              "worstRating": "1"
+            },
+            "downloadUrl": [
+              "https://apps.apple.com/app/aurora-forecast-northern-light/id6502308763",
+              "https://play.google.com/store/apps/details?id=me.auroraforecast.app"
+            ],
+            "screenshot": [
+              "https://auroraforecast.me/og-screenshot-00.webp",
+              "https://auroraforecast.me/og-screenshot.webp",
+              "https://auroraforecast.me/og-screenshot-02.webp"
+            ]
+          }
+    )}
+  ></script>
+  
+  <!-- Preconnect to external domains -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Google Fonts (no manual preload - URLs change frequently) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- No script preloads for SEO pages: keep TTI low (SSR only) -->
+  
+  <!-- Domain redirect script -->
+  <script>
+    // Redirect from Firebase domain to custom domain
+    if (window.location.hostname === 'aurorame-621f6.web.app') {
+      window.location.replace('https://auroraforecast.me' + window.location.pathname + window.location.search);
+    }
+  </script>
+  
+  
+</head>
+<body>
+  <Header currentPath={Astro.url.pathname} i18n={i18n} />
+  <slot />
+
+  <FooterLinks i18n={i18n} />
+
+  <!-- Service Worker registration for PWA functionality -->
+  <script is:inline src="/scripts/sw-register.js"></script>
+
+  <!-- No heavy scripts on SEO pages to avoid hydration and keep pages light -->
+</body>
+</html>

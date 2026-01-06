@@ -1,0 +1,111 @@
+---
+import '../styles/tokens/cross-links.css';
+import '../styles/components/cross-links.css';
+import type { CrossLinkItem, CrossLinkSlot, CrossLinkType } from '../utils/cross-links.ts';
+import { linkIndicators } from '../utils/cross-links.ts';
+import type { PageI18nContext } from '../utils/i18n-page';
+
+interface Props {
+  title?: string;
+  links: CrossLinkItem[];
+  originSlug: string;
+  slot?: CrossLinkSlot;
+  i18n?: PageI18nContext;
+}
+
+const {
+  title = 'Explore more aurora guides',
+  links = [],
+  originSlug,
+  slot = 'related_block',
+  i18n
+} = Astro.props;
+const componentId = `cross-links-${Math.random().toString(36).slice(2, 9)}`;
+
+function resolveLinkText(link: CrossLinkItem): string {
+  // Try to use i18n if available and key exists
+  if (i18n && link.textKey) {
+    const template = i18n.t(link.textKey, link.text);
+    if (link.textVars) {
+      return i18n.tpl(template, link.textVars);
+    }
+    return template;
+  }
+
+  // Fallback: Manual interpolation for default text
+  let text = link.text;
+  if (link.textVars) {
+    Object.entries(link.textVars).forEach(([key, value]) => {
+      text = text.replace(`{${key}}`, value);
+    });
+  }
+  return text;
+}
+
+function resolveIndicator(type: CrossLinkType): { visual: string; sr: string } {
+  const indicator = linkIndicators[type];
+  const label = i18n ? i18n.t(indicator.labelKey, indicator.labelFallback) : indicator.labelFallback;
+  const srText = i18n ? i18n.t(indicator.srKey, indicator.srFallback) : indicator.srFallback;
+
+  return {
+    visual: `${indicator.icon} ${label}`,
+    sr: srText
+  };
+}
+---
+
+{links.length > 0 && (
+  <section class="related-content" id={componentId} data-slot={slot} data-origin={originSlug}>
+    <h2>{title}</h2>
+    <div class="related-links" data-cross-links>
+      {links.map((link, index) => {
+        const indicator = resolveIndicator(link.type);
+        const linkText = resolveLinkText(link);
+        return (
+        <a
+          href={link.href}
+          class="related-link"
+          data-target={link.targetSlug}
+          data-type={link.type}
+          data-position={index + 1}
+        >
+          <span class="related-link-text">
+              <span aria-hidden="true">{indicator.visual}</span>
+              <span class="sr-only">{indicator.sr}</span>
+              {linkText}
+          </span>
+        </a>
+        );
+      })}
+    </div>
+  </section>
+)}
+
+<script is:inline define:vars={{ componentId }}>
+  const section = document.getElementById(componentId);
+  if (section) {
+    section.addEventListener('click', (event) => {
+      const link = event.target?.closest('a[data-target]');
+      if (!link) {
+        return;
+      }
+
+      const slot = section.dataset.slot ?? 'related_block';
+      const origin = section.dataset.origin ?? '';
+      const target = link.getAttribute('data-target') ?? '';
+      const type = (link.getAttribute('data-type') ?? 'guide');
+      const position = Number(link.getAttribute('data-position') ?? '0');
+
+      // Track using gtag directly (no module import needed)
+      if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+        window.gtag('event', 'web_crosslink_click', {
+          slot: slot,
+          origin_city: origin,
+          target_slug: target,
+          link_type: type,
+          position: Number.isNaN(position) ? 0 : position
+        });
+      }
+    });
+  }
+</script>

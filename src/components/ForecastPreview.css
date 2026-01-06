@@ -1,0 +1,727 @@
+/* ForecastPreview Component Styles - App-like design */
+
+.forecast-preview-container {
+  background: var(--aurora-surface);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 0 0 16px 0; /* Bottom padding for CTA spacing */
+  margin: 32px 0;
+  color: var(--aurora-text-primary);
+  border: 1px solid var(--aurora-border-light);
+  border-radius: var(--aurora-radius-card);
+  overflow: hidden;
+  box-shadow: var(--aurora-elevation-e2);
+}
+
+/* Forecast Header - App-like with icon */
+.forecast-preview-header {
+  padding: 20px 24px 16px 24px;
+  border-bottom: none;
+  background: transparent;
+}
+
+.header-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.header-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(52, 201, 123, 0.1);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.header-icon svg {
+  width: 18px;
+  height: 18px;
+  color: #34C97B;
+}
+
+.forecast-preview-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: left;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* Best Time Filter Button - App-like star button */
+.best-time-filter-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 184, 0, 0.3);
+  color: rgba(255, 184, 0, 0.8);
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.best-time-filter-btn:hover {
+  background: rgba(255, 184, 0, 0.1);
+  border-color: rgba(255, 184, 0, 0.5);
+  color: #FFB800;
+}
+
+.best-time-filter-btn.active {
+  background: rgba(255, 184, 0, 0.15);
+  border-color: #FFB800;
+  color: #FFB800;
+}
+
+.best-time-filter-btn svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* Loading State */
+.loading {
+  text-align: center;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-top: 3px solid #FFFFFF;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loading p {
+  margin: 0;
+  font-size: 16px;
+  color: #FFFFFF;
+}
+
+/* Error State */
+.error {
+  text-align: center;
+  padding: 20px;
+  background: rgba(244, 67, 54, 0.1);
+  border-radius: 0;
+  border-left: 0;
+  color: #FFFFFF;
+}
+
+.error p {
+  margin: 0;
+  font-size: 16px;
+}
+
+/* Preview Content */
+#preview-content {
+  background: var(--aurora-surface, #0A0A0A);
+  border-radius: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Column Headers */
+.column-headers {
+  display: grid;
+  grid-template-columns: 56px 42px 1fr;
+  align-items: center;
+  padding: 10px 16px;
+  margin: 0 0 8px 0;
+  gap: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.5px;
+  background: transparent;
+  border: none;
+}
+
+.col-time {
+  text-align: left;
+}
+
+.col-kp {
+  text-align: center;
+}
+
+.col-status {
+  text-align: right;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+/* Day Headers - App-like chip with calendar icon */
+.day-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  margin: 4px 0 12px 0;
+  background: rgba(59, 130, 246, 0.08);
+  border-radius: 8px;
+  border: 1px solid rgba(59, 130, 246, 0.15);
+  font-weight: 700;
+  font-size: 11px;
+  color: var(--aurora-text-primary);
+  width: fit-content;
+}
+
+.calendar-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calendar-icon svg {
+  width: 12px;
+  height: 12px;
+  color: #3b82f6;
+}
+
+/* Hours Grid */
+.hours-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 16px 24px 16px;
+  position: relative;
+  z-index: 10;
+}
+
+/* Hour Cards - App-like horizontal layout */
+.hour-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 56px 42px 1fr;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  background: var(--aurora-surface);
+  transition: all 0.2s ease;
+}
+
+.hour-card.visible {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* Status-based border colors */
+.hour-card[data-status="high"],
+.hour-card[data-status="good"] {
+  border-color: rgba(52, 201, 123, 0.4);
+}
+
+.hour-card[data-status="medium"] {
+  border-color: rgba(255, 235, 59, 0.4);
+}
+
+.hour-card[data-status="low"] {
+  border-color: rgba(255, 152, 0, 0.4);
+}
+
+.hour-card[data-status="very_low"],
+.hour-card[data-status="none"] {
+  border-color: rgba(255, 71, 71, 0.3);
+}
+
+/* Best Time Row - Yellow border highlight like app */
+.hour-card[data-best-hour="true"] {
+  border: 2px solid #FFB800;
+  background: rgba(255, 184, 0, 0.08);
+  padding: 13px 15px;
+}
+
+.hour-card.blurred {
+  opacity: 0.25;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Best Time Badge - App-like with star */
+.best-time-badge {
+  position: absolute;
+  top: -10px;
+  right: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: linear-gradient(135deg, #FFB800 0%, #FFA000 100%);
+  color: #1a1a1a;
+  padding: 4px 10px;
+  border-radius: 10px;
+  font-size: 9px;
+  font-weight: 700;
+  z-index: 2;
+  box-shadow: 0 2px 8px rgba(255, 184, 0, 0.4);
+  letter-spacing: 0.3px;
+}
+
+.best-time-badge svg {
+  width: 10px;
+  height: 10px;
+}
+
+.hour-card-time {
+  font-weight: 500;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.hour-card-kp-large {
+  font-weight: 600;
+  font-size: 14px;
+  color: #FFFFFF;
+  text-align: center;
+}
+
+.hour-card-status {
+  text-align: right;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+/* Status colors matching app */
+.hour-card-status.status-high,
+.hour-card-status.status-good {
+  color: #34C97B;
+}
+
+.hour-card-status.status-medium {
+  color: #FFEB3B;
+}
+
+.hour-card-status.status-low {
+  color: #FF9800;
+}
+
+.hour-card-status.status-very_low,
+.hour-card-status.status-none {
+  color: #FF4747;
+}
+
+/* CTA Section */
+.cta-section {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 16px 20px 20px 20px;
+  margin-top: 8px;
+}
+
+.cta-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 0;
+}
+
+.cta-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #FFFFFF;
+  margin: 0;
+  letter-spacing: -0.5px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.cta-button {
+  display: inline-block;
+  background: linear-gradient(135deg, #FF9800 0%, #FFB74D 50%, #FF9800 100%);
+  color: #FFFFFF;
+  padding: 16px 40px;
+  border-radius: 32px;
+  border: none;
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 6px 20px rgba(255, 152, 0, 0.35);
+  margin-top: 4px;
+  letter-spacing: 0.3px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 50%, rgba(255, 255, 255, 0.2) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.cta-button:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 28px rgba(255, 152, 0, 0.5), 0 0 0 4px rgba(255, 152, 0, 0.1);
+}
+
+.cta-button:hover::before {
+  opacity: 1;
+}
+
+.cta-button:active {
+  transform: translateY(-1px) scale(0.98);
+  box-shadow: 0 4px 16px rgba(255, 152, 0, 0.4);
+}
+
+/* Payment Methods */
+.payment-methods {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.payment-label {
+  font-size: 12px;
+  color: #B0B0B0;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.payment-label::before {
+  content: "🔒";
+  font-size: 13px;
+}
+
+.payment-logos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.payment-logo {
+  width: 40px;
+  height: 26px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
+  object-fit: contain;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 3px;
+}
+
+.payment-logo:hover {
+  transform: scale(1.15) translateY(-2px);
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.35));
+}
+
+.payment-logo.secure-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .forecast-preview-container {
+    padding: 0;
+    margin: 24px 0;
+  }
+
+  #preview-content {
+    padding: 0;
+  }
+
+  .forecast-preview-header {
+    padding: 16px 16px 12px 16px;
+  }
+
+  .header-content {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .header-icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .header-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .forecast-preview-header h3 {
+    font-size: 14px;
+  }
+
+  .day-header {
+    padding: 5px 10px;
+    font-size: 10px;
+    margin: 4px 0 10px 0;
+  }
+
+  .column-headers {
+    padding: 8px 14px;
+    font-size: 10px;
+    grid-template-columns: 50px 38px 1fr;
+    gap: 10px;
+    margin: 0 0 8px 0;
+  }
+
+  .best-time-filter-btn {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+
+  .hours-grid {
+    padding: 0 12px;
+    gap: 6px;
+  }
+
+  .hour-card {
+    padding: 12px 14px;
+    gap: 10px;
+    grid-template-columns: 50px 38px 1fr;
+    border-radius: 10px;
+  }
+
+  .hour-card[data-best-hour="true"] {
+    padding: 11px 13px;
+  }
+
+  .hour-card-time {
+    font-size: 13px;
+  }
+
+  .hour-card-kp-large {
+    font-size: 13px;
+  }
+
+  .hour-card-status {
+    font-size: 12px;
+  }
+
+  .cta-section {
+    padding: 20px 16px 16px 16px;
+  }
+
+  .cta-title {
+    font-size: 18px;
+  }
+
+  .cta-button {
+    width: 100%;
+    padding: 14px 32px;
+    font-size: 15px;
+  }
+
+  .payment-methods {
+    padding: 14px 18px;
+  }
+
+  .payment-logo {
+    width: 36px;
+    height: 24px;
+  }
+
+  .payment-logo.secure-icon {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .forecast-preview-container {
+    padding: 0;
+    margin: 16px 0;
+  }
+
+  .forecast-preview-header {
+    padding: 14px 12px 10px 12px;
+  }
+
+  .header-title-row {
+    gap: 8px;
+  }
+
+  .header-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .header-icon svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .forecast-preview-header h3 {
+    font-size: 13px;
+  }
+
+  .day-header {
+    font-size: 10px;
+    padding: 4px 8px;
+    gap: 6px;
+    margin: 4px 0 8px 0;
+  }
+
+  .calendar-icon svg {
+    width: 10px;
+    height: 10px;
+  }
+
+  .column-headers {
+    padding: 6px 12px;
+    font-size: 9px;
+    letter-spacing: 0.3px;
+    grid-template-columns: 46px 34px 1fr;
+    gap: 8px;
+    margin: 0 0 6px 0;
+  }
+
+  .best-time-filter-btn {
+    padding: 3px 6px;
+    font-size: 9px;
+  }
+
+  .hours-grid {
+    padding: 0 8px;
+    gap: 6px;
+  }
+
+  .hour-card {
+    padding: 10px 12px;
+    border-radius: 8px;
+    gap: 8px;
+    grid-template-columns: 46px 34px 1fr;
+  }
+
+  .hour-card[data-best-hour="true"] {
+    padding: 9px 11px;
+  }
+
+  .best-time-badge {
+    right: 8px;
+    font-size: 8px;
+    padding: 3px 8px;
+    top: -8px;
+  }
+
+  .hour-card-time {
+    font-size: 12px;
+  }
+
+  .hour-card-kp-large {
+    font-size: 12px;
+  }
+
+  .hour-card-status {
+    font-size: 11px;
+  }
+
+  .cta-section {
+    padding: 16px 12px 14px 12px;
+  }
+
+  .cta-title {
+    font-size: 16px;
+  }
+
+  .cta-button {
+    padding: 13px 28px;
+    font-size: 14px;
+  }
+
+  .payment-methods {
+    padding: 12px 16px;
+    gap: 10px;
+  }
+
+  .payment-label {
+    font-size: 11px;
+  }
+
+  .payment-logos {
+    gap: 8px;
+  }
+
+  .payment-logo {
+    width: 32px;
+    height: 21px;
+  }
+
+  .payment-logo.secure-icon {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+/* Integrated Paywall Overrides */
+.integrated-paywall .premium-paywall {
+  margin: 0;
+  border-radius: 0 0 16px 16px;
+  border-top: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* App Download CTA inside forecast preview - horizontal spacing */
+.forecast-preview-container .app-download-cta {
+  margin-left: 16px;
+  margin-right: 16px;
+}
+
+@media (max-width: 480px) {
+  .forecast-preview-container .app-download-cta {
+    margin-left: 8px;
+    margin-right: 8px;
+  }
+}

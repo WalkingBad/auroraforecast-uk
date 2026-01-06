@@ -1,0 +1,49 @@
+---
+import '../styles/components/footer-links.css';
+import type { I18nPageHelper } from '../utils/i18n-page';
+
+export interface Props {
+  i18n?: I18nPageHelper;
+}
+
+const { i18n } = Astro.props;
+
+// Translation with fallback
+const auroraGuides = i18n ? i18n.t('footer_aurora_guides') : 'Aurora Guides';
+const privacyPolicy = i18n ? i18n.t('footer_privacy_policy') : 'Privacy Policy';
+const termsOfService = i18n ? i18n.t('footer_terms_of_service') : 'Terms of Service';
+const cookiePolicy = i18n ? i18n.t('footer_cookie_policy') : 'Cookie Policy';
+const copyright = i18n
+  ? i18n.tpl(i18n.t('footer_copyright'), { year: new Date().getFullYear() })
+  : `© ${new Date().getFullYear()} AuroraMe. All rights reserved.`;
+
+const buildHref = (slug: string) => {
+  if (i18n && i18n.lang !== 'en') {
+    return `/${i18n.lang}/${slug}`;
+  }
+  return `/${slug}`;
+};
+
+const guidesHref = buildHref('guides');
+const privacyHref = buildHref('privacy');
+const termsHref = buildHref('terms');
+const cookieHref = buildHref('cookie-policy');
+---
+
+<footer class="footer-links">
+  <div class="footer-links__container">
+    <div class="footer-legal">
+      <a href={guidesHref} class="footer-link">{auroraGuides}</a>
+      <span class="footer-divider">·</span>
+      <a href={privacyHref} class="footer-link">{privacyPolicy}</a>
+      <span class="footer-divider">·</span>
+      <a href={termsHref} class="footer-link">{termsOfService}</a>
+      <span class="footer-divider">·</span>
+      <a href={cookieHref} class="footer-link">{cookiePolicy}</a>
+    </div>
+    <div class="footer-copyright">
+      <p>{copyright}</p>
+    </div>
+  </div>
+</footer>
+

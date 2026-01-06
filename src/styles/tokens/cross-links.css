@@ -1,0 +1,7 @@
+:root {
+  --cross-link-color-inline: var(--aurora-primary);
+  --cross-link-border: rgba(107, 231, 160, 0.24);
+  --cross-link-hover-bg: rgba(107, 231, 160, 0.08);
+  --cross-link-accent-bg: var(--aurora-primary);
+  --cross-link-accent-color: var(--aurora-on-primary);
+}

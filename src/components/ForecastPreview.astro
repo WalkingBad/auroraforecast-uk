@@ -1,0 +1,420 @@
+---
+import './ForecastPreview.css';
+import AppDownloadCTA from './AppDownloadCTA.astro';
+
+interface Props {
+  lat: number;
+  lon: number;
+  timezone?: string;
+  initialForecast?: any[]; // Passed from parent to avoid client-side fetch
+  citySlug?: string;
+  cityName?: string;
+  country?: string;
+  region?: string;
+  i18n?: any; // i18n helper for localization
+}
+
+const { lat, lon, timezone, initialForecast, citySlug, cityName, country, region, i18n } = Astro.props;
+
+// Build premium checkout URL with proper redirect params
+const siteBaseUrl = import.meta.env.DEV
+  ? 'http://localhost:4321'
+  : 'https://auroraforecast.me';
+const baseCheckoutUrl = import.meta.env.PUBLIC_LS_CHECKOUT_URL_EXTENDED || '#';
+const finalRedirectPath = citySlug ? `/${citySlug}` : '/';
+
+// Build redirect URL for LS checkout
+// CRITICAL: {order_id} must NOT be URL-encoded - LS needs to recognize it as template variable
+const redirectBase = encodeURIComponent(`${siteBaseUrl}/checkout/success?order_id=`);
+const redirectParams = encodeURIComponent(`&city=${citySlug || ''}&redirect=${encodeURIComponent(finalRedirectPath)}`);
+// Final: .../success?order_id={order_id}&city=... (where {order_id} is NOT encoded)
+const redirectUrl = `${redirectBase}{order_id}${redirectParams}`;
+
+// Full checkout URL with redirect params
+const checkoutUrl = baseCheckoutUrl !== '#'
+  ? `${baseCheckoutUrl}?checkout[redirect_url]=${redirectUrl}&checkout[custom][city]=${citySlug || ''}&checkout[custom][redirect]=${encodeURIComponent(finalRedirectPath)}`
+  : '#';
+
+// Server-side processing of initial forecast
+// For free users: expand 2 API entries (3h each) into 6 hourly cards
+// For premium users: show all 24 entries as-is (JS will reveal)
+const rawForecast = initialForecast ? initialForecast.slice(0, 24) : [];
+
+// Expand first 2 entries into 6 hourly cards for free users
+function expandFreeHours(entries: any[], tz?: string): any[] {
+  const sourceEntries = entries.slice(0, 2);
+  const expanded: any[] = [];
+
+  sourceEntries.forEach(entry => {
+    const baseTime = new Date(entry.time);
+    for (let h = 0; h < 3; h++) {
+      const hourTime = new Date(baseTime.getTime() + h * 60 * 60 * 1000);
+      expanded.push({
+        ...entry,
+        time: hourTime.toISOString(),
+        _expanded: true // Mark as expanded for SSR
+      });
+    }
+  });
+
+  return expanded;
+}
+
+// Build preview hours: 6 expanded free + remaining premium entries
+const freeHours = expandFreeHours(rawForecast, timezone);
+const premiumHours = rawForecast.slice(2); // Skip first 2 (already expanded)
+const previewHours = [...freeHours, ...premiumHours];
+const hasData = previewHours.length > 0;
+const uniqueStatuses = new Set(previewHours.map(hour => hour.status || 'unknown'));
+
+// Find best hour logic (server-side)
+let bestHourIdx = -1;
+let bestScore = -Infinity;
+if (hasData) {
+  const firstTwoHours = previewHours.slice(0, 2);
+  firstTwoHours.forEach((hour, idx) => {
+    if (hour.status !== 'high' && hour.status !== 'good') return;
+    let score = hour.kp;
+    if (hour.status === 'high') score += 5;
+    if (score > bestScore) {
+      bestScore = score;
+      bestHourIdx = idx;
+    }
+  });
+}
+
+// Helper functions for template
+function getStatusClass(status) {
+  switch (status) {
+    case 'high': case 'good': return 'status-high';
+    case 'medium': return 'status-medium';
+    case 'low': return 'status-low';
+    case 'very_low': case 'none': return 'status-very_low';
+    default: return 'status-very_low';
+  }
+}
+
+function getStatusText(status) {
+  if (!i18n) {
+    const fallbacks = {
+      'high': 'Visible',
+      'good': 'Likely Visible',
+      'medium': 'Likely Visible',
+      'low': 'Might be Visible',
+      'very_low': 'Unlikely',
+      'none': 'Unlikely'
+    };
+    return fallbacks[status] || 'Unknown';
+  }
+  // Map backend status to i18n keys matching app
+  const statusMap = {
+    'high': i18n.t('status_high', 'Visible'),
+    'good': i18n.t('status_medium', 'Likely Visible'),
+    'medium': i18n.t('status_medium', 'Likely Visible'),
+    'low': i18n.t('status_low', 'Might be Visible'),
+    'very_low': i18n.t('status_very_low', 'Unlikely'),
+    'none': i18n.t('status_very_low', 'Unlikely')
+  };
+  return statusMap[status] || i18n.t('status_very_low', 'Unlikely');
+}
+
+function formatTime(dateStr, tz) {
+  try {
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return '--:--';
+    const timeStr = date.toLocaleTimeString('en-US', {
+      timeZone: tz || 'UTC',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+    const [hour] = timeStr.split(':');
+    return `${hour}:00`;
+  } catch (error) {
+    return '--:--';
+  }
+}
+
+function getDayLabel(dateStr) {
+  const date = new Date(dateStr);
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const dayDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const daysDiff = Math.floor((dayDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+
+  const dateStrFormatted = `${dayDate.getDate().toString().padStart(2, '0')}.${(dayDate.getMonth() + 1).toString().padStart(2, '0')}`;
+
+  const weekdays = i18n ? [
+    i18n.t('day_sunday', 'Sunday'),
+    i18n.t('day_monday', 'Monday'),
+    i18n.t('day_tuesday', 'Tuesday'),
+    i18n.t('day_wednesday', 'Wednesday'),
+    i18n.t('day_thursday', 'Thursday'),
+    i18n.t('day_friday', 'Friday'),
+    i18n.t('day_saturday', 'Saturday')
+  ] : ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+  const todayLabel = i18n ? i18n.t('day_today', 'Today') : 'Today';
+  const tomorrowLabel = i18n ? i18n.t('day_tomorrow', 'Tomorrow') : 'Tomorrow';
+
+  if (daysDiff === 0) return `${dateStrFormatted}, ${todayLabel}`;
+  if (daysDiff === 1) return `${dateStrFormatted}, ${tomorrowLabel}`;
+  return `${dateStrFormatted}, ${weekdays[dayDate.getDay()]}`;
+}
+
+let lastDayLabel = null;
+---
+
+<div class="forecast-preview-container" data-lat={lat} data-lon={lon} data-timezone={timezone || 'UTC'} data-city={citySlug || ''}>
+  {!hasData ? (
+    <div id="preview-error" class="error">
+      <p>Forecast data unavailable at the moment.</p>
+    </div>
+  ) : (
+    <div id="preview-content">
+      <div class="hours-grid">
+        <div class="column-headers">
+          <div class="col-time">{i18n ? i18n.t('forecast_time', 'Time') : 'Time'}</div>
+          <div class="col-kp">Kp</div>
+          <div class="col-status">{i18n ? i18n.t('forecast_visibility', 'Visibility') : 'Visibility'}</div>
+        </div>
+
+        {previewHours.map((hour, idx) => {
+          const currentDayLabel = getDayLabel(hour.time);
+          const showDayHeader = currentDayLabel !== lastDayLabel;
+          lastDayLabel = currentDayLabel;
+          const isBestHour = idx === bestHourIdx;
+          const statusClass = getStatusClass(hour.status);
+          const isPremiumOnly = idx >= 6; // First 6 hourly cards are free, rest premium
+
+          return (
+            <>
+              {showDayHeader && (
+                <div class={`day-header ${isPremiumOnly ? 'premium-only' : ''}`}>
+                  <span class="calendar-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                      <line x1="16" y1="2" x2="16" y2="6"></line>
+                      <line x1="8" y1="2" x2="8" y2="6"></line>
+                      <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                  </span>
+                  <span>{currentDayLabel}</span>
+                </div>
+              )}
+              <div
+                class={`hour-card visible ${isPremiumOnly ? 'premium-only' : ''}`}
+                data-status={hour.status}
+                data-best-hour={isBestHour}
+              >
+                {isBestHour && (
+                  <div class="best-time-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                    {i18n ? i18n.t('forecast_best_time', 'Best time') : 'Best time'}
+                  </div>
+                )}
+                <div class="hour-card-time">{formatTime(hour.time, timezone)}</div>
+                <div class="hour-card-kp-large">{hour.kp.toFixed(1)}</div>
+                <div class={`hour-card-status ${statusClass}`}>{getStatusText(hour.status)}</div>
+              </div>
+            </>
+          );
+        })}
+      </div>
+    </div>
+  )}
+
+  <!-- A/B Test: App Download CTA (replacing Lemon Squeezy checkout) -->
+  <AppDownloadCTA block="72h" citySlug={citySlug} i18n={i18n} />
+
+  <!-- LEGACY: Lemon Squeezy checkout - commented for A/B test, restore if needed
+  <div class="premium-forecast-promo" id="premium-forecast-promo">
+    <div class="premium-features-list">
+      <div class="premium-feature"><span class="feature-icon">🔒</span>High-precision 72-hour forecast</div>
+      <div class="premium-feature"><span class="feature-icon">🔒</span>27-day calendar view</div>
+      <div class="premium-feature"><span class="feature-icon">🔒</span>1-year trends for trip planning</div>
+    </div>
+    <a href={checkoutUrl} class="premium-cta-btn" rel="nofollow noopener">
+      <span class="cta-main">Unlock All</span>
+      <span class="cta-sub">Premium</span>
+    </a>
+  </div>
+  -->
+</div>
+
+<style>
+  .column-headers {
+    /* Add specific margins as requested */
+    margin-bottom: 12px;
+    margin-top: 8px;
+    background: transparent;
+    padding: 0 12px;
+  }
+  
+  /* Premium Promo Block */
+  .premium-forecast-promo {
+    margin-top: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 14px 16px;
+    background: rgba(31, 41, 55, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .premium-features-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .premium-feature {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #E5E7EB;
+    font-size: 13px;
+    line-height: 1.3;
+  }
+
+  .feature-icon {
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+
+  .premium-cta-btn {
+    background: #F59E0B;
+    color: #FFFFFF;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 16px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    transition: transform 0.2s;
+    flex-shrink: 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  }
+
+  .premium-cta-btn:hover {
+    transform: scale(1.05);
+  }
+
+  .cta-main {
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .cta-sub {
+    font-size: 11px;
+    font-weight: 500;
+    opacity: 0.85;
+    text-transform: uppercase;
+  }
+
+  /* Hide if premium */
+  :global(.is-premium) .premium-forecast-promo {
+    display: none;
+  }
+
+  /* Premium-only forecast entries (hidden by default for free users) */
+  .premium-only {
+    display: none;
+  }
+
+  :global(.is-premium) .premium-only {
+    display: grid; /* hour-card uses grid */
+  }
+
+  :global(.is-premium) .day-header.premium-only {
+    display: inline-flex; /* day-header uses inline-flex */
+  }
+
+  /* Mobile: stack premium promo vertically */
+  @media (max-width: 768px) {
+    .premium-forecast-promo {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .premium-cta-btn {
+      width: 100%;
+    }
+  }
+</style>
+
+<script>
+  // Check if user has premium access (JWT cookie or flag cookie)
+  function checkPremiumAccess() {
+    const cookies = document.cookie.split(';').map(c => c.trim());
+    // Check for aurora_premium (contains JWT) or aurora_premium_flag (simple flag)
+    return cookies.some(c => c.startsWith('aurora_premium=') || c.startsWith('aurora_premium_flag='));
+  }
+
+  // Update forecast header title based on premium status
+  function updateForecastHeaderTitle() {
+    const headerTitle = document.getElementById('forecast-header-title');
+    if (!headerTitle) return;
+
+    const hasPremium = checkPremiumAccess();
+    const text3h = headerTitle.getAttribute('data-text-3h') || 'High-precision 3-hour forecast';
+    const text72h = headerTitle.getAttribute('data-text-72h') || 'High-precision 72-hour forecast';
+    headerTitle.textContent = hasPremium ? text72h : text3h;
+  }
+
+  // GA4 event tracking
+  const container = document.querySelector('.forecast-preview-container');
+  if (container && typeof gtag !== 'undefined') {
+    const lat = container.getAttribute('data-lat');
+    const lon = container.getAttribute('data-lon');
+    gtag('event', 'forecast_preview_viewed', { lat, lon });
+  }
+
+  // Track checkout button clicks
+  document.querySelectorAll('.premium-cta-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const citySlug = container?.getAttribute('data-city') || '';
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'checkout_start', {
+          city: citySlug,
+          product: 'extended_30d',
+          source: 'forecast_preview'
+        });
+      }
+    });
+  });
+
+  // Update title on load
+  updateForecastHeaderTitle();
+
+  // Listen for storage changes (when JWT is set from another tab/window)
+  window.addEventListener('storage', updateForecastHeaderTitle);
+
+  // Check periodically in case cookie was set
+  setInterval(updateForecastHeaderTitle, 1000);
+
+  // Best Time Button Logic
+  document.querySelectorAll('.best-time-filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const bestCard = document.querySelector('.hour-card[data-best-hour="true"]');
+      if (bestCard) {
+        bestCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        bestCard.style.borderColor = '#FFB800';
+        bestCard.style.borderWidth = '2px';
+        setTimeout(() => {
+          bestCard.style.borderColor = '';
+          bestCard.style.borderWidth = '';
+        }, 2000);
+      }
+    });
+  });
+</script>

@@ -1,0 +1,163 @@
+/**
+ * Premium Paywall Component Styles
+ * Used by: components/PremiumPaywall.astro
+ * Extracted from inline <style> block (138 lines)
+ * Date: 2025-11-24
+ * Features: Premium upgrade CTA with floating animation and payment methods
+ */
+
+/* ==========================================================================
+   Container
+   ========================================================================== */
+
+.premium-paywall {
+  position: relative;
+  /* Background handled by parent container in integrated mode, but kept here for standalone safety */
+  background: transparent;
+  padding: 20px 24px;
+  margin: 0;
+  color: #FFFFFF;
+  overflow: hidden;
+}
+
+.locked-features-container {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+}
+
+/* ==========================================================================
+   Header
+   ========================================================================== */
+
+.paywall-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.lock-icon-badge {
+  font-size: 24px;
+  filter: drop-shadow(0 0 10px rgba(255, 152, 0, 0.3));
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
+  100% { transform: translateY(0px); }
+}
+
+.unlock-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin: 0;
+  letter-spacing: -0.3px;
+  line-height: 1.2;
+}
+
+/* ==========================================================================
+   Unlock Button
+   ========================================================================== */
+
+.unlock-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #FF9800 0%, #FFB74D 50%, #FF9800 100%);
+  color: #FFFFFF;
+  padding: 14px 32px;
+  border-radius: 100px;
+  border: none;
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 6px 20px rgba(255, 152, 0, 0.35);
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  max-width: 320px;
+}
+
+.unlock-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: 0.5s;
+}
+
+.unlock-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(255, 152, 0, 0.45);
+}
+
+.unlock-button:hover::before {
+  left: 100%;
+}
+
+.unlock-button:active {
+  transform: translateY(0);
+}
+
+/* ==========================================================================
+   Payment Methods
+   ========================================================================== */
+
+.payment-methods {
+  display: flex;
+  flex-direction: row; /* Explicitly set row */
+  align-items: center;
+  justify-content: center;
+  gap: 12px; /* Increased gap slightly */
+  flex-wrap: nowrap; /* Prevent wrapping */
+  opacity: 1; /* Fully visible */
+  margin-top: 8px;
+  width: 100%;
+}
+
+.payment-logo {
+  width: 34px; /* Slightly smaller to fit if needed */
+  height: 22px;
+  object-fit: contain;
+  filter: none; /* No grayscale */
+  transition: all 0.3s ease;
+}
+
+.payment-logo:hover {
+  transform: scale(1.1);
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .premium-paywall {
+    padding: 16px 20px;
+  }
+
+  .unlock-title {
+    font-size: 18px;
+  }
+
+  .unlock-button {
+    padding: 12px 24px;
+    font-size: 15px;
+  }
+
+  .payment-logo {
+    width: 30px;
+  }
+}

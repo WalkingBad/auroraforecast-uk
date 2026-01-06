@@ -1,0 +1,237 @@
+/**
+ * City Search Component Styles
+ * Reusable search box for finding aurora viewing cities
+ */
+
+.city-search {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Geolocation Button */
+.city-search .geo-button {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.city-search .geo-button svg {
+  width: 22px;
+  height: 22px;
+}
+
+.city-search .geo-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--aurora-primary, #6BE7A0);
+  color: var(--aurora-primary, #6BE7A0);
+}
+
+.city-search .geo-button:active {
+  transform: scale(0.95);
+}
+
+.city-search .geo-button.loading {
+  pointer-events: none;
+}
+
+.city-search .geo-button.loading svg {
+  animation: geo-pulse 1s ease-in-out infinite;
+}
+
+@keyframes geo-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; color: var(--aurora-primary, #6BE7A0); }
+}
+
+/* Search input wrapper */
+.city-search .search-wrapper {
+  position: relative;
+  flex: 1;
+}
+
+.city-search .search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  color: rgba(255, 255, 255, 0.4);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.city-search .search-input {
+  width: 100%;
+  padding: 0.875rem 1rem 0.875rem 3rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: #FFFFFF;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: all 0.3s ease;
+  outline: none;
+  backdrop-filter: blur(10px);
+}
+
+.city-search .search-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.city-search .search-input:focus {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--aurora-primary, #6BE7A0);
+  box-shadow: 0 0 0 1px var(--aurora-primary, #6BE7A0), 0 0 16px rgba(107, 231, 160, 0.15);
+}
+
+/* Search Results Dropdown */
+.city-search .search-results {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 0;
+  right: 0;
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  max-height: 320px;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+.city-search .search-results.hidden {
+  display: none;
+}
+
+.city-search .search-result-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.city-search .search-result-item:last-child {
+  border-bottom: none;
+}
+
+.city-search .search-result-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.city-search .result-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.city-search .result-name {
+  color: #FFFFFF;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.city-search .result-location {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.8rem;
+}
+
+.city-search .result-status {
+  font-size: 0.75rem;
+}
+
+.city-search .no-results {
+  padding: 1rem;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.9rem;
+}
+
+/* Compact variant */
+.city-search.compact {
+  max-width: 400px;
+}
+
+.city-search.compact .geo-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+}
+
+.city-search.compact .geo-button svg {
+  width: 20px;
+  height: 20px;
+}
+
+.city-search.compact .search-input {
+  padding: 0.75rem 1rem 0.75rem 2.75rem;
+  font-size: 0.9rem;
+  border-radius: 10px;
+}
+
+.city-search.compact .search-icon {
+  width: 18px;
+  height: 18px;
+  left: 0.875rem;
+}
+
+/* Mobile responsive */
+@media (max-width: 480px) {
+  .city-search {
+    max-width: none;
+  }
+
+  .city-search .geo-button {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+  }
+
+  .city-search .geo-button svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .city-search .search-input {
+    padding: 0.75rem 1rem 0.75rem 2.75rem;
+    font-size: 0.9rem;
+  }
+
+  .city-search .search-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .city-search .search-results {
+    max-height: 280px;
+  }
+
+  .city-search .search-result-item {
+    padding: 0.75rem 1rem;
+  }
+
+  .city-search .result-name {
+    font-size: 0.9rem;
+  }
+
+  .city-search .result-location {
+    font-size: 0.75rem;
+  }
+}

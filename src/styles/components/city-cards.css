@@ -1,0 +1,658 @@
+/* City Cards with Aurora Status Block Styling */
+/* Matches aurora-status.css design patterns with status-based theming */
+@import '../shared/status-theming.css';
+
+.country-cities-gallery {
+  margin: var(--aurora-spacing-xxl) 0;
+}
+
+/* Full Width Country Cities Gallery */
+.country-cities-gallery-full-width {
+  margin: var(--aurora-spacing-xxl) 0;
+  background: var(--aurora-surface);
+  padding: var(--aurora-spacing-xxl) 0;
+}
+
+.country-cities-gallery-full-width h2 {
+  margin-bottom: var(--aurora-spacing-m);
+  text-align: center;
+}
+
+/* City Search Wrapper */
+.city-search-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--aurora-spacing-xl);
+}
+
+.country-cities-gallery h2 {
+  margin-bottom: var(--aurora-spacing-xl);
+  text-align: center;
+}
+
+.cities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--aurora-spacing-l);
+  margin-top: var(--aurora-spacing-xl);
+}
+
+.cities-grid-full-width {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--aurora-spacing-l);
+  margin-top: var(--aurora-spacing-xl);
+  padding: 0 var(--aurora-spacing-xl);
+  max-width: none;
+  width: 100%;
+}
+
+.country-cities-grid,
+.state-cities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--aurora-spacing-l);
+  margin-top: var(--aurora-spacing-xl);
+}
+
+/* City Card - Aurora Status Block Styling */
+.city-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  /* Use status color for border by default with lower opacity */
+  border: 1px solid color-mix(in srgb, var(--status-color, var(--aurora-status-unknown)) 30%, rgba(255, 255, 255, 0.1));
+  border-radius: 16px;
+  padding: var(--aurora-spacing-l);
+  min-height: 220px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+/* Subtle tinted overlay using current status color - visible by default */
+.city-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at top right,
+      var(--status-color, var(--aurora-status-unknown)) 0%,
+      transparent 70%);
+  opacity: 0.12;
+  /* Slightly increased visibility */
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+/* Ensure content sits above the tint */
+.city-card>* {
+  position: relative;
+  z-index: 1;
+}
+
+/* Status theming applied via shared/status-theming.css */
+
+.city-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px -2px rgba(0, 0, 0, 0.3);
+  /* Full color on hover */
+  border-color: var(--status-color);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.city-card:hover::before {
+  opacity: 0.25;
+}
+
+.city-card-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: left;
+  /* Enforce left alignment */
+}
+
+.city-card-content h3 {
+  margin-bottom: var(--aurora-spacing-xs);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--aurora-text-primary);
+  line-height: 1.3;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+/* City Header - horizontal layout with name on left, meta on right */
+.city-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--aurora-spacing-m);
+  margin-bottom: var(--aurora-spacing-m);
+}
+
+.city-header h3 {
+  margin-bottom: 0;
+  flex: 1;
+}
+
+.city-meta {
+  display: flex;
+  gap: var(--aurora-spacing-m);
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--aurora-text-secondary);
+  align-items: center;
+}
+
+.city-meta .meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: flex-start;
+}
+
+.city-meta .meta-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--aurora-text-tertiary);
+  opacity: 0.7;
+}
+
+.city-meta .meta-value {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--aurora-text-primary);
+}
+
+/* Legacy support for old classes */
+.city-meta .mlat {
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+}
+
+.city-meta .kp-need {
+  color: var(--aurora-primary);
+  font-weight: 600;
+}
+
+.city-description {
+  color: var(--aurora-text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: var(--aurora-spacing-m);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  opacity: 0.8;
+}
+
+/* City Status Info Section */
+.city-status-info {
+  margin-top: auto;
+  padding-top: var(--aurora-spacing-m);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: var(--aurora-spacing-s);
+}
+
+.city-status-text-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.city-status-text {
+  color: var(--aurora-text-tertiary);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 2px;
+}
+
+.city-status-label {
+  color: var(--status-color);
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 0;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+/* View Button */
+.city-view-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--aurora-text-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.city-card:hover .city-view-btn {
+  background: var(--status-color);
+  color: #000;
+  /* Assuming dark text on bright status colors, or use white if status colors are dark */
+  border-color: var(--status-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Adjust text color for specific status backgrounds if needed */
+.city-card.status-very_low:hover .city-view-btn,
+.city-card.status-unknown:hover .city-view-btn {
+  color: #fff;
+}
+
+/* Empty State */
+.country-cities-empty {
+  margin: var(--aurora-spacing-xxl) 0;
+  text-align: center;
+}
+
+.empty-state {
+  background: var(--aurora-surface);
+  border: 1px solid var(--aurora-border-light);
+  border-radius: var(--aurora-radius-card);
+  padding: var(--aurora-spacing-xxl);
+}
+
+.empty-state h2 {
+  margin-bottom: var(--aurora-spacing-l);
+  color: var(--aurora-text-primary);
+}
+
+.empty-state p {
+  margin-bottom: var(--aurora-spacing-xl);
+  color: var(--aurora-text-secondary);
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.explore-cta .cta-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--aurora-spacing-m) var(--aurora-spacing-xl);
+  border-radius: var(--aurora-radius-button);
+  background: var(--aurora-primary);
+  color: var(--aurora-on-primary);
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform var(--aurora-timing-fast) ease, box-shadow var(--aurora-timing-fast) ease;
+}
+
+.explore-cta .cta-button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--aurora-elevation-e2);
+}
+
+/* Strategic CTA */
+.strategic-cta {
+  margin: var(--aurora-spacing-xxl) 0;
+  padding: var(--aurora-spacing-xl);
+  background: var(--aurora-surface);
+  border: 1px solid var(--aurora-border-light);
+  border-radius: var(--aurora-radius-card);
+  text-align: center;
+}
+
+.strategic-cta h3 {
+  margin-bottom: var(--aurora-spacing-m);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--aurora-text-primary);
+  line-height: 1.3;
+}
+
+.strategic-cta p {
+  margin-bottom: var(--aurora-spacing-l);
+  color: var(--aurora-text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.cta-hero {
+  background: linear-gradient(135deg, var(--aurora-surface) 0%, var(--aurora-status-high-glow) 100%);
+  background: linear-gradient(135deg, var(--aurora-surface) 0%, color-mix(in srgb, var(--aurora-status-high) 8%, transparent) 100%);
+  border-color: var(--aurora-status-high-tint);
+}
+
+.cta-timeline {
+  background: linear-gradient(135deg, var(--aurora-surface) 0%, var(--aurora-status-medium-glow) 100%);
+  background: linear-gradient(135deg, var(--aurora-surface) 0%, color-mix(in srgb, var(--aurora-status-medium) 8%, transparent) 100%);
+  border-color: var(--aurora-status-medium-tint);
+}
+
+.cta-travel {
+  background: linear-gradient(135deg, var(--aurora-surface) 0%, var(--aurora-status-high-glow) 100%);
+  background: linear-gradient(135deg, var(--aurora-surface) 0%, color-mix(in srgb, var(--aurora-status-high) 8%, transparent) 100%);
+  border-color: var(--aurora-status-high-tint);
+}
+
+.cta-content {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 var(--aurora-spacing-m);
+  }
+
+  .country-cities-gallery {
+    margin: var(--aurora-spacing-xl) 0;
+  }
+
+  .cities-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: var(--aurora-spacing-m);
+  }
+
+  .cities-grid-full-width {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--aurora-spacing-m);
+    padding: 0 var(--aurora-spacing-l);
+  }
+
+  .country-cities-grid,
+  .state-cities-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: var(--aurora-spacing-m);
+  }
+
+  .city-card {
+    padding: var(--aurora-spacing-m);
+    min-height: 200px;
+  }
+
+  .city-card-content h3 {
+    font-size: 1rem;
+    margin-bottom: var(--aurora-spacing-xs);
+  }
+
+  .city-description {
+    font-size: 0.75rem;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+
+  .city-status-text {
+    font-size: 0.65rem;
+  }
+
+  .city-status-label {
+    font-size: 0.8rem;
+  }
+
+  .city-view-btn {
+    font-size: 0.7rem;
+    padding: var(--aurora-spacing-xs);
+  }
+
+  .strategic-cta {
+    margin: var(--aurora-spacing-xl) 0;
+    padding: var(--aurora-spacing-l);
+  }
+
+  .strategic-cta h3 {
+    font-size: 1.1rem;
+  }
+
+  .strategic-cta p {
+    font-size: 0.9rem;
+  }
+
+  .empty-state {
+    padding: var(--aurora-spacing-xl);
+  }
+
+  .empty-state h2 {
+    font-size: 1.3rem;
+  }
+
+  .empty-state p {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 var(--aurora-spacing-s);
+  }
+
+  .cities-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--aurora-spacing-s);
+  }
+
+  .cities-grid-full-width {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--aurora-spacing-s);
+    padding: 0 var(--aurora-spacing-m);
+  }
+
+  .country-cities-grid,
+  .state-cities-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px 6px; /* row-gap column-gap */
+  }
+
+  .city-card {
+    padding: 8px;
+    padding-bottom: 12px;
+    min-height: auto;
+  }
+
+  .city-header {
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-start;
+    margin-bottom: 6px;
+  }
+
+  .city-meta {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 8px;
+  }
+
+  .city-meta .meta-item {
+    flex-direction: row;
+    gap: 3px;
+    align-items: baseline;
+  }
+
+  .city-meta .meta-label {
+    font-size: 0.55rem;
+    opacity: 0.7;
+  }
+
+  .city-meta .meta-value {
+    font-size: 0.7rem;
+    font-weight: 700;
+  }
+
+  .city-card-content h3 {
+    font-size: 0.85rem;
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+
+  .city-description {
+    font-size: 0.65rem;
+    line-height: 1.3;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    margin-bottom: 6px;
+  }
+
+  .city-status-info {
+    padding-top: 6px;
+    gap: 4px;
+  }
+
+  .city-status-text {
+    font-size: 0.55rem;
+    margin-bottom: 2px;
+  }
+
+  .city-status-label {
+    font-size: 0.7rem;
+  }
+
+  .city-view-btn {
+    font-size: 0.6rem;
+    padding: 4px 8px;
+  }
+
+  .strategic-cta {
+    margin: var(--aurora-spacing-l) 0;
+    padding: var(--aurora-spacing-m);
+  }
+}
+
+/* Extra small screens only - 1 column for very narrow devices */
+@media (max-width: 320px) {
+  .country-cities-grid,
+  .state-cities-grid {
+    grid-template-columns: 1fr;
+    gap: var(--aurora-spacing-s);
+  }
+
+  .city-card {
+    padding: var(--aurora-spacing-s);
+  }
+
+  .city-header {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .city-meta {
+    width: auto;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .city-meta .meta-item {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .city-card-content h3 {
+    font-size: 0.9rem;
+  }
+
+  .city-description {
+    font-size: 0.75rem;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+
+  .empty-state {
+    padding: var(--aurora-spacing-l);
+  }
+
+  .empty-state h2 {
+    font-size: 1.2rem;
+  }
+}
+
+/* Desktop optimizations */
+@media (min-width: 768px) {
+  :root {
+    --spacing: 2rem;
+  }
+
+  section {
+    padding: 3rem 0;
+  }
+
+  .cities-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+
+  .country-cities-grid,
+  .state-cities-grid {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+
+  .strategic-cta {
+    padding: var(--aurora-spacing-xxl);
+  }
+
+  .strategic-cta h3 {
+    font-size: 1.4rem;
+  }
+
+  .city-card:hover {
+    transform: translateY(-3px);
+  }
+}
+
+@media (min-width: 1024px) {
+  .cities-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+
+  .country-cities-grid,
+  .state-cities-grid {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .city-card {
+    min-height: 240px;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+
+  .city-card,
+  .city-view-btn,
+  .explore-cta .cta-button {
+    transition: none;
+  }
+
+  .city-card:hover {
+    transform: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .city-card {
+    border-width: 2px;
+  }
+
+  .city-view-btn {
+    border: 2px solid var(--status-color);
+    font-weight: 700;
+  }
+}

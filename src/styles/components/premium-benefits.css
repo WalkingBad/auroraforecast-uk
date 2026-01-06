@@ -1,0 +1,26 @@
+/**
+ * Premium Benefits Component Styles
+ * Used by: PremiumBenefits.astro
+ * Extracted from inline <style> block (6 lines)
+ * Date: 2025-11-24
+ * Features: Premium feature list
+ */
+
+/* ==========================================================================
+   Premium List
+   ========================================================================== */
+
+.premium__list {
+  display: grid;
+  gap: 0.75rem;
+  padding-left: 1rem;
+}
+
+.premium__list li {
+  color: var(--aurora-text-secondary, #C8C8C8);
+}
+
+.premium__list strong {
+  color: var(--aurora-text, #fff);
+  margin-right: 0.5rem;
+}

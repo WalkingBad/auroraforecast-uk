@@ -1,0 +1,532 @@
+---
+import CityPageLayout from '../layouts/CityPageLayout.astro';
+import StoreBadges from '../components/StoreBadges.astro';
+import EnhancedMobileAppCTA from '../components/EnhancedMobileAppCTA.astro';
+import AppFeaturesList from '../components/AppFeaturesList.astro';
+import CitySearch from '../components/CitySearch.astro';
+import RelatedLinks from '../components/RelatedLinks.astro';
+import AppScreensGallery from '../components/AppScreensGallery.astro';
+import CityFAQ from '../components/CityFAQ.astro';
+import ForecastSection from '../components/ForecastSection.astro';
+import AuroraStatusCard from '../components/AuroraStatusCard.astro';
+import VisibilityFactors from '../components/VisibilityFactors.astro';
+import AuroraWarnings from '../components/AuroraWarnings.astro';
+import ResponsiveTestWrapper from '../components/ResponsiveTestWrapper.astro';
+
+import citiesData from '../data/cities.json';
+import { getFactorDefinitions } from '../data/factor-definitions.ts';
+import { getMagLat, getKp, getWeather, getMoon, getDarkness, OVERCAST_THRESHOLD } from '../utils/factor-utils.ts';
+import { loadCityData } from '../utils/api-helpers.ts';
+import { toTitleCase } from '../utils/formatters.ts';
+import { getGeoSpecificName, appendBrand } from '../utils/geo-utils.ts';
+import { generateSEOTitle, generateSEOH1, generateSEODescription, generateDynamicDescription, generateFAQSchema } from '../utils/seo-titles.ts';
+import { getSafeThreeHourForecast, getSafeCountryCities, validateCityData } from '../utils/error-handling.ts';
+import { calculateKpBands } from '../utils/kp-bands.ts';
+import { texts } from '../data/texts.ts';
+import { loadGlobalCityStatuses } from '../utils/global-status.ts';
+import {
+  buildCityRelatedLinks,
+  getPremiumDestinations,
+  getSimilarCities
+} from '../utils/cross-links.ts';
+import type { CityRecord } from '../utils/cross-links.ts';
+import webStrings from '../data/web-strings/en.json';
+
+// Enable static generation for all city pages
+export const prerender = true;
+
+export async function getStaticPaths() {
+  return citiesData.map((city) => {
+    return {
+      params: { city: city.slug },
+      props: { cityData: city },
+    };
+  });
+}
+
+const { cityData } = Astro.props;
+
+if (!cityData) {
+  throw new Error('City data is required for aurora city page generation');
+}
+
+// Validate city data first
+if (!validateCityData(cityData)) {
+  throw new Error(`Invalid city data for ${cityData?.slug || 'unknown'}`);
+}
+
+const { name, country, lat, lon, description, seoTitle, seoDescription, keywords, countryCode } = cityData;
+const cityRecord: CityRecord = {
+  slug: cityData.slug,
+  name,
+  country,
+  countryCode,
+  magneticLat: cityData.magneticLat,
+  state: cityData.state,
+  description
+};
+
+const originSlug = cityData.slug;
+const cityRelatedLinks = buildCityRelatedLinks(cityRecord);
+const premiumDestinations = getPremiumDestinations(cityRecord, 2);
+const geoName = getGeoSpecificName(cityData);
+const baseTitle = seoTitle || generateSEOTitle(cityData);
+const pageTitle = appendBrand(baseTitle);
+
+function tpl(str: string, vars: Record<string, string | number>) {
+  return str.replace(/\{(\w+)\}/g, (_, k) => String(vars[k] ?? '{'+k+'}'));
+}
+
+// Server-side: Load global city statuses once + individual city data
+let [apiData, globalCityStatuses] = await Promise.all([
+  loadCityData(lat, lon, name, cityData),
+  loadGlobalCityStatuses()
+]);
+
+const ui = apiData.ui || {};
+const tonight = apiData.tonight || {};
+const currentStatus = apiData.currentStatus || {};
+let statusLevel = currentStatus.level || tonight.status || 'very_low';
+let probability = Math.round((currentStatus.probability ?? tonight.probability) || 0);
+const localTime = apiData.location?.localTime || new Date().toLocaleTimeString('en-US', { timeZone: cityData.timezone || 'UTC', hour: '2-digit', minute: '2-digit', hour12: false });
+
+const kpIndex = apiData.conditions?.kpIndex ?? apiData.h12?.[0]?.kp;
+const cloudCover = (apiData.conditions?.cloudCover ?? 50); // Align with app fallback to partly cloudy
+const moonIllumination = apiData.conditions?.moonIllumination;
+const skyDarkness = apiData.conditions?.skyDarkness ?? 'night';
+// Use magnetic latitude from API (calculated by server using latest formula)
+// Fallback to database value only if API fails
+const magneticLatitude = apiData.location?.magneticLatitude ?? apiData.place?.mlat ?? cityData.magneticLat;
+// Minimum KP threshold for aurora visibility at this location (from backend)
+const kpThreshold = apiData.kpThreshold;
+
+// Override status during daylight/civil twilight (fixes cache returning night-time status during day)
+// This ensures users see "Unlikely" status when sun is above horizon, regardless of cached data
+if (skyDarkness === 'daylight' || skyDarkness === 'civil') {
+  statusLevel = 'very_low';
+  probability = 0;
+}
+
+// Override status when overcast - clouds completely block aurora visibility
+if (cloudCover >= OVERCAST_THRESHOLD) {
+  statusLevel = 'very_low';
+  probability = 0;
+}
+
+const optimizedDescription = generateDynamicDescription(
+  cityData, 
+  apiData.conditions?.kpIndex ?? 0, 
+  apiData.conditions?.cloudCover ?? 50, 
+  statusLevel
+);
+
+// 3-hour forecast data with comprehensive error handling
+const hourlyForecast = getSafeThreeHourForecast(apiData);
+
+// 27-day forecast data (full array from seoSnapshot)
+const d27Full = apiData.d27Full || [];
+const monthly = apiData.monthly || {};
+const historyMini = apiData.historyMini || {};
+
+// Load English factor definitions (for backward compatibility)
+const factorDefinitions = getFactorDefinitions('en');
+
+const magLat = getMagLat(magneticLatitude, factorDefinitions);
+const kp = getKp(kpIndex, factorDefinitions);
+const weather = getWeather(cloudCover, factorDefinitions);
+const moon = getMoon(moonIllumination, factorDefinitions);
+const darkness = getDarkness(skyDarkness, factorDefinitions);
+const modal = ui.modalData || {};
+
+const statusText = ui.statusTexts?.[statusLevel] || toTitleCase(statusLevel);
+const h1 = generateSEOH1(cityData);
+const faqSchema = generateFAQSchema(cityData);
+const t = texts.en;
+const h2 = t.visibilityTitle;
+
+const breadcrumbs = [
+  { title: 'Home', href: '/' },
+  { title: country, href: `/country/${country.toLowerCase().replace(/\s+/g, '-')}` },
+  { title: name, href: `/${cityData.slug}` },
+];
+
+const warnings = {
+  kpThreshold: webStrings.kp_threshold_warning,
+  daylight: webStrings.city_daylight_warning,
+  overcast: webStrings.weather_warning_overcast
+};
+---
+
+<CityPageLayout
+  title={pageTitle}
+  description={optimizedDescription}
+  canonical={`https://auroraforecast.me/${cityData.slug}`}
+  keywords={(keywords || []).join(', ')}
+  cityData={cityData}
+  breadcrumbs={breadcrumbs}
+  h1={h1}
+  subtitle="Live Aurora Status & Forecast"
+>
+  <!-- 1) Aurora Status Now -->
+  <section class="aurora-now" slot="aurora-now">
+    <AuroraStatusCard
+      statusLevel={statusLevel}
+      uiData={ui}
+      citySlug={cityData.slug}
+      magneticLatitude={magneticLatitude}
+      kpIndex={kpIndex}
+      probability={probability}
+    />
+    <AuroraWarnings
+      kpIndex={kpIndex}
+      kpThreshold={kpThreshold}
+      skyDarkness={skyDarkness}
+      cloudCover={cloudCover}
+      overcastThreshold={OVERCAST_THRESHOLD}
+      cityName={geoName}
+      warnings={warnings}
+    />
+  </section>
+
+  <!-- 2) How we calculate → факторы прогноза -->
+  <section class="methodology" slot="methodology">
+    <div class="methodology-header">
+      <div class="methodology-header-content">
+        <div class="methodology-header-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        </div>
+        <h2>{h2}</h2>
+      </div>
+    </div>
+    <div class="methodology-content">
+      <VisibilityFactors
+        magLat={magLat}
+        kp={kp}
+        weather={weather}
+        moon={moon}
+        darkness={darkness}
+        factorDefinitions={factorDefinitions}
+        modalData={modal}
+      />
+    </div>
+  </section>
+
+  <!-- Forecast Section with Tabs: 12h, 27d, 1y -->
+  <div slot="forecast">
+    <ForecastSection
+      lat={cityData.lat}
+      lon={cityData.lon}
+      timezone={cityData.timezone}
+      citySlug={cityData.slug}
+      cityName={name}
+      country={country}
+      region={cityData.state}
+      h12={hourlyForecast}
+      d27Full={d27Full}
+      monthly={monthly}
+      historyMini={historyMini}
+      kpThreshold={kpThreshold}
+    />
+  </div>
+
+  <!-- Enhanced Mobile App CTA - Full Width -->
+  <EnhancedMobileAppCTA
+    slot="app-cta"
+    pageType="city_page"
+    citySlug={cityData.slug}
+    placement="timeline"
+    cityName={name}
+    context="timeline"
+    showSocialProof={false}
+  >
+    <AppFeaturesList slot="features-list" webStrings={webStrings} />
+    <StoreBadges
+      slot="store-badges"
+      pageType="city_page"
+      citySlug={cityData.slug}
+      placement="timeline_slot"
+      enhanced={true}
+      size="large"
+    />
+  </EnhancedMobileAppCTA>
+
+  <!-- Other cities in {Country} section with Error Handling - Full Width -->
+  <ResponsiveTestWrapper
+    slot="related"
+    testId="country-cities"
+    fallbackMessage={`No other cities available in ${country} at the moment.`}
+    minHeight="150px"
+  >
+    {(() => {
+      const countryCities = getSafeCountryCities(citiesData, country, cityData.slug, 6);
+
+      return countryCities.length > 0 ? (
+        <section class="country-cities-gallery-full-width">
+          <div class="container">
+            <h2 class="section-title">Other cities in {country}</h2>
+            <div class="city-search-wrapper">
+              <CitySearch id="country-city-search" compact />
+            </div>
+          </div>
+          <div class="cities-grid-full-width">
+            {countryCities.map(city => {
+              const cityStatus = globalCityStatuses[city.slug] || {
+                status: 'unknown',
+                statusText: 'Check forecast',
+                color: '#666666'
+              };
+              const bands = calculateKpBands(city.magneticLat);
+
+              return (
+                <a href={`/${city.slug}`} class={`city-card status-${cityStatus.status}`} data-city-slug={city.slug}>
+                  <div class="city-card-content">
+                    <div class="city-header">
+                      <h3>{city.name}</h3>
+                      <div class="city-meta">
+                        <span class="meta-item">
+                          <span class="meta-label">MLAT</span>
+                          <span class="meta-value">{city.magneticLat?.toFixed(1) || 'N/A'}°</span>
+                        </span>
+                        <span class="meta-item">
+                          <span class="meta-label">Min Kp</span>
+                          <span class="meta-value">{bands.horizon.toFixed(1)}+</span>
+                        </span>
+                      </div>
+                    </div>
+                    <p class="city-description">{city.description || `Aurora viewing location in ${city.country}`}</p>
+                    <div class="city-status-info">
+                      <div class="city-status-text-group">
+                        <div class="city-status-text">CURRENT STATUS</div>
+                        <div class="city-status-label">{cityStatus.statusText}</div>
+                      </div>
+                      <div class="city-view-btn">View</div>
+                    </div>
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+        </section>
+      ) : (
+        <section class="country-cities-empty">
+          <div class="container">
+            <div class="empty-state">
+              <h2>Explore More Locations</h2>
+              <p>{name} is our featured location in {country}. Discover aurora viewing opportunities worldwide:</p>
+              <div class="explore-cta">
+                <a href="/" class="cta-button">Browse All Cities</a>
+              </div>
+            </div>
+          </div>
+        </section>
+      );
+    })()}
+  </ResponsiveTestWrapper>
+
+  <section class="cta-app" slot="related">
+    <AppScreensGallery
+      title={`Experience the complete aurora forecast in ${name}`}
+      subtitle="Real screenshots from the AuroraMe app showing detailed forecasts for your location."
+    />
+    <div class="container">
+      <StoreBadges
+        pageType="city_page"
+        citySlug={cityData.slug}
+        placement="app_screens_cta"
+        enhanced={true}
+        size="large"
+      />
+    </div>
+  </section>
+
+  <p class="city-crosslink-intro" slot="related">
+    Planning a trip?
+    <a
+      class="cross-link-inline"
+      href={`/best-time/${cityData.slug}`}
+      data-cross-link
+      data-slot="related"
+      data-type="guide"
+      data-target={`best-time/${cityData.slug}`}
+      data-position="1"
+    >
+      See the best months for {name} →
+    </a>
+  </p>
+
+  <div slot="related">
+
+    <!-- JSON-LD breadcrumbs -->
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: breadcrumbs.map((b, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: b.title,
+          item: `https://auroraforecast.me${b.href}`
+        }))
+      })}
+    ></script>
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'Place',
+        name: `${name || 'Unknown'}, ${country || 'Unknown'}`,
+        geo: { '@type': 'GeoCoordinates', latitude: lat || 0, longitude: lon || 0 }
+      })}
+    ></script>
+
+    <!-- Event schema for aurora viewing tonight -->
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'Event',
+        name: `Aurora Forecast Tonight in ${name}`,
+        description: `Northern lights viewing opportunity in ${name}, ${country}. Current probability: ${probability}%. KP index: ${kpIndex ?? 'N/A'}.`,
+        image: `https://auroraforecast.me/og/${cityData.slug}.png`,
+        startDate: new Date().toISOString().split('T')[0] + 'T21:00:00',
+        endDate: new Date(Date.now() + 86400000).toISOString().split('T')[0] + 'T05:00:00',
+        eventStatus: 'https://schema.org/EventScheduled',
+        eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+        location: {
+          '@type': 'Place',
+          name: `${name}, ${country}`,
+          address: {
+            '@type': 'PostalAddress',
+            addressLocality: name,
+            addressCountry: country
+          },
+          geo: { '@type': 'GeoCoordinates', latitude: lat || 0, longitude: lon || 0 }
+        },
+        performer: {
+          '@type': 'Thing',
+          name: 'Aurora Borealis',
+          alternateName: 'Northern Lights',
+          description: 'Natural light display in Earth\'s sky'
+        },
+        organizer: {
+          '@type': 'Organization',
+          name: 'AuroraMe',
+          url: 'https://auroraforecast.me'
+        },
+        offers: {
+          '@type': 'Offer',
+          price: '0',
+          priceCurrency: 'USD',
+          availability: 'https://schema.org/InStock',
+          url: `https://auroraforecast.me/${cityData.slug}`,
+          validFrom: new Date().toISOString().split('T')[0]
+        }
+      })}
+    ></script>
+
+    <script src="/js/hydrate.js" defer></script>
+    <script src="/scripts/city-page-runtime.js" defer></script>
+
+    <div class="container">
+      <RelatedLinks
+        title="More aurora guides"
+        links={cityRelatedLinks}
+        originSlug={originSlug}
+        slot="related_block"
+      />
+    </div>
+  </div>
+
+  <!-- FAQ Section -->
+  <CityFAQ
+    slot="faq"
+    name={name}
+    country={country}
+    magneticLatitude={magneticLatitude || cityData.magneticLat || 60}
+    lat={lat}
+    kpIndex={kpIndex}
+    probability={probability}
+    statusLevel={statusLevel}
+    statusText={statusText}
+    cloudCover={cloudCover}
+  />
+
+  <!-- Strategic CTA 3: After FAQ -->
+  <section class="strategic-cta cta-travel" slot="travel-cta">
+    <div class="cta-content">
+      <h3>Traveling? Track multiple locations easily</h3>
+      <p>Compare aurora chances across cities and get alerts for all your planned destinations.</p>
+      <StoreBadges pageType="city_page" citySlug={cityData.slug} placement="travel_cta" enhanced={true} />
+      {premiumDestinations.length > 0 && (
+        <p class="city-crosslink-premium">
+          For brighter shows consider
+          {premiumDestinations.map((city, idx) => (
+            <span>
+              {idx > 0 ? ', ' : ' '}
+              <a
+                class="cross-link-inline"
+                href={`/best-time/${city.slug}`}
+                data-cross-link
+                data-slot="planning"
+                data-type="premium"
+                data-target={`best-time/${city.slug}`}
+                data-position={`${idx + 1}`}
+              >
+                {city.name}
+              </a>
+            </span>
+          ))}
+        </p>
+      )}
+    </div>
+  </section>
+
+  <!-- Sticky Store Badges -->
+  <StoreBadges slot="sticky-footer" pageType="city_page" citySlug={cityData.slug} placement="sticky_footer" sticky={true} enhanced={true} />
+
+  <!-- Sticky footer scroll detection -->
+  <script slot="sticky-footer" is:inline>
+    (function() {
+      const stickyFooter = document.querySelector('.store-badges.sticky');
+      const footerLinks = document.querySelector('.footer-links');
+      if (!stickyFooter || !footerLinks) return;
+
+      function checkScroll() {
+        const footerRect = footerLinks.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
+        // When footer is visible (its top is in the viewport)
+        if (footerRect.top <= windowHeight) {
+          stickyFooter.classList.add('landed');
+        } else {
+          stickyFooter.classList.remove('landed');
+        }
+      }
+
+      window.addEventListener('scroll', checkScroll, { passive: true });
+      checkScroll();
+    })();
+  </script>
+
+  <!-- FAQ Schema for Voice Search & Featured Snippets -->
+  <script slot="sticky-footer" type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqSchema.map(item => ({
+      "@type": "Question",
+      "name": item.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": item.answer
+      }
+    }))
+  })}></script>
+
+</CityPageLayout>
+
+<script src="/scripts/aurora-sync.js?v=3" defer></script>
+<script type="module" src="/scripts/cross-link-tracker.js"></script>
+<div data-origin-slug={originSlug} style="display:none;"></div>

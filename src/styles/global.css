@@ -1,0 +1,603 @@
+/*
+  AuroraMe Global Styles
+  Синхронизировано с дизайн-системой мобильного приложения
+  @sync app/lib/constants/design_system.dart
+*/
+
+:root {
+  /* 🎨 Цвета - синхронизированы с AuroraColors */
+  --aurora-bg-primary: #0A0A0A;
+  /* backgroundPrimary */
+  --aurora-bg-fullscreen: #000000;
+  /* backgroundFullscreen */
+  --aurora-text-primary: #FFFFFF;
+  /* textPrimary */
+  --aurora-text-secondary: #C8C8C8;
+  /* textSecondary */
+  --aurora-text-tertiary: #8A8A8A;
+  /* textTertiary */
+
+  --aurora-success: #34C97B;
+  /* success */
+  --aurora-warning: #FFD700;
+  /* warning (Gold) */
+  --aurora-danger: #FF4747;
+  /* danger */
+
+  --aurora-surface: #111214;
+  /* surface */
+  --aurora-chip: #1A1C1F;
+  /* chip */
+  --aurora-surface-inverse: #FFFFFF;
+  /* surfaceInverse */
+
+  --aurora-border: rgba(255, 255, 255, 0.16);
+  /* border */
+  --aurora-border-light: rgba(255, 255, 255, 0.12);
+  /* borderLight */
+
+  --aurora-primary: #6BE7A0;
+  /* primary */
+  --aurora-primary-strong: #34C97B;
+  /* lowEnergyPleasantLight */
+  --aurora-on-primary: #000000;
+  /* onPrimary */
+  --aurora-orange: #FF8C00;
+  /* AuroraColors.orange (Darker) */
+  --aurora-blue: #2196F3;
+  /* AuroraColors.blue */
+  --aurora-yellow: #FFD700;
+  /* AuroraColors.yellow */
+  --aurora-grey600: #757575;
+  /* grey600 */
+  --aurora-grey700: #616161;
+  /* grey700 */
+  --aurora-grey800: #424242;
+  /* grey800 */
+
+  /* 🌌 Status palette - shared with mobile design system */
+  --aurora-status-high: var(--aurora-success);
+  --aurora-status-medium: var(--aurora-warning);
+  --aurora-status-low: var(--aurora-orange);
+  --aurora-status-very-low: var(--aurora-danger);
+  --aurora-status-unknown: var(--aurora-text-tertiary);
+
+  --aurora-status-high-tint: rgba(52, 201, 123, 0.16);
+  --aurora-status-medium-tint: rgba(255, 215, 0, 0.16);
+  /* Gold tint */
+  --aurora-status-low-tint: rgba(255, 140, 0, 0.18);
+  /* Dark Orange tint */
+  --aurora-status-very-low-tint: rgba(255, 71, 71, 0.18);
+  --aurora-status-unknown-tint: rgba(138, 138, 138, 0.14);
+  --aurora-yellow-tint: rgba(255, 215, 0, 0.16);
+  --aurora-status-high-glow: rgba(107, 231, 160, 0.05);
+  --aurora-status-medium-glow: rgba(255, 215, 0, 0.05);
+  --aurora-status-low-glow: rgba(255, 140, 0, 0.05);
+  --aurora-status-high-glow-strong: rgba(107, 231, 160, 0.3);
+
+  --aurora-primary-hover: #7DEAAB;
+  --aurora-status-high-strong: #44CD86;
+  --aurora-status-medium-strong: #FFBE14;
+  --aurora-status-low-strong: #FFA014;
+  --aurora-overlay-subtle: rgba(255, 255, 255, 0.05);
+
+  /* 📐 Отступы - синхронизированы с AuroraSpacing */
+  --aurora-spacing-xs: 4px;
+  /* xs */
+  --aurora-spacing-s: 8px;
+  /* s */
+  --aurora-spacing-m: 12px;
+  /* m */
+  --aurora-spacing-l: 16px;
+  /* l */
+  --aurora-spacing-xl: 24px;
+  /* xl */
+  --aurora-spacing-xxl: 32px;
+  /* xxl */
+
+  /* 🔘 Радиусы - синхронизированы с AuroraRadius */
+  --aurora-radius-xs: 4px;
+  /* xs */
+  --aurora-radius-s: 8px;
+  /* s */
+  --aurora-radius-m: 12px;
+  /* m */
+  --aurora-radius-l: 16px;
+  /* l */
+  --aurora-radius-chip: 16px;
+  /* chip */
+  --aurora-radius-button: 28px;
+  /* button */
+  --aurora-radius-card: 24px;
+  /* card */
+
+  /* 🌟 Тени - синхронизированы с AuroraElevation */
+  --aurora-elevation-e1: 0 2px 8px rgba(0, 0, 0, 0.2);
+  /* e1 */
+  --aurora-elevation-e2: 0 8px 24px rgba(0, 0, 0, 0.4);
+  /* e2 */
+
+  /* ⏱️ Анимации - синхронизированы с AuroraTiming */
+  --aurora-timing-fast: 150ms;
+  /* fast */
+  --aurora-timing-base: 200ms;
+  /* base */
+  --aurora-timing-slow: 300ms;
+  /* slow */
+
+  /* 📱 Layout tokens (веб-специфичные) */
+  --max-width: 600px;
+  --max-width-wide: 1400px;
+  /* For state/region pages */
+  --spacing: var(--aurora-spacing-l);
+  /* 16px */
+}
+
+@supports (color: color-mix(in srgb, white 50%, black 50%)) {
+  :root {
+    --aurora-primary-hover: color-mix(in srgb, var(--aurora-primary) 88%, #FFFFFF 12%);
+    --aurora-status-high-strong: color-mix(in srgb, var(--aurora-status-high) 92%, #FFFFFF 8%);
+    --aurora-status-medium-strong: color-mix(in srgb, var(--aurora-status-medium) 92%, #FFFFFF 8%);
+    --aurora-status-low-strong: color-mix(in srgb, var(--aurora-status-low) 92%, #FFFFFF 8%);
+  }
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.6;
+  color: var(--aurora-text-primary);
+  background: var(--aurora-bg-primary);
+}
+
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--spacing);
+}
+
+.container-wide {
+  max-width: var(--max-width-wide);
+  margin: 0 auto;
+  padding: 0 var(--spacing);
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.2;
+  margin-bottom: var(--aurora-spacing-l);
+  color: var(--aurora-text-primary);
+}
+
+h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+}
+
+h2 {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 600;
+  margin-top: var(--aurora-spacing-xxl);
+}
+
+p {
+  margin-bottom: var(--aurora-spacing-l);
+  color: var(--aurora-text-secondary);
+}
+
+section {
+  padding: var(--aurora-spacing-xxl) 0;
+}
+
+ul {
+  list-style-position: inside;
+  margin-bottom: var(--aurora-spacing-l);
+}
+
+li {
+  margin-bottom: var(--aurora-spacing-s);
+}
+
+footer {
+  margin-top: 4rem;
+  padding: var(--aurora-spacing-xxl) 0;
+  border-top: 1px solid var(--aurora-border-light);
+}
+
+/* 🔘 Buttons - синхронизированы с дизайн-системой */
+.cta-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--aurora-spacing-m) var(--aurora-spacing-xl);
+  border-radius: var(--aurora-radius-button);
+  background: var(--aurora-surface-inverse);
+  color: var(--aurora-on-primary);
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform var(--aurora-timing-fast) ease,
+    box-shadow var(--aurora-timing-fast) ease;
+}
+
+.cta-pill:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--aurora-elevation-e2);
+}
+
+.cta-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--aurora-spacing-m) var(--aurora-spacing-xl);
+  border-radius: var(--aurora-radius-button);
+  background: var(--aurora-primary);
+  color: var(--aurora-on-primary);
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform var(--aurora-timing-fast) ease,
+    box-shadow var(--aurora-timing-fast) ease;
+}
+
+.cta-button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--aurora-elevation-e2);
+}
+
+/* 📦 Card/surface - синхронизированы с дизайн-системой */
+.surface-card {
+  background: var(--aurora-surface);
+  border: 1px solid var(--aurora-border-light);
+  border-radius: var(--aurora-radius-card);
+}
+
+/* 🔍 Factor Cards - info icons positioning */
+
+.factors-grid-app .factor-app .factor-info-hint {
+  position: absolute;
+  top: var(--aurora-spacing-m);
+  right: var(--aurora-spacing-m);
+  margin: 0;
+  z-index: 10;
+  display: block;
+}
+
+.factors-grid-app .factor-app .factor-info-hint .factor-info-hint__btn,
+.info-hint .info-hint__btn {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--aurora-chip);
+  border: 1px solid var(--aurora-border-light);
+  color: var(--aurora-text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.factors-grid-app .factor-app .factor-info-hint .factor-info-hint__btn:hover,
+.info-hint .info-hint__btn:hover {
+  background: var(--aurora-surface);
+  color: var(--aurora-text-primary);
+  transform: scale(1.05);
+}
+
+.factors-grid-app .factor-app .factor-info-hint .info-icon,
+.info-hint .info-icon {
+  width: 12px;
+  height: 12px;
+  color: currentColor;
+}
+
+/* 🕐 3-Hour Forecast styles moved to components/forecast.css */
+
+/* 🏙️ Country Cities Gallery */
+.country-cities-gallery {
+  margin: var(--aurora-spacing-xxl) 0;
+}
+
+.country-cities-gallery h2 {
+  margin-bottom: var(--aurora-spacing-xl);
+  text-align: center;
+}
+
+.cities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--aurora-spacing-l);
+  margin-top: var(--aurora-spacing-xl);
+}
+
+.city-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  background: var(--aurora-surface);
+  border: 1px solid var(--aurora-border-light);
+  border-radius: var(--aurora-radius-card);
+  padding: var(--aurora-spacing-l);
+  aspect-ratio: 1;
+  transition: transform var(--aurora-timing-fast) ease,
+    box-shadow var(--aurora-timing-fast) ease,
+    border-color var(--aurora-timing-fast) ease;
+}
+
+.city-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--aurora-elevation-e2);
+  border-color: var(--aurora-border);
+}
+
+.city-card-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.city-card-content h3 {
+  margin-bottom: var(--aurora-spacing-s);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--aurora-text-primary);
+  line-height: 1.2;
+}
+
+.city-description {
+  color: var(--aurora-text-secondary);
+  font-size: 0.8rem;
+  line-height: 1.3;
+  margin-bottom: 0;
+  overflow: hidden;
+  display: -webkit-box;
+  line-clamp: 3;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+/* Empty State for Country Cities */
+.country-cities-empty {
+  margin: var(--aurora-spacing-xxl) 0;
+  text-align: center;
+}
+
+.empty-state {
+  background: var(--aurora-surface);
+  border: 1px solid var(--aurora-border-light);
+  border-radius: var(--aurora-radius-card);
+  padding: var(--aurora-spacing-xxl);
+}
+
+.empty-state h2 {
+  margin-bottom: var(--aurora-spacing-l);
+  color: var(--aurora-text-primary);
+}
+
+.empty-state p {
+  margin-bottom: var(--aurora-spacing-xl);
+  color: var(--aurora-text-secondary);
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.explore-cta .cta-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--aurora-spacing-m) var(--aurora-spacing-xl);
+  border-radius: var(--aurora-radius-button);
+  background: var(--aurora-primary);
+  color: var(--aurora-on-primary);
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform var(--aurora-timing-fast) ease,
+    box-shadow var(--aurora-timing-fast) ease;
+}
+
+.explore-cta .cta-button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--aurora-elevation-e2);
+}
+
+/* 🎯 Strategic CTA Sections */
+.strategic-cta {
+  margin: var(--aurora-spacing-xxl) 0;
+  padding: var(--aurora-spacing-xl);
+  background: var(--aurora-surface);
+  border: 1px solid var(--aurora-border-light);
+  border-radius: var(--aurora-radius-card);
+  text-align: center;
+}
+
+.strategic-cta h3 {
+  margin-bottom: var(--aurora-spacing-m);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--aurora-text-primary);
+  line-height: 1.3;
+}
+
+.strategic-cta p {
+  margin-bottom: var(--aurora-spacing-l);
+  color: var(--aurora-text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+/* CTA Type Variations */
+.cta-hero {
+  background: linear-gradient(135deg, var(--aurora-surface) 0%, rgba(107, 231, 160, 0.05) 100%);
+  border-color: rgba(107, 231, 160, 0.2);
+}
+
+.cta-timeline {
+  background: linear-gradient(135deg, var(--aurora-surface) 0%, rgba(255, 184, 0, 0.05) 100%);
+  border-color: rgba(255, 184, 0, 0.2);
+}
+
+.cta-travel {
+  background: linear-gradient(135deg, var(--aurora-surface) 0%, rgba(52, 201, 123, 0.05) 100%);
+  border-color: rgba(52, 201, 123, 0.2);
+}
+
+/* CTA Content wrapper for better spacing */
+.cta-content {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* Mobile-first responsive design */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 var(--aurora-spacing-m);
+  }
+
+  .country-cities-gallery {
+    margin: var(--aurora-spacing-xl) 0;
+  }
+
+  .cities-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: var(--aurora-spacing-m);
+  }
+
+  .city-card {
+    padding: var(--aurora-spacing-m);
+    aspect-ratio: 1.1;
+  }
+
+  .city-card-content h3 {
+    font-size: 1rem;
+    margin-bottom: var(--aurora-spacing-xs);
+  }
+
+  .city-description {
+    font-size: 0.75rem;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+  }
+
+  .strategic-cta {
+    margin: var(--aurora-spacing-xl) 0;
+    padding: var(--aurora-spacing-l);
+  }
+
+  .strategic-cta h3 {
+    font-size: 1.1rem;
+  }
+
+  .strategic-cta p {
+    font-size: 0.9rem;
+  }
+
+  .empty-state {
+    padding: var(--aurora-spacing-xl);
+  }
+
+  .empty-state h2 {
+    font-size: 1.3rem;
+  }
+
+  .empty-state p {
+    font-size: 0.9rem;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 480px) {
+  .container {
+    padding: 0 var(--aurora-spacing-s);
+  }
+
+  .cities-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--aurora-spacing-s);
+  }
+
+  .city-card {
+    padding: var(--aurora-spacing-s);
+  }
+
+  .city-card-content h3 {
+    font-size: 0.9rem;
+  }
+
+  .city-description {
+    font-size: 0.7rem;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+  }
+
+  .strategic-cta {
+    margin: var(--aurora-spacing-l) 0;
+    padding: var(--aurora-spacing-m);
+  }
+
+  .strategic-cta h3 {
+    font-size: 1rem;
+  }
+
+  .strategic-cta p {
+    font-size: 0.85rem;
+  }
+
+  .empty-state {
+    padding: var(--aurora-spacing-l);
+  }
+
+  .empty-state h2 {
+    font-size: 1.2rem;
+  }
+}
+
+/* Tablet and desktop */
+@media (min-width: 768px) {
+  :root {
+    --spacing: 2rem;
+  }
+
+  section {
+    padding: 3rem 0;
+  }
+
+  .cities-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+
+  .strategic-cta {
+    padding: var(--aurora-spacing-xxl);
+  }
+
+  .strategic-cta h3 {
+    font-size: 1.4rem;
+  }
+
+  .city-card:hover {
+    transform: translateY(-3px);
+  }
+}
+
+/* Large screens */
+@media (min-width: 1024px) {
+  .cities-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+
+  .city-card {
+    aspect-ratio: 1.2;
+  }
+}

@@ -1,0 +1,72 @@
+---
+/**
+ * Multilingual Terms of Service Pages
+ *
+ * Generates localized Terms of Service for all supported languages
+ *
+ * URL Structure:
+ * - /ru/terms (Russian version)
+ * - /no/terms (Norwegian version)
+ * - /de/terms (German version)
+ * - /es/terms (Spanish version)
+ * - /fr/terms (French version)
+ */
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import type { SupportedLanguage } from '@config/language-targeting';
+import { SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE } from '@config/language-targeting';
+import { generatePageHreflangTags, getPageCanonicalUrl } from '../../utils/hreflang';
+import { createPageI18n } from '../../utils/i18n-page';
+import TermsContent from '../../components/legal/TermsContent.astro';
+
+// Enable static generation for all multilingual terms pages
+export const prerender = true;
+
+/**
+ * Generate static paths for all localized terms pages
+ */
+export async function getStaticPaths() {
+  const paths = [];
+
+  for (const lang of SUPPORTED_LANGUAGES) {
+    // Skip English (handled by root /terms.astro)
+    if (lang === 'en') {
+      continue;
+    }
+
+    paths.push({
+      params: { lang },
+      props: { lang }
+    });
+  }
+
+  console.log(`[i18n] Generating terms pages for ${paths.length} languages`);
+
+  return paths;
+}
+
+// Get props from getStaticPaths
+const { lang } = Astro.props as { lang: SupportedLanguage };
+
+// Load translations for this language
+const i18n = await createPageI18n(lang);
+
+// Generate hreflang tags for all available language versions
+const hreflangTags = generatePageHreflangTags('terms', SUPPORTED_LANGUAGES);
+
+// Get canonical URL for this language version
+const canonicalUrl = getPageCanonicalUrl('terms', lang);
+
+// Get current date for "Last updated"
+const currentDate = new Date().toISOString().split('T')[0];
+---
+
+<BaseLayout
+  title={i18n.t('terms_meta_title')}
+  description={i18n.t('terms_meta_description')}
+  canonical={canonicalUrl}
+  lang={lang}
+  hreflangTags={hreflangTags}
+>
+  <TermsContent i18n={i18n} currentDate={currentDate} lang={lang} />
+</BaseLayout>

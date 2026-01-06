@@ -1,0 +1,435 @@
+---
+import type { SupportedLanguage } from '@config/language-targeting';
+import { SUPPORTED_LANGUAGES } from '@config/language-targeting';
+import GuideLayout from '../../../layouts/GuideLayout.astro';
+import KpIndexScale from '../../../components/KpIndexScale.astro';
+import PopularCities from '../../../components/PopularCities.astro';
+import '../../../styles/components/faq.css';
+import guideHero from '../../../assets/guide-hero-northern-lights-tonight.webp';
+import weatherSplit from '../../../assets/guide-weather-conditions-split.webp';
+import { buildStoreUrl, buildUtmParams } from '../../../utils/utm-builder.ts';
+import { IOS_STORE_URL, ANDROID_STORE_URL } from '../../../config/store-urls.ts';
+import { createPageI18n } from '../../../utils/i18n-page.ts';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  return SUPPORTED_LANGUAGES
+    .filter(lang => lang !== 'en')
+    .map(lang => ({
+      params: { lang },
+      props: { lang }
+    }));
+}
+
+const { lang } = Astro.props as { lang: SupportedLanguage };
+const i18n = await createPageI18n(lang);
+
+const title = i18n.t('article_tonight_meta_title');
+const description = i18n.t('article_tonight_meta_description');
+const publishDate = "2025-10-20T00:00:00Z";
+
+// UTM tracking for guide
+const guideSlug = "northern-lights-tonight";
+const iosStoreUrl = buildStoreUrl(
+  IOS_STORE_URL,
+  buildUtmParams('guide', { guideSlug, placement: 'inline' })
+);
+const androidStoreUrl = buildStoreUrl(
+  ANDROID_STORE_URL,
+  buildUtmParams('guide', { guideSlug, placement: 'inline' })
+);
+const readingTime = i18n.t('article_tonight_meta_reading_time');
+
+const relatedGuides = [
+  {
+    title: i18n.t('article_tonight_related1_title'),
+    slug: "aurora-forecast-tracker",
+    category: i18n.t('article_tonight_related1_category'),
+    readingTime: i18n.t('article_tonight_related1_time')
+  },
+  {
+    title: i18n.t('article_tonight_related2_title'),
+    slug: "kp-index-explained",
+    category: i18n.t('article_tonight_related2_category'),
+    readingTime: i18n.t('article_tonight_related2_time')
+  },
+  {
+    title: i18n.t('article_tonight_related3_title'),
+    slug: "best-time-northern-lights",
+    category: i18n.t('article_tonight_related3_category'),
+    readingTime: i18n.t('article_tonight_related3_time')
+  }
+];
+---
+
+<GuideLayout
+  title={title}
+  description={description}
+  heroImage={guideHero.src}
+  heroImageAlt={i18n.t('article_tonight_meta_hero_alt')}
+  publishDate={publishDate}
+  readingTime={readingTime}
+  relatedGuides={relatedGuides}
+  i18n={i18n}
+  guideSlug={guideSlug}
+>
+  <!-- Quick Answer Section -->
+  <section class="guide__section">
+    <h2 set:html={i18n.t('article_tonight_quick_h2')}></h2>
+    <p set:html={i18n.t('article_tonight_quick_intro')}></p>
+    <div class="guide__checklist">
+      <div class="guide__checklist-item">
+        <span class="guide__checklist-icon">✅</span>
+        <div>
+          <strong set:html={i18n.t('article_tonight_quick_check1_title')}></strong> — <span set:html={i18n.t('article_tonight_quick_check1_desc')}></span>
+        </div>
+      </div>
+      <div class="guide__checklist-item">
+        <span class="guide__checklist-icon">✅</span>
+        <div>
+          <strong set:html={i18n.t('article_tonight_quick_check2_title')}></strong> — <span set:html={i18n.t('article_tonight_quick_check2_desc')}></span>
+        </div>
+      </div>
+      <div class="guide__checklist-item">
+        <span class="guide__checklist-icon">✅</span>
+        <div>
+          <strong set:html={i18n.t('article_tonight_quick_check3_title')}></strong> — <span set:html={i18n.t('article_tonight_quick_check3_desc')}></span>
+        </div>
+      </div>
+    </div>
+    <p set:html={i18n.tpl(i18n.t('article_tonight_quick_cta'), {
+      iosLink: `<a href="${iosStoreUrl}">iOS</a>`,
+      androidLink: `<a href="${androidStoreUrl}">Android</a>`
+    })}></p>
+  </section>
+
+  <!-- Understanding Kp Index -->
+  <section class="guide__section">
+    <h2 set:html={i18n.t('article_tonight_kp_h2')}></h2>
+    <p set:html={i18n.tpl(i18n.t('article_tonight_kp_intro'), {
+      kpGuideLink: `<a href="/guides/kp-index-explained">${i18n.t('article_tonight_kp_intro_link_text')}</a>`
+    })}></p>
+    <ul>
+      <li set:html={i18n.tpl(i18n.t('article_tonight_kp_range1'), {
+        fairbanksLink: '<a href="/fairbanks">Fairbanks</a>',
+        reykjavikLink: '<a href="/reykjavk">Reykjavík</a>',
+        tromsoLink: '<a href="/troms">Tromsø</a>'
+      })}></li>
+      <li set:html={i18n.tpl(i18n.t('article_tonight_kp_range2'), {
+        anchorageLink: '<a href="/anchorage">Anchorage</a>',
+        yellowknifeLink: '<a href="/yellowknife">Yellowknife</a>',
+        aberdeenLink: '<a href="/aberdeen">Aberdeen</a>'
+      })}></li>
+      <li set:html={i18n.tpl(i18n.t('article_tonight_kp_range3'), {
+        londonLink: '<a href="/london">London</a>',
+        newYorkLink: '<a href="/new-york">New York</a>'
+      })}></li>
+    </ul>
+
+    <div class="guide__info-box">
+      <h4 set:html={i18n.t('article_tonight_kp_infobox_title')}></h4>
+      <p set:html={i18n.t('article_tonight_kp_infobox_text')}></p>
+    </div>
+
+    <h3 set:html={i18n.t('article_tonight_kp_h3')}></h3>
+    <p set:html={i18n.t('article_tonight_kp_table_intro')}></p>
+
+    <div style="margin: 2rem 0;">
+      <KpIndexScale currentKp={3} requiredKp={5} showLabels={true} />
+      <p style="text-align: center; color: #8A8A8A; font-size: 0.875rem; margin-top: 0.5rem;" set:html={i18n.t('article_tonight_kp_scale_caption')}></p>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th set:html={i18n.t('article_tonight_kp_table_col1')}></th>
+          <th set:html={i18n.t('article_tonight_kp_table_col2')}></th>
+          <th set:html={i18n.t('article_tonight_kp_table_col3')}></th>
+          <th set:html={i18n.t('article_tonight_kp_table_col4')}></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td set:html={i18n.t('article_tonight_kp_table_fairbanks')}></td>
+          <td>65°</td>
+          <td>Kp 2</td>
+          <td set:html={i18n.t('article_tonight_kp_table_fairbanks_freq')}></td>
+        </tr>
+        <tr>
+          <td set:html={i18n.t('article_tonight_kp_table_tromso')}></td>
+          <td>67°</td>
+          <td>Kp 2</td>
+          <td set:html={i18n.t('article_tonight_kp_table_tromso_freq')}></td>
+        </tr>
+        <tr>
+          <td set:html={i18n.t('article_tonight_kp_table_reykjavik')}></td>
+          <td>64°</td>
+          <td>Kp 2</td>
+          <td set:html={i18n.t('article_tonight_kp_table_reykjavik_freq')}></td>
+        </tr>
+        <tr>
+          <td set:html={i18n.t('article_tonight_kp_table_seattle')}></td>
+          <td>54°</td>
+          <td>Kp 5</td>
+          <td set:html={i18n.t('article_tonight_kp_table_seattle_freq')}></td>
+        </tr>
+        <tr>
+          <td set:html={i18n.t('article_tonight_kp_table_edinburgh')}></td>
+          <td>58°</td>
+          <td>Kp 6</td>
+          <td set:html={i18n.t('article_tonight_kp_table_edinburgh_freq')}></td>
+        </tr>
+        <tr>
+          <td set:html={i18n.t('article_tonight_kp_table_london')}></td>
+          <td>53°</td>
+          <td>Kp 7</td>
+          <td set:html={i18n.t('article_tonight_kp_table_london_freq')}></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p set:html={i18n.t('article_tonight_kp_takeaway')}></p>
+  </section>
+
+  <!-- Popular Cities CTA -->
+  <PopularCities i18n={i18n} />
+
+  <!-- Weather Conditions -->
+  <section class="guide__section">
+    <h2 set:html={i18n.t('article_tonight_weather_h2')}></h2>
+    <p set:html={i18n.t('article_tonight_weather_intro')}></p>
+
+    <img
+      src={weatherSplit.src}
+      alt={i18n.t('article_tonight_weather_img_alt', 'Aurora viewing weather split illustration')}
+      style="margin: 2rem 0; border-radius: 8px;"
+    />
+
+    <h3 set:html={i18n.t('article_tonight_weather_h3')}></h3>
+    <ul>
+      <li set:html={i18n.t('article_tonight_weather_cloud1')}></li>
+      <li set:html={i18n.t('article_tonight_weather_cloud2')}></li>
+      <li set:html={i18n.t('article_tonight_weather_cloud3')}></li>
+      <li set:html={i18n.t('article_tonight_weather_cloud4')}></li>
+    </ul>
+
+    <p set:html={i18n.t('article_tonight_weather_protip')}></p>
+
+    <div class="guide__info-box guide__info-box--warning">
+      <h4 set:html={i18n.t('article_tonight_weather_moon_title')}></h4>
+      <p set:html={i18n.t('article_tonight_weather_moon_text')}></p>
+    </div>
+  </section>
+
+  <!-- Best Viewing Times -->
+  <section class="guide__section">
+    <h2 set:html={i18n.t('article_tonight_time_h2')}></h2>
+    <p set:html={i18n.t('article_tonight_time_intro')}></p>
+    <ul>
+      <li set:html={i18n.t('article_tonight_time_rule1')}></li>
+      <li set:html={i18n.t('article_tonight_time_rule2')}></li>
+      <li set:html={i18n.t('article_tonight_time_rule3')}></li>
+    </ul>
+
+    <h3 set:html={i18n.t('article_tonight_time_h3')}></h3>
+    <p set:html={i18n.t('article_tonight_time_table_intro')}></p>
+    <table>
+      <thead>
+        <tr>
+          <th set:html={i18n.t('article_tonight_time_table_col1')}></th>
+          <th set:html={i18n.t('article_tonight_time_table_col2')}></th>
+          <th set:html={i18n.t('article_tonight_time_table_col3')}></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td set:html={i18n.t('article_tonight_time_table_winter')}></td>
+          <td set:html={i18n.t('article_tonight_time_table_winter_dark')}></td>
+          <td set:html={i18n.t('article_tonight_time_table_winter_best')}></td>
+        </tr>
+        <tr>
+          <td set:html={i18n.t('article_tonight_time_table_spring')}></td>
+          <td set:html={i18n.t('article_tonight_time_table_spring_dark')}></td>
+          <td set:html={i18n.t('article_tonight_time_table_spring_best')}></td>
+        </tr>
+        <tr>
+          <td set:html={i18n.t('article_tonight_time_table_summer')}></td>
+          <td set:html={i18n.t('article_tonight_time_table_summer_dark')}></td>
+          <td set:html={i18n.t('article_tonight_time_table_summer_best')}></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p set:html={i18n.t('article_tonight_time_important')}></p>
+  </section>
+
+  <!-- How to Check Tonight's Forecast -->
+  <section class="guide__section">
+    <h2 set:html={i18n.t('article_tonight_check_h2')}></h2>
+    <p set:html={i18n.t('article_tonight_check_intro')}></p>
+
+    <h3 set:html={i18n.t('article_tonight_check_method1_h3')}></h3>
+    <ol>
+      <li set:html={i18n.tpl(i18n.t('article_tonight_check_method1_step1'), {
+        iosLink: `<a href="${iosStoreUrl}">iOS</a>`,
+        androidLink: `<a href="${androidStoreUrl}">Android</a>`
+      })}></li>
+      <li set:html={i18n.tpl(i18n.t('article_tonight_check_method1_step2'), {
+        fairbanksLink: '<a href="/fairbanks">Fairbanks</a>',
+        tromsoLink: '<a href="/troms">Tromsø</a>',
+        reykjavikLink: '<a href="/reykjavk">Reykjavík</a>'
+      })}></li>
+      <li set:html={i18n.t('article_tonight_check_method1_step3')}>
+        <ul>
+          <li set:html={i18n.t('article_tonight_check_method1_step3_sub1')}></li>
+          <li set:html={i18n.t('article_tonight_check_method1_step3_sub2')}></li>
+          <li set:html={i18n.t('article_tonight_check_method1_step3_sub3')}></li>
+          <li set:html={i18n.t('article_tonight_check_method1_step3_sub4')}></li>
+        </ul>
+      </li>
+      <li set:html={i18n.tpl(i18n.t('article_tonight_check_method1_step4'), {
+        alertsGuideLink: `<a href="/guides/aurora-alerts-setup">${i18n.t('article_tonight_check_method1_step4_link')}</a>`
+      })}></li>
+    </ol>
+
+    <h3 set:html={i18n.t('article_tonight_check_method2_h3')}></h3>
+    <p set:html={i18n.t('article_tonight_check_method2_intro')}></p>
+    <ol>
+      <li set:html={i18n.tpl(i18n.t('article_tonight_check_method2_step1'), {
+        noaaLink: `<a href="https://www.swpc.noaa.gov/products/3-day-forecast" target="_blank" rel="noopener">${i18n.t('article_tonight_check_method2_step1_link')}</a>`
+      })}></li>
+      <li set:html={i18n.t('article_tonight_check_method2_step2')}></li>
+      <li set:html={i18n.t('article_tonight_check_method2_step3')}></li>
+      <li set:html={i18n.t('article_tonight_check_method2_step4')}></li>
+      <li set:html={i18n.tpl(i18n.t('article_tonight_check_method2_step5'), {
+        trackerGuideLink: `<a href="/guides/aurora-forecast-tracker">${i18n.t('article_tonight_check_method2_step5_link')}</a>`
+      })}></li>
+    </ol>
+
+    <div class="guide__info-box guide__info-box--danger">
+      <h4 set:html={i18n.t('article_tonight_check_warning_title')}></h4>
+      <p set:html={i18n.t('article_tonight_check_warning_intro')}></p>
+      <ul>
+        <li set:html={i18n.t('article_tonight_check_warning_item1')}></li>
+        <li set:html={i18n.t('article_tonight_check_warning_item2')}></li>
+        <li set:html={i18n.t('article_tonight_check_warning_item3')}></li>
+        <li set:html={i18n.t('article_tonight_check_warning_item4')}></li>
+      </ul>
+      <p set:html={i18n.t('article_tonight_check_warning_outro')}></p>
+    </div>
+  </section>
+
+  <!-- Where to See Aurora -->
+  <section class="guide__section">
+    <h2 set:html={i18n.t('article_tonight_where_h2')}></h2>
+    <p set:html={i18n.t('article_tonight_where_intro')}></p>
+
+    <h3 set:html={i18n.t('article_tonight_where_kp02_h3')}></h3>
+    <p set:html={i18n.t('article_tonight_where_kp02_intro')}></p>
+    <ul>
+      <li set:html={i18n.t('article_tonight_where_kp02_loc1')}></li>
+      <li set:html={i18n.t('article_tonight_where_kp02_loc2')}></li>
+      <li set:html={i18n.t('article_tonight_where_kp02_loc3')}></li>
+      <li set:html={i18n.t('article_tonight_where_kp02_loc4')}></li>
+    </ul>
+
+    <h3 set:html={i18n.t('article_tonight_where_kp35_h3')}></h3>
+    <p set:html={i18n.t('article_tonight_where_kp35_intro')}></p>
+    <ul>
+      <li set:html={i18n.t('article_tonight_where_kp35_loc1')}></li>
+      <li set:html={i18n.t('article_tonight_where_kp35_loc2')}></li>
+      <li set:html={i18n.t('article_tonight_where_kp35_loc3')}></li>
+      <li set:html={i18n.t('article_tonight_where_kp35_loc4')}></li>
+      <li set:html={i18n.t('article_tonight_where_kp35_loc5')}></li>
+      <li set:html={i18n.t('article_tonight_where_kp35_loc6')}></li>
+    </ul>
+
+    <h3 set:html={i18n.t('article_tonight_where_kp69_h3')}></h3>
+    <p set:html={i18n.t('article_tonight_where_kp69_intro')}></p>
+    <ul>
+      <li set:html={i18n.t('article_tonight_where_kp69_loc1')}></li>
+      <li set:html={i18n.t('article_tonight_where_kp69_loc2')}></li>
+      <li set:html={i18n.t('article_tonight_where_kp69_loc3')}></li>
+      <li set:html={i18n.t('article_tonight_where_kp69_loc4')}></li>
+      <li set:html={i18n.t('article_tonight_where_kp69_loc5')}></li>
+    </ul>
+
+    <p set:html={i18n.tpl(i18n.t('article_tonight_where_cta'), {
+      homepageLink: `<a href="/">${i18n.t('article_tonight_where_cta_link')}</a>`
+    })}></p>
+  </section>
+
+  <!-- Common Mistakes -->
+  <section class="guide__section">
+    <h2 set:html={i18n.t('article_tonight_mistakes_h2')}></h2>
+
+    <h3 set:html={i18n.t('article_tonight_mistake1_h3')}></h3>
+    <p>
+      <span set:html={i18n.t('article_tonight_mistake1_wrong')}></span><br />
+      <span set:html={i18n.t('article_tonight_mistake1_right')}></span>
+    </p>
+
+    <h3 set:html={i18n.t('article_tonight_mistake2_h3')}></h3>
+    <p>
+      <span set:html={i18n.t('article_tonight_mistake2_wrong')}></span><br />
+      <span set:html={i18n.t('article_tonight_mistake2_right')}></span>
+    </p>
+
+    <h3 set:html={i18n.t('article_tonight_mistake3_h3')}></h3>
+    <p>
+      <span set:html={i18n.t('article_tonight_mistake3_wrong')}></span><br />
+      <span set:html={i18n.t('article_tonight_mistake3_right')}></span>
+    </p>
+
+    <h3 set:html={i18n.t('article_tonight_mistake4_h3')}></h3>
+    <p>
+      <span set:html={i18n.t('article_tonight_mistake4_wrong')}></span><br />
+      <span set:html={i18n.t('article_tonight_mistake4_right')}></span>
+    </p>
+
+    <h3 set:html={i18n.t('article_tonight_mistake5_h3')}></h3>
+    <p>
+      <span set:html={i18n.t('article_tonight_mistake5_wrong')}></span><br />
+      <span set:html={i18n.t('article_tonight_mistake5_right')}></span>
+    </p>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="guide__section faq-section guide-faq faq-section--left">
+    <h2 set:html={i18n.t('article_tonight_faq_h2')}></h2>
+    <div class="faq-grid">
+      <div class="faq-item faq-theme-primary">
+        <h3 set:html={i18n.t('article_tonight_faq1_q')}></h3>
+        <p set:html={i18n.t('article_tonight_faq1_a')}></p>
+      </div>
+
+      <div class="faq-item faq-theme-secondary">
+        <h3 set:html={i18n.t('article_tonight_faq2_q')}></h3>
+        <p set:html={i18n.t('article_tonight_faq2_a')}></p>
+      </div>
+
+      <div class="faq-item faq-theme-tertiary">
+        <h3 set:html={i18n.t('article_tonight_faq3_q')}></h3>
+        <p set:html={i18n.t('article_tonight_faq3_a')}></p>
+      </div>
+
+      <div class="faq-item faq-theme-primary">
+        <h3 set:html={i18n.t('article_tonight_faq4_q')}></h3>
+        <p set:html={i18n.t('article_tonight_faq4_a')}></p>
+      </div>
+
+      <div class="faq-item faq-theme-secondary">
+        <h3 set:html={i18n.t('article_tonight_faq5_q')}></h3>
+        <p set:html={i18n.t('article_tonight_faq5_a')}></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="guide__section" style="text-align: center; margin-top: 4rem;">
+    <h2 set:html={i18n.t('article_tonight_cta_h2')}></h2>
+    <p style="font-size: 1.125rem; color: #C8C8C8; max-width: 600px; margin: 1rem auto 2rem;" set:html={i18n.t('article_tonight_cta_text')}></p>
+  </section>
+</GuideLayout>
+

@@ -1,0 +1,103 @@
+/* Import design tokens for cross-links */
+@import '../tokens/cross-links.css';
+
+.related-content {
+  margin-top: var(--aurora-spacing-xxl);
+  padding: var(--aurora-spacing-xl) 0;
+  border-top: 1px solid var(--aurora-border-light);
+}
+
+.related-content h2 {
+  margin-bottom: var(--aurora-spacing-l);
+}
+
+.related-links {
+  display: grid;
+  gap: var(--aurora-spacing-m);
+}
+
+.related-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--aurora-spacing-s);
+  padding: var(--aurora-spacing-m);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--aurora-radius-l);
+  background: rgba(255, 255, 255, 0.02);
+  transition: background var(--aurora-timing-base), border-color var(--aurora-timing-base);
+  text-decoration: none;
+  color: var(--aurora-text-primary);
+}
+
+.related-link:hover,
+.related-link:focus-visible {
+  border-color: var(--cross-link-border);
+  background: var(--cross-link-hover-bg);
+}
+
+.related-link-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 500;
+}
+
+.related-link-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  color: var(--cross-link-color-inline);
+}
+
+.related-link-badge .badge-accent {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 2px var(--aurora-spacing-s);
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: var(--aurora-radius-s);
+  font-size: 0.75rem;
+  color: var(--aurora-text-secondary);
+}
+
+.cross-link-inline {
+  color: var(--cross-link-color-inline);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color var(--aurora-timing-base), border-color var(--aurora-timing-base);
+}
+
+.cross-link-inline:hover,
+.cross-link-inline:focus-visible {
+  border-color: var(--cross-link-border);
+}
+
+.cross-link-accent {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5ch;
+  padding: var(--aurora-spacing-xs) var(--aurora-spacing-s);
+  background: var(--cross-link-accent-bg);
+  color: var(--cross-link-accent-color);
+  border-radius: var(--aurora-radius-s);
+  font-size: 0.75rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+@media (min-width: 640px) {
+  .related-links {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  }
+}

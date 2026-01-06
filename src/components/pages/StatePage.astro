@@ -1,0 +1,628 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import '../../styles/pages/state.css';
+import '../../styles/components/faq.css';
+import '../../styles/components/store-badges.css';
+import '../../styles/components/city-cards.css';
+import '../../styles/components/app-screens-gallery.css';
+import '../../styles/components/city-search.css';
+import StoreBadges from '../StoreBadges.astro';
+import Breadcrumbs from '../Breadcrumbs.astro';
+import AppScreensGallery from '../AppScreensGallery.astro';
+import DataFreshness from '../DataFreshness.astro';
+import CitySearch from '../CitySearch.astro';
+import heroBackground from '../../../assets/main-background.webp';
+import bortleSites from '../../data/bortle-sites.json';
+import { loadGlobalCityStatuses } from '../../utils/global-status';
+import { calculateKpBands, getKpBandsRange } from '../../utils/kp-bands';
+import { sortCitiesByStatusAndMagLat, getSortingExplanation } from '../../utils/city-sorting';
+import { DEFAULT_STATUS_TEXTS } from '../../data/status-defaults';
+import {
+  normalizeStateSlug,
+  REGIONS
+} from '../../utils/slug-normalizer';
+import { generateStateTitle } from '../../utils/seo-titles';
+import {
+  buildStatePath,
+  buildStateAbsoluteUrl,
+  getAvailableLanguagesForState,
+  getLocalizedCitySlugSet,
+  StatePageData
+} from '../../utils/state-pages';
+import type { SupportedLanguage } from '@config/language-targeting';
+import { createPageI18n } from '../../utils/i18n-page';
+
+interface Props {
+  lang: SupportedLanguage;
+  stateData: StatePageData;
+  isRegion?: boolean;
+  hreflangTags?: { hreflang: string; href: string }[];
+  canonicalPath?: string;
+}
+
+const {
+  lang,
+  stateData,
+  isRegion: isRegionPage = false,
+  hreflangTags: overrideHreflangTags = [],
+  canonicalPath
+} = Astro.props as Props;
+
+const { name, iso, country, countryCode, countryISO, cities } = stateData;
+
+const i18n = await createPageI18n(lang);
+
+const localizedCitySlugs = getLocalizedCitySlugSet(lang);
+
+const buildCityHref = (citySlug: string) => {
+  // English pages don't have /en/ prefix - they live at root level
+  if (lang === 'en') {
+    return `/${citySlug}`;
+  }
+  // Non-English: use language prefix only if city is translated for that language
+  return localizedCitySlugs.has(citySlug)
+    ? `/${lang}/${citySlug}`
+    : `/${citySlug}`;
+};
+
+const buildBestTimeHref = (slug: string) => {
+  // English pages don't have /en/ prefix
+  if (lang === 'en') {
+    return `/best-time/${slug}`;
+  }
+  return localizedCitySlugs.has(slug)
+    ? `/${lang}/best-time/${slug}`
+    : `/best-time/${slug}`;
+};
+
+const buildCountryHref = (countrySlug: string) => {
+  return lang === 'en'
+    ? `/country/${countrySlug}`
+    : `/${lang}/country/${countrySlug}`;
+};
+
+const buildHomeHref = () => (lang === 'en' ? '/' : `/${lang}`);
+
+
+const BASE_URL = 'https://auroraforecast.me';
+
+const canonicalUrl = buildStateAbsoluteUrl(countryISO, iso, lang);
+const availableLanguages = getAvailableLanguagesForState(stateData);
+const defaultHreflangTags = availableLanguages.map(language => ({
+  hreflang: language,
+  href: buildStateAbsoluteUrl(countryISO, iso, language)
+})).concat({
+  hreflang: 'x-default',
+  href: buildStateAbsoluteUrl(countryISO, iso, 'en')
+});
+
+const pageType = isRegionPage ? 'Region' : 'State';
+const baseTitle = generateStateTitle(name, iso.toUpperCase(), cities.length);
+const pageTitle = `${baseTitle} | AuroraMe`;
+const pageDescription = i18n.tpl(
+  i18n.t('state_meta_description', 'Live aurora forecast for {count} cities in {name}. Real-time northern lights visibility with required Kp {kp}.'),
+  {
+    count: cities.length,
+    name,
+    kp: getKpBandsRange(cities.map(c => c.magneticLat).filter(Boolean)).range
+  }
+);
+
+const breadcrumbs = [
+  { title: i18n.t('breadcrumb_home'), href: buildHomeHref() },
+  { title: country, href: buildCountryHref(country.toLowerCase().replace(/\s+/g, '-')) },
+  { title: name }
+];
+
+const globalCityStatuses = await loadGlobalCityStatuses();
+const magneticLatitudes = cities.map(c => c.magneticLat).filter((value): value is number => typeof value === 'number');
+const kpBandsRange = getKpBandsRange(magneticLatitudes);
+const avgMagneticLat = magneticLatitudes.reduce((sum, mlat) => sum + mlat, 0) / magneticLatitudes.length;
+
+const sortedCities = sortCitiesByStatusAndMagLat(cities, globalCityStatuses);
+
+const bortleKey = isRegionPage ? `${countryISO}-${iso}` : `${countryISO}-${iso}`;
+const stateBortleSites = (bortleSites as Record<string, any[]>)[bortleKey] || [];
+
+const currentBestCity = sortedCities.reduce((best, city) => {
+  const cityStatus = globalCityStatuses[city.slug];
+  const bestStatus = globalCityStatuses[best.slug];
+
+  if (!cityStatus) return best;
+  if (!bestStatus) return city;
+
+  const statusOrder: Record<string, number> = {
+    high: 4,
+    medium: 3,
+    low: 2,
+    very_low: 1
+  };
+
+  return (statusOrder[cityStatus.status] || 0) > (statusOrder[bestStatus.status] || 0)
+    ? city
+    : best;
+}, sortedCities[0]);
+
+const dataTimestamp = new Date().toISOString();
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  canonical={canonicalPath ? `https://auroraforecast.me/${canonicalPath}` : canonicalUrl}
+  lang={lang}
+  hreflangTags={overrideHreflangTags.length ? overrideHreflangTags : defaultHreflangTags}
+>
+  <div class="state-header-parallax" style={`background-image: url(${heroBackground.src})`}>
+    <div class="state-header">
+      <h1>{i18n.tpl(i18n.t('state_header_title'), { name })}</h1>
+      <p class="header-subtitle">{i18n.tpl(i18n.t('state_header_subtitle'), { count: cities.length })}</p>
+      <DataFreshness updatedAt={dataTimestamp} timezone="UTC" />
+
+      <p class="intro">
+        {isRegionPage
+          ? i18n.tpl(i18n.t('state_header_intro_region'), { name })
+          : i18n.tpl(i18n.t('state_header_intro_state'), { name, count: cities.length })
+        }
+        {currentBestCity && globalCityStatuses[currentBestCity.slug]?.status !== 'very_low' && (
+          <span class="best-now"> {i18n.t('state_header_best_now')} <a href={buildCityHref(currentBestCity.slug)}>{currentBestCity.name}</a></span>
+        )}
+      </p>
+    </div>
+  </div>
+
+  <div class="state-breadcrumbs">
+    <Breadcrumbs items={breadcrumbs} />
+  </div>
+
+  <main class="container state-page-container">
+    <section class="key-stats-section">
+      <div class="stats-grid">
+        <div class="stat-card stat-card-primary">
+          <div class="stat-icon">📍</div>
+          <div class="stat-content">
+            <h3>{i18n.t('state_stat_cities_title')}</h3>
+            <div class="stat-value">{cities.length}</div>
+            <p class="stat-description">{i18n.tpl(i18n.t('state_stat_cities_desc'), { name })}</p>
+          </div>
+        </div>
+        <div class="stat-card stat-card-success">
+          <div class="stat-icon">🧭</div>
+          <div class="stat-content">
+            <h3>{i18n.t('state_stat_mlat_title')}</h3>
+            <div class="stat-value">
+              {Math.min(...magneticLatitudes).toFixed(1)}°–{Math.max(...magneticLatitudes).toFixed(1)}° MLAT
+            </div>
+            <p class="stat-description">{i18n.t('state_stat_mlat_desc')}</p>
+          </div>
+        </div>
+        <div class="stat-card stat-card-accent">
+          <div class="stat-icon">⚡</div>
+          <div class="stat-content">
+            <h3>{i18n.t('state_stat_kp_title')}</h3>
+            <div class="stat-value">{kpBandsRange.range}</div>
+            <p class="stat-description">{i18n.t('state_stat_kp_desc')}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="kp-bands-section">
+      <h2>{i18n.t('state_kp_section_title')}</h2>
+      <div class="kp-bands-chart">
+        {sortedCities.slice(0, 6).map(city => {
+          const bands = calculateKpBands(city.magneticLat);
+          return (
+            <div class="kp-band-row">
+              <div class="kp-band-header">
+                <div class="city-name">{city.name}</div>
+                <div class="mlat-value">
+                  {city.magneticLat?.toFixed(1)}° MLAT
+                </div>
+              </div>
+              <div class="kp-range-info">
+                <div class="kp-range-label">{i18n.t('state_kp_range_label')}</div>
+                <div class="kp-range-values">
+                  <div class="kp-range-item">
+                    <strong>Kp {bands.horizon.toFixed(1)}+</strong>
+                    <span>{i18n.t('state_kp_level_horizon')}</span>
+                  </div>
+                  <div class="kp-range-item">
+                    <strong>Kp {bands.noticeable.toFixed(1)}+</strong>
+                    <span>{i18n.t('state_kp_level_optimal')}</span>
+                  </div>
+                  <div class="kp-range-item">
+                    <strong>Kp {bands.bright.toFixed(1)}+</strong>
+                    <span>{i18n.t('state_kp_level_bright')}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="kp-visual">
+                <div class="kp-bar">
+                  {[0,1,2,3,4,5,6,7,8,9].map(kp => (
+                    <span class={`kp-segment ${
+                      kp >= bands.bright ? 'bright' :
+                      kp >= bands.noticeable ? 'noticeable' :
+                      kp >= bands.horizon ? 'horizon' : 'inactive'
+                    }`}></span>
+                  ))}
+                </div>
+                <div class="kp-scale">
+                  {[0,1,2,3,4,5,6,7,8,9].map(kp => (
+                    <span class="kp-scale-label">Kp{kp}</span>
+                  ))}
+                </div>
+              </div>
+              <div class="kp-mobile-legend">
+                <div class="kp-mobile-legend-grid">
+                  <div class="kp-mobile-legend-item">
+                    <div class="kp-mobile-legend-color horizon"></div>
+                    <div class="kp-mobile-legend-text">{i18n.t('state_kp_legend_horizon')}</div>
+                  </div>
+                  <div class="kp-mobile-legend-item">
+                    <div class="kp-mobile-legend-color noticeable"></div>
+                    <div class="kp-mobile-legend-text">{i18n.t('state_kp_legend_visible')}</div>
+                  </div>
+                  <div class="kp-mobile-legend-item">
+                    <div class="kp-mobile-legend-color bright"></div>
+                    <div class="kp-mobile-legend-text">{i18n.t('state_kp_legend_bright')}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <div class="kp-legend">
+        <div class="kp-legend-item">
+          <div class="kp-legend-color horizon"></div>
+          <span class="kp-legend-label">{i18n.t('state_kp_legend_horizon')}</span>
+        </div>
+        <div class="kp-legend-item">
+          <div class="kp-legend-color noticeable"></div>
+          <span class="kp-legend-label">{i18n.t('state_kp_legend_visible')}</span>
+        </div>
+        <div class="kp-legend-item">
+          <div class="kp-legend-color bright"></div>
+          <span class="kp-legend-label">{i18n.t('state_kp_legend_bright')}</span>
+        </div>
+      </div>
+    </section>
+
+    {stateBortleSites.length > 0 && (
+      <section class="dark-sky-locations">
+        <h2>{i18n.t('state_darksky_title')}</h2>
+        <div class="dark-sky-map">
+          {stateBortleSites.length > 0 ? (
+            <iframe
+              src={`https://www.google.com/maps/embed/v1/search?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodeURIComponent(stateBortleSites.map(site => site.name).join(' OR ') + ' dark sky sites ' + name)}&zoom=7&center=${cities[0]?.lat || avgMagneticLat},${cities[0]?.lon || -100}`}
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              title={`${stateBortleSites.length} dark sky locations in ${name}`}
+            ></iframe>
+          ) : (
+            <iframe
+              src={`https://www.google.com/maps/embed/v1/search?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=dark+sky+preserves+${encodeURIComponent(name)}&zoom=7&center=${cities[0]?.lat || avgMagneticLat},${cities[0]?.lon || -100}`}
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              title={`Dark sky locations in ${name}`}
+            ></iframe>
+          )}
+        </div>
+        <p class="map-description">
+          {i18n.tpl(i18n.t('state_darksky_map_desc'), {
+            type: stateBortleSites.length > 0 ? i18n.t('state_darksky_type_preserves') : i18n.t('state_darksky_type_areas'),
+            name
+          })}
+        </p>
+        <div class="bortle-sites-grid">
+          {stateBortleSites.map(site => (
+            <div class="bortle-site-card">
+              <div class="bortle-badge">{i18n.tpl(i18n.t('state_darksky_bortle_badge'), { number: site.bortle })}</div>
+              <h3>{site.name}</h3>
+              <p class="site-description">{site.description}</p>
+              <div class="site-details">
+                <div class="distances">
+                  {Object.entries(site.distance_from).slice(0, 2).map(([city, miles]) => (
+                    <span>{i18n.tpl(i18n.t('state_darksky_distance'), { miles, city: city.replace(/_/g, ' ') })}</span>
+                  ))}
+                </div>
+                <div class="access">{site.access}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <section class="state-cities-gallery">
+      <h2>{i18n.t('state_cities_title')}</h2>
+      <div class="city-search-wrapper">
+        <CitySearch i18n={i18n} id="state-city-search" compact={true} />
+      </div>
+      <div class="state-cities-grid">
+        {sortedCities.slice(0, 12).map(city => {
+          const cityStatus = globalCityStatuses[city.slug] || {
+            status: 'unknown',
+            statusText: DEFAULT_STATUS_TEXTS.medium || 'Check forecast',
+            color: ''
+          };
+          const bands = calculateKpBands(city.magneticLat);
+
+          return (
+            <a
+              href={buildCityHref(city.slug)}
+              class={`city-card status-${cityStatus.status}`}
+              data-status={cityStatus.status}
+              data-city-slug={city.slug}
+              style={cityStatus.color ? `--status-color: ${cityStatus.color}` : undefined}
+            >
+              <div class="city-card-content">
+                <div class="city-header">
+                  <h3>{city.name}</h3>
+                  <div class="city-meta">
+                    <span class="meta-item">
+                      <span class="meta-label">MLAT</span>
+                      <span class="meta-value">{city.magneticLat?.toFixed(1) || 'N/A'}°</span>
+                    </span>
+                    <span class="meta-item">
+                      <span class="meta-label">Min Kp</span>
+                      <span class="meta-value">{bands.horizon.toFixed(1)}+</span>
+                    </span>
+                  </div>
+                </div>
+                <p class="city-description">{city.description}</p>
+                <div class="city-status-info">
+                  <div class="city-status-text-group">
+                    <div class="city-status-text">{i18n.t('state_city_status_label')}</div>
+                    <div class="city-status-label" data-status-label>{cityStatus.statusText}</div>
+                  </div>
+                  <div class="city-view-btn">{i18n.t('state_city_view_btn')}</div>
+                </div>
+              </div>
+            </a>
+          );
+        })}
+      </div>
+      {sortedCities.length > 12 && (
+        <div class="more-cities-info">
+          <p>{i18n.tpl(
+            i18n.t('state_cities_showing'),
+            {
+              count: 12,
+              explanation: getSortingExplanation(Object.keys(globalCityStatuses).length > 0),
+              name,
+              total: sortedCities.length
+            }
+          )}</p>
+          <details class="all-cities-list">
+            <summary>{i18n.tpl(i18n.t('state_cities_view_all'), { count: sortedCities.length })}</summary>
+            <div class="all-cities-links">
+              {sortedCities.slice(12).map(city => (
+                <a href={buildCityHref(city.slug)} class="city-link">{city.name}</a>
+              ))}
+            </div>
+          </details>
+        </div>
+      )}
+    </section>
+
+    <section class="seasonal-guide">
+      <h2>{i18n.tpl(i18n.t('state_season_title'), { name })}</h2>
+      <div class="guide-grid">
+        <div class="guide-card guide-card-success">
+          <div class="guide-card-header">
+            <span class="guide-icon">🌍</span>
+            <h3>{i18n.t('state_season_geo_title')}</h3>
+          </div>
+          <div class="guide-highlights">
+            <div class="highlight-item">
+              <span class="highlight-label">{i18n.t('state_season_geo_mlat')}</span>
+              <span class="highlight-value highlight-good">
+                {Math.min(...magneticLatitudes).toFixed(1)}°–{Math.max(...magneticLatitudes).toFixed(1)}° MLAT
+              </span>
+            </div>
+            <div class="highlight-item">
+              <span class="highlight-label">{i18n.t('state_stat_cities_title')}</span>
+              <span class="highlight-value">
+                {i18n.tpl(i18n.t('state_season_geo_cities'), { count: cities.length })}
+              </span>
+            </div>
+            <div class="highlight-item">
+              <span class="highlight-label">{i18n.t('state_season_geo_darkness')}</span>
+              <span class="highlight-value highlight-excellent">
+                {i18n.tpl(
+                  i18n.t('state_season_geo_darkness_hours'),
+                  { hours: name.includes('Alaska') ? '20' : '16-18' }
+                )}
+              </span>
+            </div>
+            <div class="highlight-item">
+              <span class="highlight-label">{i18n.t('state_season_geo_darksites')}</span>
+              <span class="highlight-value highlight-good">
+                {i18n.tpl(i18n.t('state_season_geo_darksites_count'), { count: stateBortleSites.length })}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="guide-card guide-card-primary">
+          <div class="guide-card-header">
+            <span class="guide-icon">🗓️</span>
+            <h3>{i18n.t('state_season_peak_title')}</h3>
+          </div>
+          <div class="guide-highlights">
+            <div class="highlight-item">
+              <span class="highlight-label">{i18n.t('state_season_peak_primary')}</span>
+              <span class="highlight-value highlight-excellent">{i18n.t('state_season_peak_primary_months')}</span>
+            </div>
+            <div class="highlight-item">
+              <span class="highlight-label">{i18n.t('state_season_peak_secondary')}</span>
+              <span class="highlight-value highlight-good">{i18n.t('state_season_peak_secondary_months')}</span>
+            </div>
+            <div class="highlight-item">
+              <span class="highlight-label">{i18n.t('state_season_peak_equinox')}</span>
+              <span class="highlight-value highlight-excellent">{i18n.t('state_season_peak_equinox_value')}</span>
+            </div>
+            <div class="highlight-item">
+              <span class="highlight-label">{i18n.t('state_season_peak_photography')}</span>
+              <span class="highlight-value">{i18n.t('state_season_peak_photography_desc')}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="guide-card guide-card-accent">
+          <div class="guide-card-header">
+            <span class="guide-icon">📱</span>
+            <h3>{i18n.t('state_season_track_title')}</h3>
+          </div>
+          <div class="guide-highlights">
+            <div class="highlight-item">
+              <span class="highlight-label">{i18n.t('state_season_track_coverage')}</span>
+              <span class="highlight-value highlight-excellent">
+                {i18n.tpl(i18n.t('state_season_track_coverage_value'), { count: cities.length })}
+              </span>
+            </div>
+            <div class="highlight-item">
+              <span class="highlight-label">{i18n.t('state_season_track_notice')}</span>
+              <span class="highlight-value highlight-good">{i18n.t('state_season_track_notice_value')}</span>
+            </div>
+            <div class="highlight-item">
+              <span class="highlight-label">{i18n.t('state_season_track_weather')}</span>
+              <span class="highlight-value">{i18n.t('state_season_track_weather_value')}</span>
+            </div>
+            <div class="highlight-item">
+              <span class="highlight-label">{i18n.t('state_season_track_predictions')}</span>
+              <span class="highlight-value">{i18n.t('state_season_track_predictions_value')}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="faq-section state-faq faq-section--compact">
+      <h2>{i18n.t('state_faq_title')}</h2>
+      <div class="faq-grid">
+        <div class="faq-item faq-theme-primary">
+          <h3>{i18n.tpl(i18n.t('state_faq_q1'), { name })}</h3>
+          <p>
+            {i18n.tpl(i18n.t('state_faq_a1_yes'), {
+              name,
+              region: isRegionPage ? i18n.t('state_faq_a1_region_word') : '',
+              city: sortedCities[0]?.name || '',
+              mlat: sortedCities[0]?.magneticLat?.toFixed(1) || '',
+              kp_min: calculateKpBands(sortedCities[0]?.magneticLat).horizon.toFixed(1),
+              kp_max: kpBandsRange.max.horizon.toFixed(1)
+            })}
+          </p>
+        </div>
+        <div class="faq-item faq-theme-secondary">
+          <h3>{i18n.tpl(i18n.t('state_faq_q2'), { name })}</h3>
+          <p>
+            {stateBortleSites.length > 0
+              ? i18n.tpl(i18n.t('state_faq_a2_sites'), {
+                  sites: stateBortleSites.slice(0, 2).map(s => s.name).join(i18n.t('state_faq_joiner', ' and ')),
+                  min: Math.min(...stateBortleSites.map(s => s.bortle)),
+                  max: Math.max(...stateBortleSites.map(s => s.bortle))
+                }) + ' ' + i18n.t('state_darksky_photo_desc')
+              : i18n.t('state_darksky_check_cities')
+            }
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-app">
+      <AppScreensGallery
+        title={i18n.tpl(i18n.t('state_cta_title'), { name })}
+        subtitle={i18n.t('state_cta_subtitle')}
+      />
+    </section>
+
+    <section class="related-content">
+      <h2>{i18n.t('state_footer_title')}</h2>
+      <div class="related-links">
+        {!isRegionPage && (
+          <a href={buildBestTimeHref(iso)} class="related-link">
+            📅 {i18n.tpl(i18n.t('state_footer_best_time'), { name })}
+          </a>
+        )}
+        <a href={buildCountryHref(country.toLowerCase().replace(/\s+/g, '-'))} class="related-link">
+          🌍 {i18n.tpl(i18n.t('state_footer_all_country'), { country })}
+        </a>
+        {isRegionPage && REGIONS[iso]?.states.map(stateSlug => {
+          const stateISO = normalizeStateSlug(stateSlug, countryCode);
+          const stateCities = cities.filter(c =>
+            normalizeStateSlug(c.state || '', c.countryCode) === stateISO
+          );
+          if (stateCities.length === 0) {
+            return null;
+          }
+          return (
+            <a href={buildStatePath(countryISO, stateISO, lang)} class="related-link">
+              📍 {stateCities[0].state} ({stateCities.length} {i18n.t('state_footer_cities_label', 'cities')})
+            </a>
+          );
+        })}
+      </div>
+    </section>
+  </main>
+
+  <script src="/scripts/aurora-sync.js?v=3" defer></script>
+
+  <StoreBadges
+    pageType="state_page"
+    countryCode={countryISO}
+    stateCode={iso}
+    placement="sticky_footer"
+    sticky={true}
+    enhanced={true}
+  />
+
+  <script
+    type="application/ld+json"
+    set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'WebPage',
+      'name': i18n.tpl(i18n.t('state_header_title'), { name }),
+      'description': pageDescription,
+      'breadcrumb': {
+        '@type': 'BreadcrumbList',
+        'itemListElement': breadcrumbs
+          .filter(crumb => crumb.href)
+          .map((crumb, index) => ({
+            '@type': 'ListItem',
+            'position': index + 1,
+            'name': crumb.title,
+            'item': `${BASE_URL}${crumb.href}`
+          }))
+      },
+      'mainEntity': [
+        {
+          '@type': 'ItemList',
+          'itemListElement': sortedCities.map((city, index) => ({
+            '@type': 'Place',
+            'position': index + 1,
+            'name': city.name,
+            'url': `${BASE_URL}${buildCityHref(city.slug)}`
+          }))
+        },
+        {
+          '@type': 'Question',
+          'name': i18n.tpl(i18n.t('state_faq_q1'), { name }),
+          'acceptedAnswer': {
+            '@type': 'Answer',
+            'text': i18n.tpl(i18n.t('state_faq_a1_yes'), {
+              name,
+              region: isRegionPage ? i18n.t('state_faq_a1_region_word') : '',
+              city: sortedCities[0]?.name || '',
+              mlat: sortedCities[0]?.magneticLat?.toFixed(1) || '',
+              kp_min: calculateKpBands(sortedCities[0]?.magneticLat).horizon.toFixed(1),
+              kp_max: kpBandsRange.max.horizon.toFixed(1)
+            })
+          }
+        }
+      ]
+    })}
+  ></script>
+</BaseLayout>

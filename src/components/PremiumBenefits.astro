@@ -1,0 +1,27 @@
+---
+import '../styles/components/premium-benefits.css';
+import FactorInfoHint from './FactorInfoHint.astro';
+---
+
+<section class="premium container">
+  <h2>Premium benefits</h2>
+  <ul class="premium__list">
+    <li>
+      <strong>Full 72‑hour forecast</strong>
+      <FactorInfoHint simple={true} text="See detailed probabilities for the next 3 days." />
+    </li>
+    <li>
+      <strong>27‑day monthly outlook</strong>
+      <FactorInfoHint simple={true} text="Plan trips around seasonal patterns and trends." />
+    </li>
+    <li>
+      <strong>Aurora history</strong>
+      <FactorInfoHint simple={true} text="Recent activity, confidence, and local KP thresholds." />
+    </li>
+    <li>
+      <strong>Storm alerts (in app)</strong>
+      <FactorInfoHint simple={true} text="Push notifications for strong geomagnetic activity." />
+    </li>
+  </ul>
+</section>
+

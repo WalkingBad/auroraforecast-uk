@@ -1,0 +1,31 @@
+/**
+ * City Page CSS Bundle
+ *
+ * Aggregates all CSS imports for city pages to simplify maintenance.
+ * Instead of importing 11 separate CSS files, import this single bundle.
+ *
+ * Usage in [city].astro:
+ *   import '../styles/bundles/city-page.css';
+ *
+ * Contains:
+ * - Page styles (city.css, city-legacy.css)
+ * - Component styles (7 components)
+ * - Cross-links styles (with tokens)
+ */
+
+/* Page Styles */
+@import '../pages/city.css';
+@import '../pages/city-legacy.css';
+
+/* Component Styles */
+@import '../components/aurora-status.css';
+@import '../components/factors-grid.css';
+@import '../components/forecast.css';
+@import '../components/faq.css';
+@import '../components/enhanced-mobile-cta.css';
+@import '../components/store-badges.css';
+@import '../components/city-cards.css';
+@import '../components/app-screens-gallery.css';
+
+/* Cross-links (includes tokens via @import) */
+@import '../components/cross-links.css';

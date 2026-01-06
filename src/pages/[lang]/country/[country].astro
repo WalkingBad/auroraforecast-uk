@@ -1,0 +1,430 @@
+---
+import CountryPageLayout from '../../../layouts/CountryPageLayout.astro';
+import StoreBadges from '../../../components/StoreBadges.astro';
+import SocialLinks from '../../../components/SocialLinks.astro';
+import RelatedLinks from '../../../components/RelatedLinks.astro';
+import CitySearch from '../../../components/CitySearch.astro';
+import '../../../styles/components/city-search.css';
+import citiesData from '../../../data/cities.json';
+import { loadGlobalCityStatuses } from '../../../utils/global-status.ts';
+import { calculateKpThreshold, calculateKpBands } from '../../../utils/kp-bands.ts';
+import { sortCitiesByStatusAndMagLat, getSortingExplanation } from '../../../utils/city-sorting.ts';
+import {
+  getCountryBestTimeLinks,
+  getCountryLiveLinks
+} from '../../../utils/cross-links.ts';
+import type { CountryPageRecord } from '../../../utils/cross-links.ts';
+import { REGIONS, normalizeStateSlug } from '../../../utils/slug-normalizer.ts';
+import { getStateFlagUrl, hasStateFlags } from '../../../utils/state-flags.ts';
+import type { SupportedLanguage } from '@config/language-targeting';
+import { SUPPORTED_LANGUAGES, getCitiesForLanguage } from '@config/language-targeting';
+import { createPageI18n } from '../../../utils/i18n-page';
+import { generatePageHreflangTags } from '../../../utils/hreflang';
+
+// Generate static paths for all countries and all languages
+export async function getStaticPaths() {
+  // Group cities by country
+  const countriesMap = new Map();
+
+  citiesData.forEach(city => {
+    const countryKey = city.country.toLowerCase().replace(/\s+/g, '-');
+    if (!countriesMap.has(countryKey)) {
+      countriesMap.set(countryKey, {
+        name: city.country,
+        countryCode: city.countryCode,
+        cities: []
+      });
+    }
+    countriesMap.get(countryKey).cities.push(city);
+  });
+
+  // Generate paths for all lang + country combinations
+  const paths = [];
+  for (const lang of SUPPORTED_LANGUAGES) {
+    if (lang === 'en') continue; // English is at /country/[country]
+    for (const [slug, countryData] of countriesMap.entries()) {
+      paths.push({
+        params: { lang, country: slug },
+        props: { lang, countryData: { slug, ...countryData } },
+      });
+    }
+  }
+  return paths;
+}
+
+const { lang, countryData } = Astro.props;
+const i18n = await createPageI18n(lang);
+
+if (!countryData) {
+  throw new Error('Country data is required for country page generation');
+}
+const { slug, name, countryCode, cities } = countryData;
+
+// Get localized cities for this language
+const localizedCitySlugs = new Set(
+  getCitiesForLanguage(citiesData as any, lang).map(c => c.slug)
+);
+
+// Helper function to build city href
+// Only use localized links for cities that actually have localized pages
+const buildCityHref = (citySlug: string) => {
+  // Only use localized link if the city is actually localized for this language
+  if (localizedCitySlugs.has(citySlug)) {
+    return `/${lang}/${citySlug}`;
+  }
+  // Fall back to English version for non-localized cities
+  return `/${citySlug}`;
+};
+
+// Helper function to build best-time page href
+const buildBestTimeHref = (citySlug: string) => {
+  if (localizedCitySlugs.has(citySlug)) {
+    return `/${lang}/best-time/${citySlug}`;
+  }
+  return `/best-time/${citySlug}`;
+};
+
+// Load global city statuses
+const globalCityStatuses = await loadGlobalCityStatuses();
+
+// SEO optimization
+const canonicalUrl = `https://auroraforecast.me/${lang}/country/${slug}`;
+
+// Calculate country statistics
+const avgMagneticLat = cities.reduce((sum, city) => sum + (city.magneticLat || 0), 0) / cities.length;
+const totalPopulation = cities.reduce((sum, city) => sum + (city.population || 0), 0);
+// Calculate best (lowest) Kp threshold from cities with highest magnetic latitude
+const bestKpThreshold = Math.min(...cities.map(city => calculateKpThreshold(city.magneticLat)));
+
+// Sort cities by current aurora status + magnetic latitude (active aurora first)
+const sortedCities = sortCitiesByStatusAndMagLat(cities, globalCityStatuses);
+const highlightCities = sortedCities.slice(0, 3).map((city) => city.name).join(', ');
+const pageTitle = i18n.t('country_meta_title')
+  .replace('{name}', name)
+  .replace('{count}', cities.length.toString());
+const pageDescription = i18n.t('country_meta_description')
+  .replace('{name}', name)
+  .replace('{count}', cities.length.toString())
+  .replace('{highlights}', highlightCities);
+
+const originSlug = `country/${slug}`;
+const countryRecord: CountryPageRecord = {
+  slug,
+  name,
+  countryCode,
+  cities: sortedCities
+};
+const countryLiveLinks = getCountryLiveLinks(countryRecord, 3, lang);
+const countryGuideLinks = getCountryBestTimeLinks(countryRecord, 3, lang);
+const highlightCity = sortedCities[0];
+
+// Filter regions for this country
+const countryISO = countryCode.toLowerCase();
+const countryRegions = Object.entries(REGIONS)
+  .filter(([_, region]) => region.country === countryISO)
+  .map(([slug, region]) => {
+    const regionCities = cities.filter(city => {
+      const stateSlug = city.state?.toLowerCase().replace(/\s+/g, '-');
+      return region.states.includes(stateSlug);
+    });
+    return {
+      slug,
+      name: region.name,
+      cityCount: regionCities.length
+    };
+  })
+  .filter(r => r.cityCount > 0);
+
+// Aggregate states for this country
+const stateMap = new Map();
+cities.forEach(city => {
+  if (city.state) {
+    const normalizedSlug = normalizeStateSlug(city.state, countryCode);
+    if (!stateMap.has(normalizedSlug)) {
+      stateMap.set(normalizedSlug, {
+        name: city.state,
+        count: 0,
+        slug: normalizedSlug
+      });
+    }
+    stateMap.get(normalizedSlug).count++;
+  }
+});
+const availableStates = Array.from(stateMap.values()).sort((a, b) => a.name.localeCompare(b.name));
+
+// Breadcrumb structure for country page
+const breadcrumbs = [
+  { title: i18n.t('breadcrumb_home'), href: `/${lang}` },
+  { title: name } // Current page - no href
+];
+
+// Generate hreflang tags for all language variants of this country
+const hreflangTags = generatePageHreflangTags(
+  `/country/${slug}`,
+  SUPPORTED_LANGUAGES
+);
+---
+
+<CountryPageLayout
+  title={pageTitle}
+  description={pageDescription}
+  canonical={canonicalUrl}
+  lang={lang}
+  i18n={i18n}
+  hreflangTags={hreflangTags}
+  countryData={countryData}
+  breadcrumbs={breadcrumbs}
+>
+  <!-- Header Content -->
+  <h1 slot="header-content">{i18n.t('country_header_title').replace('{name}', name)}</h1>
+  <p class="intro" slot="header-content">
+    {i18n.t('country_header_intro').replace('{name}', name).replace('{count}', cities.length.toString())}
+    {highlightCity && (
+      <>
+        {' '}
+        <a
+          class="cross-link-inline"
+          href={buildBestTimeHref(highlightCity.slug)}
+          data-cross-link
+          data-slot="intro"
+          data-type="guide"
+          data-target={`best-time/${highlightCity.slug}`}
+          data-position="1"
+        >
+          {i18n.t('country_header_plan_link').replace('{city}', highlightCity.name)}
+        </a>
+      </>
+    )}
+  </p>
+
+  <!-- Stats -->
+  <div class="stat" slot="stats">
+    <h3>{i18n.t('country_stat_cities')}</h3>
+    <p>{cities.length}</p>
+  </div>
+  <div class="stat" slot="stats">
+    <h3>{i18n.t('country_stat_avg_mlat')}</h3>
+    <p>{avgMagneticLat.toFixed(1)}°</p>
+  </div>
+  <div class="stat" slot="stats">
+    <h3>{i18n.t('country_stat_best_kp')}</h3>
+    <p>{bestKpThreshold.toFixed(1)}+</p>
+  </div>
+
+  <!-- Cities Gallery -->
+  <section class="country-cities-gallery" slot="cities-gallery">
+    <h2>{i18n.t('country_destinations_title').replace('{name}', name)}</h2>
+    <div class="city-search-wrapper">
+      <CitySearch i18n={i18n} id="country-city-search" compact={true} />
+    </div>
+    <div class="country-cities-grid">
+      {sortedCities.slice(0, 16).map((city) => {
+        const cityStatus = globalCityStatuses[city.slug] || {
+          status: 'unknown',
+          statusText: 'Check forecast',
+          color: '#666666'
+        };
+        const bands = calculateKpBands(city.magneticLat);
+
+        return (
+          <a href={buildCityHref(city.slug)} class={`city-card status-${cityStatus.status}`} data-city-slug={city.slug}>
+            <div class="city-card-content">
+              <div class="city-header">
+                <h3>{city.name}</h3>
+                <div class="city-meta">
+                  <span class="meta-item">
+                    <span class="meta-label">MLAT</span>
+                    <span class="meta-value">{city.magneticLat?.toFixed(1) || 'N/A'}°</span>
+                  </span>
+                  <span class="meta-item">
+                    <span class="meta-label">Min Kp</span>
+                    <span class="meta-value">{bands.horizon.toFixed(1)}+</span>
+                  </span>
+                </div>
+              </div>
+              <p class="city-description">{city[`description_${lang}`] || city.description}</p>
+              <div class="city-status-info">
+                <div class="city-status-text-group">
+                  <div class="city-status-text">{i18n.t('country_city_current_status')}</div>
+                  <div class="city-status-label" data-status-label>{cityStatus.statusText}</div>
+                </div>
+                <div class="city-view-btn">{i18n.t('country_city_view_forecast')}</div>
+              </div>
+            </div>
+          </a>
+        );
+      })}
+    </div>
+    {sortedCities.length > 16 && (
+      <div class="more-cities-info">
+        <p>{i18n.t('country_showing_top').replace('{explanation}', getSortingExplanation(Object.keys(globalCityStatuses).length > 0)).replace('{name}', name).replace('{total}', sortedCities.length.toString())}</p>
+        <details class="all-cities-list">
+          <summary>{i18n.t('country_view_all_cities').replace('{count}', sortedCities.length.toString())}</summary>
+          <div class="all-cities-links">
+            {sortedCities.slice(16).map(city => (
+              <a href={buildCityHref(city.slug)} class="city-link">{city.name}</a>
+            ))}
+          </div>
+        </details>
+      </div>
+    )}
+  </section>
+
+  <!-- Live Links -->
+  <RelatedLinks
+    slot="live-links"
+    title={i18n.t('country_related_live_title').replace('{name}', name)}
+    links={countryLiveLinks}
+    originSlug={originSlug}
+    i18n={i18n}
+  />
+
+  <!-- Guide Section -->
+  <section class="country-guide" slot="guide">
+    <h2>{i18n.t('country_guide_title').replace('{name}', name)}</h2>
+    <div class="guide-grid">
+      <div class="guide-card">
+        <h3>{i18n.t('country_guide_geo_title')}</h3>
+        <ul>
+          <li>{i18n.t('country_guide_geo_avg_mlat').replace('{mlat}', avgMagneticLat.toFixed(1))}</li>
+          <li>{i18n.t('country_guide_geo_coverage').replace('{count}', cities.length.toString())}</li>
+          <li>{i18n.t('country_guide_geo_population').replace('{population}', totalPopulation.toLocaleString())}</li>
+          <li>{i18n.t('country_guide_geo_light_pollution').replace('{count}', cities.filter(c => c.population < 100000).length.toString())}</li>
+        </ul>
+      </div>
+
+      <div class="guide-card">
+        <h3>{i18n.t('country_guide_season_title')}</h3>
+        <ul>
+          <li>{i18n.t('country_guide_season_peak')}</li>
+          <li>{i18n.t('country_guide_season_kp').replace('{kp}', bestKpThreshold.toFixed(1))}</li>
+          <li>{i18n.t('country_guide_season_dark_sky').replace('{months}', name === 'Iceland' || name === 'Norway' ? '4-6' : '6-8')}</li>
+          <li>{i18n.t('country_guide_season_weather')}</li>
+        </ul>
+      </div>
+
+      <div class="guide-card">
+        <h3>{i18n.t('country_guide_app_title')}</h3>
+        <ul>
+          <li>{i18n.t('country_guide_app_forecasts')}</li>
+          <li>{i18n.t('country_guide_app_notifications')}</li>
+          <li>{i18n.t('country_guide_app_cloud_data')}</li>
+          <li>{i18n.t('country_guide_app_premium')}</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Regions Section -->
+  {availableStates.length > 0 && (
+    <section class="country-regions" slot="regions">
+      <h2>{i18n.t('country_regions_title').replace('{name}', name)}</h2>
+      <p class="regions-intro">{i18n.t('country_regions_intro').replace('{name}', name)}</p>
+
+      <div class="state-search-wrapper">
+        <div class="state-search-container">
+          <span class="search-icon">🔍</span>
+          <input
+            type="text"
+            id="state-search"
+            placeholder={i18n.t('country_regions_search_placeholder')}
+            class="state-search-input"
+          />
+        </div>
+      </div>
+
+      <div class="regions-grid" id="states-grid">
+        {availableStates.map(state => {
+          const flagUrl = getStateFlagUrl(state.slug, countryCode);
+          return (
+            <a href={`/${lang}/${countryISO}/${state.slug}`} class="region-card" data-name={(state.name || '').toLowerCase()}>
+              {flagUrl && (
+                <img src={flagUrl} alt={`${state.name} flag`} class="region-flag" loading="lazy" />
+              )}
+              <div class="region-info">
+                <h3>{state.name}</h3>
+                <span class="region-coverage">{state.count} locations</span>
+              </div>
+              <div class="region-arrow">→</div>
+            </a>
+          );
+        })}
+      </div>
+    </section>
+  )}
+
+  <!-- Best Time Links -->
+  <RelatedLinks
+    slot="best-time-links"
+    title={i18n.t('country_related_plan_title').replace('{name}', name)}
+    links={countryGuideLinks}
+    originSlug={originSlug}
+    i18n={i18n}
+  />
+
+  <!-- Structured Data -->
+  <script
+    slot="structured-data"
+    type="application/ld+json"
+    set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": `Northern Lights ${name}`,
+      "description": pageDescription,
+      "url": canonicalUrl,
+      "mainEntity": {
+        "@type": "Country",
+        "name": name,
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": avgMagneticLat,
+          "longitude": cities.reduce((sum, city) => sum + (city.lon || 0), 0) / cities.length
+        }
+      },
+      "hasPart": sortedCities
+        .filter(city => typeof city.lat === 'number' && typeof city.lon === 'number')
+        .map(city => ({
+          "@type": "Place",
+          "name": city.name,
+          "url": `https://auroraforecast.me/${city.slug}`,
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": city.lat,
+            "longitude": city.lon
+          }
+        }))
+    })}
+  ></script>
+
+  <script
+    slot="structured-data"
+    type="application/ld+json"
+    set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: breadcrumbs.map((b, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        name: b.title,
+        item: b.href ? `https://auroraforecast.me${b.href}` : `https://auroraforecast.me/${lang}/country/${slug}`
+      }))
+    })}
+  ></script>
+
+  <!-- Social Links -->
+  <SocialLinks slot="social-links" position="footer" />
+
+  <!-- Page Navigation -->
+  <nav class="page-nav" slot="page-nav">
+    <a href={`/${lang}`}>{i18n.t('country_nav_all_locations')}</a>
+    <a href={sortedCities[0]?.slug ? buildCityHref(sortedCities[0].slug) : `/${lang}`}>{i18n.t('country_nav_live_forecast')}</a>
+  </nav>
+
+  <!-- Sticky Footer -->
+  <StoreBadges slot="sticky-footer" pageType="country_hub" countryCode={countryCode} placement="sticky_footer" sticky={true} enhanced={true} i18n={i18n} />
+</CountryPageLayout>
+
+<script type="module" src="/scripts/cross-link-tracker.js"></script>
+<script type="module" src="/src/scripts/state-search.js"></script>
+<script src="/scripts/aurora-sync.js?v=3" defer></script>
+<div data-origin-slug={originSlug} style="display:none;"></div>

@@ -1,0 +1,264 @@
+/*
+  Aurora Factors Grid - What Affects Visibility Section
+  Extracted from [city].astro for better modularity
+  @sync app/lib/constants/design_system.dart
+*/
+
+/* Methodology Section Container */
+.methodology {
+  margin: var(--aurora-spacing-l) 0;
+  background: var(--aurora-surface);
+  border: 1px solid var(--aurora-border-light);
+  border-radius: var(--aurora-radius-card);
+  padding: 0;
+  overflow: visible;
+  /* Allow tooltips to overflow */
+  box-shadow: var(--aurora-elevation-e2);
+}
+
+/* Methodology Header - App-like with icon */
+.methodology-header {
+  padding: 20px 24px 16px 24px;
+  border-bottom: none;
+  background: transparent;
+}
+
+.methodology-header-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+
+.methodology-header-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(59, 130, 246, 0.1);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.methodology-header-icon svg {
+  width: 18px;
+  height: 18px;
+  color: #3b82f6;
+}
+
+.methodology h2,
+.methodology-header h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: left;
+  letter-spacing: 0;
+  text-transform: none;
+  font-family: inherit;
+}
+
+/* Factors grid wrapper */
+.methodology-content {
+  padding: 0 24px 24px 24px;
+}
+
+/* Factors Grid Layout */
+.factors-grid-app {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  overflow: visible;
+  /* Allow tooltips to overflow */
+}
+
+/* Individual Factor Card */
+.factor-app {
+  border-radius: 24px;
+  padding: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(17, 18, 20, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  /* Better spacing */
+  position: relative;
+  overflow: visible;
+  isolation: auto;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.factor-app:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.2);
+  z-index: 100;
+}
+
+.factor-app.full {
+  grid-column: 1 / -1;
+}
+
+/* Factor Card Content */
+.factor-title {
+  color: var(--aurora-text-secondary);
+  font-size: 11px;
+  /* Reduced from 13px */
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+  opacity: 0.7;
+  /* Slightly reduced opacity */
+}
+
+.factor-value-main {
+  font-size: clamp(16px, 2.5vw, 20px);
+  /* Reduced from clamp(18px, 4vw, 24px) */
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  line-height: 1.2;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  color: #FFFFFF;
+}
+
+.factor-value-main .value {
+  margin-left: 0;
+  /* Remove margin since we use gap */
+  font-weight: 800;
+}
+
+/* Sky Darkness Timer */
+.darkness-timer {
+  font-size: 12px;
+  color: var(--aurora-text-secondary);
+  margin-top: 6px;
+  opacity: 0.8;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+/* Specific adjustments for long text */
+.factor-app:has(.factor-value-main:contains("Quarter moon")) .factor-value-main,
+.factor-app:has(.factor-value-main:contains("Cloudy")) .factor-value-main {
+  font-size: clamp(12px, 3.5vw, 16px);
+}
+
+/* Factor Card Status Colors - Use colors from Flutter design system */
+.card-success {
+  background: var(--aurora-status-high-tint);
+  border-color: var(--aurora-status-high);
+}
+
+.card-yellow {
+  background: var(--aurora-status-medium-tint);
+  border-color: var(--aurora-warning);
+}
+
+.card-orange {
+  background: var(--aurora-status-low-tint);
+  border-color: var(--aurora-status-low);
+}
+
+.card-danger {
+  background: var(--aurora-status-very-low-tint);
+  border-color: var(--aurora-status-very-low);
+}
+
+/* Responsive Design for Methodology Header */
+@media (max-width: 640px) {
+  .methodology-header {
+    padding: 16px 16px 12px 16px;
+  }
+
+  .methodology-header-icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .methodology-header-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .methodology h2,
+  .methodology-header h2 {
+    font-size: 14px;
+  }
+
+  .methodology-content {
+    padding: 0 16px 16px 16px;
+  }
+
+  .factors-grid-app {
+    gap: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .methodology-header {
+    padding: 14px 12px 10px 12px;
+  }
+
+  .methodology-header-content {
+    gap: 8px;
+  }
+
+  .methodology-header-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .methodology-header-icon svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .methodology h2,
+  .methodology-header h2 {
+    font-size: 13px;
+  }
+
+  .methodology-content {
+    padding: 0 12px 12px 12px;
+  }
+
+  .factors-grid-app {
+    gap: 8px;
+  }
+
+  .factor-app {
+    padding: 16px;
+    min-height: 100px;
+    border-radius: 16px;
+  }
+
+  .factor-title {
+    font-size: 9px;
+    margin-bottom: 8px;
+  }
+
+  .factor-value-main {
+    font-size: clamp(12px, 3vw, 14px);
+    gap: 4px;
+  }
+}
+
+/* Only switch to 1 column at very small screens */
+@media (max-width: 320px) {
+  .factors-grid-app {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .factor-app.full {
+    grid-column: 1;
+  }
+}

@@ -1,0 +1,71 @@
+---
+import StatePage from '../../../../components/pages/StatePage.astro';
+import {
+  getStateStaticEntries,
+  stateSupportsLanguage
+} from '../../../../utils/state-pages';
+import {
+  SUPPORTED_LANGUAGES,
+  type SupportedLanguage
+} from '@config/language-targeting';
+import { generatePageHreflangTags } from '../../../../utils/hreflang';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const entries = getStateStaticEntries();
+  const paths: Array<{
+    params: { lang: SupportedLanguage; country: string; state: string };
+    props: { stateData: any; isRegion: boolean; lang: SupportedLanguage };
+  }> = [];
+
+  for (const lang of SUPPORTED_LANGUAGES) {
+    if (lang === 'en') continue;
+
+    for (const entry of entries) {
+      if (!stateSupportsLanguage(entry.stateData, lang)) {
+        continue;
+      }
+
+      paths.push({
+        params: {
+          lang,
+          country: entry.stateData.countryISO,
+          state: entry.stateData.iso
+        },
+        props: {
+          stateData: entry.stateData,
+          isRegion: entry.isRegion,
+          lang
+        }
+      });
+    }
+  }
+
+  return paths;
+}
+
+const {
+  stateData,
+  isRegion = false,
+  lang
+} = Astro.props as {
+  stateData: any;
+  isRegion?: boolean;
+  lang: SupportedLanguage;
+};
+const canonicalPath = `state/${stateData.countryISO}/${stateData.iso}`;
+const hreflangTags = generatePageHreflangTags(
+  canonicalPath,
+  SUPPORTED_LANGUAGES
+    .filter(code => code === 'en' ? true : stateSupportsLanguage(stateData, code as SupportedLanguage)) as SupportedLanguage[]
+);
+---
+
+<StatePage
+  lang={lang}
+  stateData={stateData}
+  isRegion={isRegion}
+  hreflangTags={hreflangTags}
+  canonicalPath={canonicalPath}
+/>

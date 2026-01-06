@@ -1,0 +1,110 @@
+---
+import FactorInfoHint from './FactorInfoHint.astro';
+
+interface Props {
+  magLat: any;
+  kp: any;
+  weather: any;
+  moon: any;
+  darkness: any;
+  factorDefinitions: any;
+  modalData?: any;
+  i18n?: any;
+}
+
+const {
+  magLat,
+  kp,
+  weather,
+  moon,
+  darkness,
+  factorDefinitions,
+  modalData = {},
+  i18n
+} = Astro.props;
+
+// Helper function to convert factor definitions to FactorInfoHint format
+function convertFactorStatuses(factorDef: any) {
+  if (!factorDef?.statuses) return [];
+  return Object.values(factorDef.statuses).map((status: any) => ({
+    label: status.label,
+    description: status.description,
+    colorType: status.colorType === 'success' ? 'success' :
+               status.colorType === 'yellow' ? 'yellow' :
+               status.colorType === 'orange' ? 'orange' : 'danger'
+  }));
+}
+---
+
+<div class="factors-grid-app">
+  <div class={`factor-app ${magLat.cls}`} data-factor="magneticLatitude">
+    <FactorInfoHint
+      i18n={i18n}
+      factorType="magneticLatitude"
+      title={factorDefinitions.magneticLatitude.title}
+      description={modalData.magneticLatitude?.description || factorDefinitions.magneticLatitude.description}
+      statuses={convertFactorStatuses(factorDefinitions.magneticLatitude)}
+    />
+    <div class="factor-title">
+      <span>{factorDefinitions.magneticLatitude.title}</span>
+    </div>
+    <div class="factor-value-main">{magLat.label} <span class="value">{magLat.value}</span></div>
+  </div>
+  <div class={`factor-app ${kp.cls}`} data-factor="kp">
+    <FactorInfoHint
+      i18n={i18n}
+      factorType="kp"
+      title={factorDefinitions.kp.title}
+      description={modalData.kp?.description || factorDefinitions.kp.description}
+      statuses={convertFactorStatuses(factorDefinitions.kp)}
+    />
+    <div class="factor-title">
+      <span>{factorDefinitions.kp.title}</span>
+    </div>
+    <div class="factor-value-main">{kp.label} <span class="value">{kp.value}</span></div>
+  </div>
+  <div class={`factor-app ${weather.cls}`} data-factor="weather">
+    <FactorInfoHint
+      i18n={i18n}
+      factorType="weather"
+      title={factorDefinitions.weather.title}
+      description={modalData.weather?.description || factorDefinitions.weather.description}
+      statuses={convertFactorStatuses(factorDefinitions.weather)}
+    />
+    <div class="factor-title">
+      <span>{factorDefinitions.weather.title}</span>
+    </div>
+    <div class="factor-value-main">{weather.emoji} {weather.label} <span class="value">{weather.value}</span></div>
+  </div>
+  <div class={`factor-app ${moon.cls}`} data-factor="moon">
+    <FactorInfoHint
+      i18n={i18n}
+      factorType="moon"
+      title={factorDefinitions.moon.title}
+      description={modalData.moon?.description || factorDefinitions.moon.description}
+      statuses={convertFactorStatuses(factorDefinitions.moon)}
+    />
+    <div class="factor-title">
+      <span>{factorDefinitions.moon.title}</span>
+    </div>
+    <div class="factor-value-main">{moon.emoji} {moon.label} <span class="value">{moon.value}</span></div>
+  </div>
+  <div class={`factor-app full ${darkness.cls}`} data-factor="darkness">
+    <FactorInfoHint
+      i18n={i18n}
+      factorType="darkness"
+      title={factorDefinitions.darkness.title}
+      description={modalData.darkness?.description || factorDefinitions.darkness.description}
+      statuses={convertFactorStatuses(factorDefinitions.darkness)}
+    />
+    <div class="factor-title">
+      <span>{factorDefinitions.darkness.title}</span>
+    </div>
+    <div class="factor-value-main danger">
+      {darkness.label}
+      <div class="darkness-timer" id="darkness-timer">
+        <!-- Timer will be populated by JavaScript -->
+      </div>
+    </div>
+  </div>
+</div>

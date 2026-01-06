@@ -1,0 +1,22 @@
+---
+import GuidesIndexPage from '../../../components/pages/GuidesIndexPage.astro';
+import {
+  SUPPORTED_LANGUAGES,
+  type SupportedLanguage
+} from '@config/language-targeting';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  return SUPPORTED_LANGUAGES
+    .filter(lang => lang !== 'en')
+    .map(lang => ({
+      params: { lang },
+      props: { lang }
+    }));
+}
+
+const { lang } = Astro.props as { lang: SupportedLanguage };
+---
+
+<GuidesIndexPage lang={lang} />

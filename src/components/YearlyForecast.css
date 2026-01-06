@@ -1,0 +1,370 @@
+/**
+ * YearlyForecast.css - 1-year aurora history styles
+ * Matches app's AuroraSection design
+ */
+
+.yearly-forecast-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Stats Cards */
+.stats-card {
+  background: #1F2937;
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.card-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  color: white;
+}
+
+.title-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+}
+
+.title-row h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  color: white;
+}
+
+/* Stats Rows */
+.stats-row {
+  display: flex;
+  gap: 12px;
+}
+
+.stats-row.single-item {
+  justify-content: center;
+}
+
+.stat-item {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stat-item.full-width {
+  flex: 0 1 auto;
+  min-width: 200px;
+  text-align: center;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: #9CA3AF;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.stat-label .icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+}
+
+.stat-label .icon svg {
+  width: 16px;
+  height: 16px;
+  color: currentColor;
+}
+
+.stat-value {
+  font-size: 20px;
+  font-weight: 600;
+  color: white;
+}
+
+.stat-value.locked {
+  color: #F59E0B;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+}
+
+.lock-icon-sm {
+  display: flex;
+  align-items: center;
+}
+
+.lock-icon-sm svg {
+  width: 14px;
+  height: 14px;
+  color: #F59E0B;
+}
+
+/* Seasonal Card */
+.seasonal-card .subtitle {
+  font-size: 14px;
+  color: #9CA3AF;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+/* REMOVED: .info-icon styles moved to factor-hint.css
+ * These orphaned styles were conflicting with FactorInfoHint SVG icons
+ * The margin-left: auto was displacing icons from their circular containers
+ */
+
+/* Heatmap Container */
+.heatmap-container {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Overlay for free users */
+.heatmap-overlay {
+  position: relative;
+  width: 100%;
+  min-height: 340px; /* Ensure enough space for CTA on mobile */
+}
+
+.heatmap-blurred-bg {
+  filter: blur(5px);
+  opacity: 0.4;
+  pointer-events: none;
+  padding: 10px;
+}
+
+/* Heatmap Grid - both dummy and real */
+.heatmap-grid-dummy,
+.heatmap-grid-real {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.heatmap-header-dummy,
+.heatmap-header-real {
+  display: grid;
+  grid-template-columns: 40px repeat(4, 1fr);
+  text-align: center;
+  margin-bottom: 8px;
+  color: #6B7280;
+  font-size: 12px;
+}
+
+.heatmap-row {
+  display: grid;
+  grid-template-columns: 40px repeat(4, 1fr);
+  gap: 4px;
+  margin-bottom: 4px;
+  align-items: center;
+}
+
+.month-label {
+  color: #9CA3AF;
+  font-size: 12px;
+}
+
+/* Heatmap Cells */
+.heatmap-cell {
+  height: 28px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  transition: transform 0.15s;
+  cursor: default;
+}
+
+.heatmap-cell:hover {
+  transform: scale(1.05);
+}
+
+/* Cell colors - match app exactly */
+.heatmap-cell.none { background-color: #374151; color: #9CA3AF; }
+.heatmap-cell.low { background-color: #F97316; color: rgba(255, 255, 255, 0.9); }
+.heatmap-cell.medium { background-color: #EAB308; color: rgba(0, 0, 0, 0.8); }
+.heatmap-cell.high { background-color: #22C55E; color: rgba(255, 255, 255, 0.9); }
+
+/* Dummy cells for blur effect */
+.cell {
+  height: 28px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.cell.level-0, .cell.level-none { background-color: #374151; }
+.cell.level-1, .cell.level-low { background-color: #F97316; }
+.cell.level-2, .cell.level-medium { background-color: #EAB308; }
+.cell.level-3, .cell.level-high { background-color: #22C55E; }
+
+/* Lock overlay */
+.lock-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 90%;
+  z-index: 20;
+}
+
+.lock-icon-large {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.lock-icon-large svg {
+  width: 40px;
+  height: 40px;
+  color: #F59E0B;
+}
+
+.lock-content h4 {
+  color: white;
+  margin: 0 0 12px 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.lock-content p {
+  color: #D1D5DB;
+  font-size: 15px;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+/* CTA Button */
+.cta-button {
+  background-color: #F59E0B;
+  color: white;
+  text-decoration: none;
+  padding: 12px 24px;
+  border-radius: 16px;
+  font-weight: 600;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s;
+}
+
+.cta-button:hover {
+  transform: scale(1.05);
+}
+
+.cta-main {
+  font-size: 15px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cta-sub {
+  font-size: 11px;
+  font-weight: 500;
+  opacity: 0.85;
+  text-transform: uppercase;
+}
+
+/* Hidden class */
+.hidden {
+  display: none !important;
+}
+
+/* Legend */
+.legend {
+  display: flex;
+  gap: 16px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #9CA3AF;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+.dot.unlikely { background-color: #374151; }
+.dot.low { background-color: #F97316; }
+.dot.medium { background-color: #EAB308; }
+.dot.high { background-color: #22C55E; }
+
+/* Loading state */
+.loading {
+  opacity: 0.5;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .stats-card {
+    padding: 16px;
+  }
+
+  .stats-row {
+    flex-direction: column;
+  }
+
+  .stat-item.full-width {
+    min-width: auto;
+    width: 100%;
+  }
+
+  .heatmap-header-dummy,
+  .heatmap-header-real,
+  .heatmap-row {
+    grid-template-columns: 32px repeat(4, 1fr);
+  }
+
+  .month-label {
+    font-size: 10px;
+  }
+
+  .heatmap-cell,
+  .cell {
+    height: 24px;
+    font-size: 10px;
+  }
+}

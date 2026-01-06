@@ -1,0 +1,111 @@
+---
+import '../styles/components/kp-scale.css';
+
+/**
+ * Kp Index Scale Component
+ * Visual representation of Kp index from 0-9
+ * Color logic: Green = aurora visible, Red = not visible (requires higher Kp)
+ * Based on AuroraMe design system
+ */
+
+export interface Props {
+  currentKp?: number;
+  requiredKp?: number;
+  showLabels?: boolean;
+  compact?: boolean;
+}
+
+const {
+  currentKp,
+  requiredKp,
+  showLabels = true,
+  compact = false
+} = Astro.props;
+
+// Kp scale from 0 to 9
+const kpLevels = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+/**
+ * Get color for Kp level based on visibility logic
+ * Green shades = aurora visible (Kp >= required)
+ * Red shades = not visible (Kp < required)
+ * Gray = neutral/unknown state
+ */
+function getKpColor(kp: number): string {
+  if (requiredKp === undefined) {
+    // No required Kp set - use gradient from low (gray) to high (green)
+    if (kp <= 2) return '#8A8A8A'; // Gray - very low activity
+    if (kp <= 4) return '#FFB800'; // Yellow - moderate activity
+    if (kp <= 6) return '#6BE7A0'; // Light green - good activity
+    return '#34C97B'; // Bright green - strong activity
+  }
+
+  // Compare with required Kp
+  if (kp >= requiredKp) {
+    // Aurora is visible - green shades
+    const intensity = Math.min((kp - requiredKp) / 3, 1);
+    if (intensity > 0.66) return '#34C97B'; // Bright green - strong visibility
+    if (intensity > 0.33) return '#6BE7A0'; // Light green - good visibility
+    return '#6BE7A0'; // Light green - minimal visibility
+  } else {
+    // Aurora not visible - red shades
+    const deficit = requiredKp - kp;
+    if (deficit >= 4) return '#424242'; // Dark gray - far from visible
+    if (deficit >= 2) return '#FF7878'; // Light red - getting closer
+    return '#FF4747'; // Bright red - just below threshold
+  }
+}
+
+function getKpLabel(kp: number): string {
+  if (kp === 0) return 'Quiet';
+  if (kp <= 2) return 'Low';
+  if (kp <= 4) return 'Moderate';
+  if (kp <= 6) return 'Active';
+  if (kp <= 8) return 'Storm';
+  return 'Extreme';
+}
+---
+
+<div class={`kp-scale ${compact ? 'kp-scale--compact' : ''}`}>
+  <div class="kp-scale__bars">
+    {kpLevels.map((kp) => (
+      <div
+        class={`kp-scale__bar ${currentKp === kp ? 'kp-scale__bar--current' : ''}`}
+        style={`background-color: ${getKpColor(kp)};`}
+        data-kp={kp}
+      >
+        {showLabels && !compact && (
+          <span class="kp-scale__number">{kp}</span>
+        )}
+      </div>
+    ))}
+  </div>
+
+  {showLabels && (
+    <div class="kp-scale__labels">
+      <div class="kp-scale__label kp-scale__label--start">
+        Kp 0<br />
+        <span class="kp-scale__sublabel">Quiet</span>
+      </div>
+      {requiredKp !== undefined && (
+        <div class="kp-scale__label kp-scale__label--threshold" style={`left: ${(requiredKp / 9) * 100}%;`}>
+          Kp {requiredKp}<br />
+          <span class="kp-scale__sublabel kp-scale__sublabel--highlight">Visible Here</span>
+        </div>
+      )}
+      <div class="kp-scale__label kp-scale__label--end">
+        Kp 9<br />
+        <span class="kp-scale__sublabel">Extreme Storm</span>
+      </div>
+    </div>
+  )}
+
+  {currentKp !== undefined && (
+    <div class="kp-scale__current-indicator" style={`left: ${(currentKp / 9) * 100}%;`}>
+      <div class="kp-scale__current-marker">
+        <span class="kp-scale__current-value">Kp {currentKp}</span>
+      </div>
+    </div>
+  )}
+</div>
+

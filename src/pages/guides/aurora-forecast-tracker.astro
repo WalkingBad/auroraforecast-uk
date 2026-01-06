@@ -1,0 +1,402 @@
+---
+import GuideLayout from '../../layouts/GuideLayout.astro';
+import KpIndexScale from '../../components/KpIndexScale.astro';
+import { createPageI18n } from '../../utils/i18n-page.ts';
+
+const i18n = await createPageI18n('en');
+
+const title = i18n.t('forecast_tracker_meta_title');
+const description = i18n.t('forecast_tracker_meta_description');
+const publishDate = "2025-10-20T00:00:00Z";
+const readingTime = i18n.t('forecast_tracker_meta_reading_time');
+
+const relatedGuides = [
+  {
+    title: i18n.t('forecast_tracker_related1_title'),
+    slug: "kp-index-explained",
+    category: i18n.t('forecast_tracker_related1_category'),
+    readingTime: i18n.t('forecast_tracker_related1_time')
+  },
+  {
+    title: i18n.t('forecast_tracker_related2_title'),
+    slug: "aurora-alerts-setup",
+    category: i18n.t('forecast_tracker_related2_category'),
+    readingTime: i18n.t('forecast_tracker_related2_time')
+  },
+  {
+    title: i18n.t('forecast_tracker_related3_title'),
+    slug: "northern-lights-tonight",
+    category: i18n.t('forecast_tracker_related3_category'),
+    readingTime: i18n.t('forecast_tracker_related3_time')
+  }
+];
+---
+
+<GuideLayout
+  title={title}
+  description={description}
+  publishDate={publishDate}
+  readingTime={readingTime}
+  relatedGuides={relatedGuides}
+>
+  <section class="guide__section">
+    <h2>What is Aurora Forecasting?</h2>
+    <p>
+      Aurora forecasting predicts when and where northern lights will be visible by analyzing <strong>solar wind data</strong> reaching Earth. Unlike weather forecasting (which looks at atmospheric conditions), aurora forecasting tracks <strong>geomagnetic activity</strong> from the Sun.
+    </p>
+    <p>
+      The key difference: Weather forecasts are accurate 3-7 days ahead. Aurora forecasts are most accurate <strong>30 minutes to 3 hours</strong> ahead due to unpredictable solar wind variations.
+    </p>
+  </section>
+
+  <section class="guide__section">
+    <h2>How NOAA OVATION Model Works</h2>
+    <p>
+      The <strong>NOAA OVATION model</strong> (Oval Variation, Assessment, Tracking, Intensity, and Online Nowcasting) is the gold standard for aurora forecasting. It combines:
+    </p>
+    <ul>
+      <li><strong>Solar wind sensors:</strong> NASA's ACE satellite measures solar wind 1 million miles from Earth (~30-60 min warning)</li>
+      <li><strong>Magnetometer networks:</strong> Ground stations worldwide measure Earth's magnetic field disruptions</li>
+      <li><strong>Historical patterns:</strong> 20+ years of data correlating solar wind with aurora observations</li>
+    </ul>
+
+    <h3>What OVATION Predicts</h3>
+    <p>OVATION generates a probability map showing:</p>
+    <ul>
+      <li>Where aurora is likely overhead (green oval zone)</li>
+      <li>Intensity levels (0-10 scale)</li>
+      <li>Updates every 5 minutes</li>
+    </ul>
+
+    <div class="guide__info-box guide__info-box--warning">
+      <h4>⚠️ OVATION Limitations</h4>
+      <p>
+        OVATION shows aurora at 60-200 miles altitude in space. It <strong>does not account for</strong>:
+      </p>
+      <ul>
+        <li>Cloud coverage (the #1 reason you can't see aurora)</li>
+        <li>Moon phase (bright moonlight washes out faint displays)</li>
+        <li>Darkness requirements (aurora invisible during twilight)</li>
+      </ul>
+      <p>
+        This is why "green OVATION oval" doesn't guarantee you'll see anything. You need all factors aligned.
+      </p>
+    </div>
+  </section>
+
+  <section class="guide__section">
+    <h2>Understanding Kp Index Forecasts</h2>
+    <p>
+      The <strong>Kp index</strong> (planetary K-index) is a 0-9 scale measuring global geomagnetic activity. Forecasts predict Kp for the next 3 days based on solar wind speed and direction.
+    </p>
+
+    <h3>Kp Forecast Accuracy</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Timeframe</th>
+          <th>Accuracy</th>
+          <th>Reliability</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>0-3 hours (nowcast)</td>
+          <td>85-90%</td>
+          <td>⭐⭐⭐⭐⭐ Excellent</td>
+        </tr>
+        <tr>
+          <td>3-24 hours</td>
+          <td>70-80%</td>
+          <td>⭐⭐⭐⭐ Good</td>
+        </tr>
+        <tr>
+          <td>1-3 days</td>
+          <td>50-70%</td>
+          <td>⭐⭐⭐ Moderate</td>
+        </tr>
+        <tr>
+          <td>3-7 days</td>
+          <td>30-50%</td>
+          <td>⭐⭐ Low (unreliable)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>
+      <strong>Why accuracy drops:</strong> Solar wind can change speed/direction unexpectedly. Coronal mass ejections (CMEs) may arrive earlier/later than predicted.
+    </p>
+
+    <div style="margin: 2rem 0;">
+      <KpIndexScale currentKp={5} requiredKp={3} showLabels={true} />
+      <p style="text-align: center; color: #8A8A8A; font-size: 0.875rem; margin-top: 0.5rem;">
+        Example: Current Kp 5 exceeds required Kp 3 = aurora visible (green zone)
+      </p>
+    </div>
+  </section>
+
+  <section class="guide__section">
+    <h2>Best Aurora Trackers & Apps</h2>
+    <p>
+      Not all aurora trackers are equal. Here's what differentiates them:
+    </p>
+
+    <h3>1. AuroraMe (Recommended)</h3>
+    <ul>
+      <li><strong>Unique feature:</strong> Combines Kp + clouds + moon + darkness into one visibility score</li>
+      <li><strong>Accuracy:</strong> Location-specific thresholds (Kp 2 for Alaska vs Kp 7 for London)</li>
+      <li><strong>Alerts:</strong> Smart notifications only when all factors align</li>
+      <li><strong>Coverage:</strong> 970+ cities worldwide</li>
+    </ul>
+
+    <h3>2. NOAA Space Weather Prediction Center</h3>
+    <ul>
+      <li><strong>Best for:</strong> Technical users who want raw data</li>
+      <li><strong>Pros:</strong> Official source, most accurate Kp forecasts</li>
+      <li><strong>Cons:</strong> No weather integration, complex interface</li>
+      <li><strong>URL:</strong> <a href="https://www.swpc.noaa.gov" target="_blank" rel="noopener">swpc.noaa.gov</a></li>
+    </ul>
+
+    <h3>3. AuroraWatch UK</h3>
+    <ul>
+      <li><strong>Best for:</strong> UK-specific alerts</li>
+      <li><strong>Pros:</strong> Email/SMS alerts, university-backed</li>
+      <li><strong>Cons:</strong> UK only, no cloud forecast integration</li>
+    </ul>
+
+    <h3>4. Glendale App</h3>
+    <ul>
+      <li><strong>Best for:</strong> Photographers planning multi-day trips</li>
+      <li><strong>Pros:</strong> Dark sky finder, camera settings guide</li>
+      <li><strong>Cons:</strong> Paid features ($5-10/mo), slower updates than NOAA</li>
+    </ul>
+
+    <div class="guide__info-box">
+      <h4>💡 Which Tracker Should You Use?</h4>
+      <p>
+        <strong>Beginners:</strong> AuroraMe (easiest to understand, automatic alerts)<br />
+        <strong>Advanced users:</strong> NOAA + AuroraMe (verify alerts with official data)<br />
+        <strong>Photographers:</strong> Glendale + AuroraMe (dark sky planning + timing)
+      </p>
+    </div>
+  </section>
+
+  <section class="guide__section">
+    <h2>How to Read Aurora Forecasts Correctly</h2>
+    <p>
+      Most people misinterpret aurora forecasts. Here's how to read them properly:
+    </p>
+
+    <h3>Step 1: Check Current Kp (Nowcast)</h3>
+    <p>
+      <strong>Don't look at 3-day forecast first.</strong> Check the <em>current</em> Kp (updated every 3 hours). If current Kp is high and conditions are good <strong>right now</strong>, go outside immediately.
+    </p>
+
+    <h3>Step 2: Verify Your Location's Threshold</h3>
+    <p>
+      Generic Kp forecasts say "Kp 5 storm tonight" but don't tell you if that's enough for <em>your</em> location. Use this quick reference:
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Your Magnetic Latitude</th>
+          <th>Required Kp</th>
+          <th>Example Cities</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>65°+</td>
+          <td>Kp 2</td>
+          <td>Fairbanks, Tromsø, Longyearbyen</td>
+        </tr>
+        <tr>
+          <td>60-65°</td>
+          <td>Kp 3</td>
+          <td>Reykjavik, Yellowknife, Anchorage</td>
+        </tr>
+        <tr>
+          <td>55-60°</td>
+          <td>Kp 5</td>
+          <td>Edinburgh, Juneau, Whitehorse</td>
+        </tr>
+        <tr>
+          <td>50-55°</td>
+          <td>Kp 6-7</td>
+          <td>London, Seattle, Calgary</td>
+        </tr>
+        <tr>
+          <td>Below 50°</td>
+          <td>Kp 8-9</td>
+          <td>New York, Paris, Tokyo (rare)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Step 3: Cross-Check Weather</h3>
+    <p>
+      High Kp means nothing if clouds are overhead. Always check:
+    </p>
+    <ul>
+      <li><strong>Cloud coverage:</strong> <a href="https://www.windy.com" target="_blank" rel="noopener">Windy.com</a> or local weather</li>
+      <li><strong>Target:</strong> Less than 30% clouds for good visibility</li>
+      <li><strong>Timing:</strong> Check hourly forecast (clouds can clear suddenly)</li>
+    </ul>
+
+    <h3>Step 4: Calculate Darkness Window</h3>
+    <p>
+      Aurora is only visible in complete darkness (after nautical twilight ends). Check sunset/twilight times at <a href="https://www.timeanddate.com" target="_blank" rel="noopener">TimeAndDate.com</a>.
+    </p>
+
+    <div class="guide__info-box guide__info-box--warning">
+      <h4>⚠️ Common Mistake: Checking Too Early</h4>
+      <p>
+        Many people check forecasts at 8 PM when it's still twilight, see "Kp 4", and think aurora isn't visible. Wait until full darkness (usually 10 PM+) before giving up.
+      </p>
+    </div>
+  </section>
+
+  <section class="guide__section">
+    <h2>Real-Time vs Predictive Tracking</h2>
+    <p>
+      There are two types of aurora tracking:
+    </p>
+
+    <h3>Real-Time Tracking (Nowcast)</h3>
+    <ul>
+      <li><strong>Data source:</strong> Current solar wind measurements + magnetometers</li>
+      <li><strong>Update frequency:</strong> Every 5-15 minutes</li>
+      <li><strong>Accuracy:</strong> 85-90% for next 30-60 minutes</li>
+      <li><strong>Best for:</strong> "Should I go outside right now?" decisions</li>
+    </ul>
+
+    <h3>Predictive Tracking (Forecast)</h3>
+    <ul>
+      <li><strong>Data source:</strong> Solar wind speed + CME models</li>
+      <li><strong>Timeframe:</strong> 1-3 days ahead</li>
+      <li><strong>Accuracy:</strong> 50-70% (drops significantly beyond 24 hours)</li>
+      <li><strong>Best for:</strong> Planning travel or multi-day aurora trips</li>
+    </ul>
+
+    <p>
+      <strong>Pro tip:</strong> Use predictive forecasts to plan, but rely on real-time nowcasts for actual viewing decisions. Don't cancel plans based on a 3-day forecast showing "low activity" — conditions change rapidly.
+    </p>
+  </section>
+
+  <section class="guide__section">
+    <h2>Advanced: Reading 27-Day Solar Rotation Forecast</h2>
+    <p>
+      The Sun rotates every 27 days. Active regions (sunspots, coronal holes) that caused aurora this month may reappear ~27 days later. NOAA publishes a <a href="https://www.swpc.noaa.gov/products/27-day-outlook-107-cm-radio-flux-and-geomagnetic-indices" target="_blank" rel="noopener">27-day outlook</a> showing expected active periods.
+    </p>
+
+    <h3>How to Use It</h3>
+    <ol>
+      <li>Check if a major aurora event happened 27 days ago</li>
+      <li>Look at the 27-day forecast for "active region return"</li>
+      <li>If predicted, monitor forecasts closely during that window</li>
+      <li>Book flexible travel plans around these high-probability periods</li>
+    </ol>
+
+    <p>
+      <strong>Limitation:</strong> Solar regions change over 27 days (decay, grow, shift position). This forecast is only 40-50% accurate but useful for trip planning.
+    </p>
+  </section>
+
+  <section class="guide__section">
+    <h2>Mobile Apps vs Websites: Which Is Better?</h2>
+
+    <h3>Mobile Apps (Recommended)</h3>
+    <p><strong>Advantages:</strong></p>
+    <ul>
+      <li>Push notifications wake you during aurora events</li>
+      <li>Location-based automatic thresholds</li>
+      <li>Offline data caching (useful in remote areas)</li>
+      <li>Faster access (no browser required)</li>
+    </ul>
+    <p><strong>Best apps:</strong> AuroraMe, My Aurora Forecast, Glendale</p>
+
+    <h3>Websites</h3>
+    <p><strong>Advantages:</strong></p>
+    <ul>
+      <li>More detailed technical data (NOAA)</li>
+      <li>Larger maps and charts</li>
+      <li>No app storage required</li>
+    </ul>
+    <p><strong>Best websites:</strong> NOAA SWPC, AuroraWatch, Soft Serve News</p>
+
+    <p>
+      <strong>Recommendation:</strong> Use both. Install a mobile app for alerts, bookmark NOAA website for verification when major storms are predicted.
+    </p>
+  </section>
+
+  <section class="guide__section">
+    <h2>Common Aurora Tracking Mistakes</h2>
+
+    <h3>1. Only Checking Kp Forecasts</h3>
+    <p>
+      <strong>Problem:</strong> "Forecast says Kp 5, but I saw nothing."<br />
+      <strong>Cause:</strong> Clouds, twilight, or moon phase blocked visibility<br />
+      <strong>Solution:</strong> Always check weather + darkness + moon
+    </p>
+
+    <h3>2. Trusting 7-Day Forecasts</h3>
+    <p>
+      <strong>Problem:</strong> Planning a trip based on next week's Kp 7 forecast<br />
+      <strong>Cause:</strong> Accuracy drops to 30% beyond 3 days<br />
+      <strong>Solution:</strong> Book flexible trips, check forecasts 24-48h before
+    </p>
+
+    <h3>3. Ignoring Substorm Timing</h3>
+    <p>
+      <strong>Problem:</strong> "Kp was 5 all night, but I only saw faint aurora"<br />
+      <strong>Cause:</strong> Kp is a 3-hour average; actual activity peaks in 15-30 min bursts<br />
+      <strong>Solution:</strong> Stay outside 30-60 minutes during favorable conditions
+    </p>
+
+    <h3>4. Using Wrong Location Coordinates</h3>
+    <p>
+      <strong>Problem:</strong> Generic apps using city center (not your viewing spot)<br />
+      <strong>Cause:</strong> 50 miles difference can change Kp threshold by 1-2 points<br />
+      <strong>Solution:</strong> Use apps that let you set custom coordinates
+    </p>
+  </section>
+
+  <section class="guide__section">
+    <h2>FAQ: Aurora Tracking</h2>
+
+    <h3>Which aurora tracker is most accurate?</h3>
+    <p>
+      NOAA OVATION is the most accurate for Kp nowcasts (85-90% accuracy for next hour). However, it doesn't include weather, so combined trackers like AuroraMe (Kp + clouds + darkness) give better real-world visibility predictions.
+    </p>
+
+    <h3>Can I predict aurora a week in advance?</h3>
+    <p>
+      No. 7-day forecasts are only 30-40% accurate. You can identify <em>potential</em> active periods (solar active region returns), but precise timing requires 24-48 hour forecasts.
+    </p>
+
+    <h3>Do aurora trackers work in the Southern Hemisphere?</h3>
+    <p>
+      Yes. NOAA tracks both aurora borealis (North) and aurora australis (South). However, fewer trackers focus on Southern Hemisphere due to less populated viewing areas. AuroraMe covers cities in New Zealand, southern Australia, Chile, and Argentina.
+    </p>
+
+    <h3>How often do aurora forecasts update?</h3>
+    <p>
+      <strong>Kp index:</strong> Every 3 hours (official), every 5 minutes (OVATION nowcast)<br />
+      <strong>OVATION maps:</strong> Every 5 minutes<br />
+      <strong>3-day forecasts:</strong> Twice daily (midnight, noon UTC)
+    </p>
+
+    <h3>What's the difference between Kp and G-scale?</h3>
+    <p>
+      Both measure geomagnetic activity. <strong>Kp</strong> is 0-9 scale used for aurora forecasting. <strong>G-scale</strong> (G1-G5) is used for space weather alerts and infrastructure warnings. Conversion: G1 = Kp 5, G2 = Kp 6, G3 = Kp 7, G4 = Kp 8, G5 = Kp 9.
+    </p>
+  </section>
+
+  <section class="guide__section" style="text-align: center; margin-top: 4rem;">
+    <h2>Start Using Smart Aurora Tracking</h2>
+    <p style="font-size: 1.125rem; color: #C8C8C8; max-width: 600px; margin: 1rem auto 2rem;">
+      Stop missing aurora due to incomplete forecasts. AuroraMe tracks Kp, clouds, moon, and darkness automatically — so you only get alerts when everything aligns. Free 3-day forecast included.
+    </p>
+  </section>
+</GuideLayout>
+

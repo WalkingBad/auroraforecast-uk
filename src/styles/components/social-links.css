@@ -1,0 +1,76 @@
+/**
+ * Social Links Component Styles
+ * Used by: SocialLinks.astro
+ * Extracted from inline <style> block (56 lines)
+ * Date: 2025-11-24
+ * Features: Social media icon links
+ */
+
+/* ==========================================================================
+   Container
+   ========================================================================== */
+
+.social-links {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  margin: 1rem 0;
+}
+
+.social-links.hero {
+  margin: 1.5rem 0;
+}
+
+.social-links.footer {
+  margin: 1rem 0;
+  opacity: 0.8;
+}
+
+/* ==========================================================================
+   Social Link Items
+   ========================================================================== */
+
+.social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06); /* surface tint */
+  color: var(--aurora-text, #ffffff);
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.social-link:hover {
+  background: rgba(107, 231, 160, 0.18); /* primary glow */
+  color: var(--aurora-primary, #6BE7A0);
+  transform: translateY(-2px);
+}
+
+.social-link svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 480px) {
+  .social-links {
+    gap: 0.75rem;
+  }
+
+  .social-link {
+    width: 36px;
+    height: 36px;
+  }
+
+  .social-link svg {
+    width: 18px;
+    height: 18px;
+  }
+}

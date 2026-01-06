@@ -1,0 +1,163 @@
+/*
+  City Page Layout Styles
+  Extracted from [city].astro for better modularity
+  @sync app/lib/constants/design_system.dart
+*/
+
+/* Page Layout */
+.container {
+  max-width: 600px; /* Mobile-first from design system */
+  margin: 0 auto;
+  padding: 0 var(--aurora-spacing-l);
+}
+
+/* Page Headers */
+h1 {
+  font-size: 20px; /* Even smaller size */
+  font-weight: 300;
+  margin-bottom: var(--aurora-spacing-s);
+  color: var(--aurora-text-primary);
+  font-family: 'Cormorant', serif;
+  text-align: center;
+  letter-spacing: 0; /* Remove custom letter-spacing */
+}
+
+.city-crosslink-intro {
+  text-align: center;
+  color: var(--aurora-text-secondary);
+  margin: var(--aurora-spacing-xl) auto;
+  padding: 0 20px;
+  font-size: 0.95rem;
+  max-width: 800px;
+}
+
+.city-crosslink-compare {
+  color: var(--aurora-text-secondary);
+  margin-bottom: var(--aurora-spacing-l);
+  font-size: 0.95rem;
+  text-align: left;
+}
+
+.city-crosslink-premium {
+  color: var(--aurora-text-secondary);
+  margin-top: var(--aurora-spacing-m);
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+/* CTA App Section - Full Width */
+.cta-app {
+  margin: var(--aurora-spacing-xxl) 0;
+  padding: var(--aurora-spacing-xxl) 0;
+  text-align: center;
+  background: var(--aurora-surface);
+}
+
+.cta-row {
+  display: flex;
+  gap: var(--aurora-spacing-l);
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Primary Button */
+.btn-primary {
+  display: inline-block;
+  background: var(--aurora-primary);
+  color: var(--aurora-on-primary);
+  text-decoration: none;
+  padding: 12px 16px;
+  border-radius: var(--aurora-radius-button);
+  font-weight: 600;
+  border: 1px solid var(--aurora-border-light);
+}
+
+/* Local Time Display */
+.local-time {
+  color: var(--aurora-text-secondary);
+  font-size: 0.9em;
+}
+
+/* Forecast Hour Status and KP */
+.forecast-hour .status {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.forecast-hour .kp {
+  font-size: 0.8em;
+  color: var(--aurora-text-secondary);
+  margin-top: 4px;
+}
+
+/* Strategic CTA Sections */
+.strategic-cta {
+  margin: var(--aurora-spacing-xxl) 0;
+  text-align: center;
+  padding: var(--aurora-spacing-xl);
+  background: var(--aurora-chip); /* Use design token surface */
+  border-radius: var(--aurora-radius-card);
+  border: 1px solid var(--aurora-border-light);
+}
+
+.strategic-cta .cta-content h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: var(--aurora-spacing-s);
+  color: var(--aurora-text-primary);
+  font-family: 'Cormorant', serif;
+}
+
+.strategic-cta .cta-content p {
+  color: var(--aurora-text-secondary);
+  margin-bottom: var(--aurora-spacing-l);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Specific CTA styling variations */
+.cta-hero { }
+
+.cta-travel { }
+
+/* Forecast CTA styling (for consistency) */
+.forecast-cta {
+  margin-top: var(--aurora-spacing-l);
+  padding: var(--aurora-spacing-l);
+  background: var(--aurora-chip);
+  border-radius: var(--aurora-radius-card);
+  border: 1px solid var(--aurora-border-light);
+  text-align: center;
+}
+
+.forecast-cta h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: var(--aurora-spacing-s);
+  color: var(--aurora-text-primary);
+  font-family: 'Cormorant', serif;
+}
+
+.forecast-cta p {
+  color: var(--aurora-text-secondary);
+  margin-bottom: var(--aurora-spacing-l);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Mobile Responsive Adjustments */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 var(--aurora-spacing-m); /* Smaller padding on mobile */
+  }
+  
+  .strategic-cta {
+    margin: var(--aurora-spacing-xl) 0;
+    padding: var(--aurora-spacing-l);
+  }
+  
+  .strategic-cta .cta-content h3 {
+    font-size: 16px;
+  }
+}

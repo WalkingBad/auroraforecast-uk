@@ -1,0 +1,162 @@
+---
+import citiesData from '../data/cities.json';
+import '../styles/components/live-forecast-bar.css';
+import type { I18nPageHelper } from '../utils/i18n-page';
+
+export interface Props {
+  i18n?: I18nPageHelper;
+}
+
+const { i18n } = Astro.props;
+
+// Translations with fallback
+const globalStatus = i18n ? i18n.t('live_bar_global_status') : 'Global Aurora Status:';
+const searchPlaceholder = i18n ? i18n.t('live_bar_search_placeholder') : 'Search cities...';
+const topViewing = i18n ? i18n.t('live_bar_top_viewing') : 'Top Viewing Now:';
+
+// Pass city metadata to client-side for rendering
+const cityMetadata = citiesData.map(city => ({
+  name: city.name,
+  slug: city.slug,
+  country: city.country,
+  countryCode: city.countryCode,
+  state: city.stateName || city.state,
+  magneticLat: city.magneticLat
+}));
+---
+
+<section class="live-forecast-bar">
+  <div class="forecast-container">
+    <div class="forecast-header">
+      <div class="kp-display">
+        <span class="kp-label">{globalStatus}</span>
+        <span class="kp-value" id="global-kp-value">
+          <span class="loading-skeleton">Kp --.-</span>
+        </span>
+      </div>
+
+      <div class="search-box">
+        <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+        </svg>
+        <input
+          type="text"
+          placeholder={searchPlaceholder}
+          id="city-search-input"
+          class="search-input"
+          autocomplete="off"
+        />
+        <div id="search-results" class="search-results hidden"></div>
+      </div>
+    </div>
+
+    <div class="top-cities">
+      <span class="top-cities-label">🔥 {topViewing}</span>
+      <div id="top-cities-list" class="cities-list">
+        <!-- Will be populated by aurora-sync.js -->
+        <div class="loading-skeleton">Loading...</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script define:vars={{ cityMetadata }}>
+  // Export city metadata for aurora-sync.js to use
+  window.AURORA_CITY_METADATA = cityMetadata;
+</script>
+
+<script>
+  // Client-side search implementation
+  const searchInput = document.getElementById('city-search-input');
+  const searchResults = document.getElementById('search-results');
+
+  // Will be populated by aurora-sync.js
+  let searchIndex = [];
+
+  // Export function for aurora-sync.js to set search index
+  window.setAuroraSearchIndex = (index) => {
+    searchIndex = index;
+  };
+
+  // Normalize search text for special characters and multiple languages
+  const normalizeSearchText = (text) => {
+    return text
+      .toLowerCase()
+      .normalize('NFD') // Decompose combined characters
+      .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+      .replace(/ø/g, 'o')
+      .replace(/ö/g, 'o')
+      .replace(/å/g, 'a')
+      .replace(/ä/g, 'a')
+      .replace(/æ/g, 'ae')
+      .replace(/ü/g, 'u')
+      .replace(/ñ/g, 'n')
+      .replace(/ç/g, 'c')
+      .replace(/ß/g, 'ss')
+      .replace(/þ/g, 'th')
+      .replace(/ð/g, 'd');
+  };
+
+  if (searchInput && searchResults) {
+    let debounceTimer;
+
+    searchInput.addEventListener('input', (e) => {
+      clearTimeout(debounceTimer);
+
+      debounceTimer = setTimeout(() => {
+        const query = normalizeSearchText(e.target.value.trim());
+
+        if (query.length < 2) {
+          searchResults.classList.add('hidden');
+          return;
+        }
+
+        if (searchIndex.length === 0) {
+          searchResults.innerHTML = '<div class="no-results">Loading data...</div>';
+          searchResults.classList.remove('hidden');
+          return;
+        }
+
+        // Filter cities
+        const matches = searchIndex
+          .filter(city => city.searchText.includes(query))
+          .slice(0, 8); // Limit to 8 results
+
+        if (matches.length === 0) {
+          searchResults.innerHTML = '<div class="no-results">No cities found</div>';
+          searchResults.classList.remove('hidden');
+          return;
+        }
+
+        // Render results
+        searchResults.innerHTML = matches
+          .map(city => `
+            <a href="${city.url}" class="search-result-item">
+              <div class="result-main">
+                <span class="result-name">${city.name}</span>
+                <span class="result-location">${city.country}${city.state ? `, ${city.state}` : ''}</span>
+              </div>
+              <span class="result-status" style="color: ${city.color}">●</span>
+            </a>
+          `)
+          .join('');
+
+        searchResults.classList.remove('hidden');
+      }, 200); // 200ms debounce
+    });
+
+    // Close search results when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+        searchResults.classList.add('hidden');
+      }
+    });
+
+    // Show results when focusing input (if there's a query)
+    searchInput.addEventListener('focus', () => {
+      if (searchInput.value.length >= 2 && searchIndex.length > 0) {
+        searchResults.classList.remove('hidden');
+      }
+    });
+  }
+</script>

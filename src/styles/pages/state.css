@@ -1,0 +1,924 @@
+/**
+ * State and Region Pages Styles
+ * Used by: /[country]/[state].astro
+ * Follows design patterns from city-cards.css and faq.css
+ */
+@import '../shared/status-theming.css';
+
+/* Parallax Hero Section */
+.state-header-parallax {
+  position: relative;
+  width: 100%;
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  overflow: hidden;
+  margin-bottom: 3rem;
+}
+
+.state-header-parallax::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(10, 10, 10, 0.7) 0%,
+    rgba(10, 10, 10, 0.55) 50%,
+    rgba(10, 10, 10, 0.8) 100%
+  );
+  z-index: 0;
+}
+
+.state-header {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 3rem 1.5rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.state-breadcrumbs {
+  padding: 0 var(--aurora-spacing-xl);
+  max-width: 1200px;
+  margin: var(--aurora-spacing-m) auto var(--aurora-spacing-l);
+}
+
+.state-page-container {
+  width: 100%;
+  max-width: none;
+  margin: 0 auto;
+  padding: 0 clamp(var(--aurora-spacing-l), 5vw, var(--aurora-spacing-xxl));
+}
+
+.state-header h1 {
+  margin-bottom: var(--aurora-spacing-m);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+}
+
+.header-subtitle {
+  color: var(--aurora-text-secondary);
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  line-height: 1.5;
+  margin-bottom: var(--aurora-spacing-l);
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.state-header .intro {
+  color: var(--aurora-text-secondary);
+  font-size: clamp(1rem, 1.8vw, 1.125rem);
+  line-height: 1.6;
+  margin: var(--aurora-spacing-l) 0;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.best-now {
+  display: inline-block;
+  margin-left: var(--aurora-spacing-m);
+  padding: var(--aurora-spacing-xs) var(--aurora-spacing-m);
+  background: var(--aurora-status-high-tint);
+  color: var(--aurora-success);
+  border-radius: var(--aurora-radius-chip);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.best-now a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+/* Key Statistics Cards */
+.key-stats-section {
+  margin: var(--aurora-spacing-xxl) 0;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--aurora-spacing-l);
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: var(--aurora-spacing-l);
+  padding: var(--aurora-spacing-xl);
+  background: var(--aurora-surface);
+  border: 1px solid var(--aurora-border-light);
+  border-radius: var(--aurora-radius-card);
+  box-shadow: var(--aurora-elevation-e1);
+  transition: transform var(--aurora-timing-fast) ease, box-shadow var(--aurora-timing-fast) ease;
+  position: relative;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--aurora-elevation-e2);
+}
+
+.stat-card-primary {
+  border-left: 4px solid var(--aurora-primary);
+}
+
+.stat-card-success {
+  border-left: 4px solid var(--aurora-success);
+}
+
+.stat-card-accent {
+  border-left: 4px solid var(--aurora-status-medium);
+}
+
+.stat-icon {
+  font-size: 2rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.stat-content {
+  flex: 1;
+}
+
+.stat-content h3 {
+  font-size: 0.875rem;
+  color: var(--aurora-text-tertiary);
+  margin-bottom: var(--aurora-spacing-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.stat-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--aurora-text-primary);
+  margin-bottom: var(--aurora-spacing-xs);
+  line-height: 1.2;
+}
+
+.stat-description {
+  font-size: 0.875rem;
+  color: var(--aurora-text-secondary);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Kp Bands Visualization Block - Full Width with Horizontal Scroll */
+.kp-bands-section {
+  margin: var(--aurora-spacing-xxl) 0;
+  width: 100%;
+  position: relative;
+  padding: var(--aurora-spacing-xxl) 0;
+  background: var(--aurora-surface);
+  border-top: 1px solid var(--aurora-border-light);
+  border-bottom: 1px solid var(--aurora-border-light);
+}
+
+.kp-bands-section,
+.state-cities-gallery,
+.state-page-container .cta-app {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  padding-left: clamp(var(--aurora-spacing-l), 4vw, var(--aurora-spacing-xxl));
+  padding-right: clamp(var(--aurora-spacing-l), 4vw, var(--aurora-spacing-xxl));
+}
+
+.kp-bands-section h2 {
+  margin-bottom: var(--aurora-spacing-xl);
+  text-align: center;
+  padding: 0 var(--aurora-spacing-xl);
+}
+
+.kp-bands-chart {
+  display: flex;
+  gap: var(--aurora-spacing-l);
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: var(--aurora-spacing-xl);
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  scrollbar-color: var(--aurora-primary) transparent;
+}
+
+.kp-bands-chart::-webkit-scrollbar {
+  height: 8px;
+}
+
+.kp-bands-chart::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.kp-bands-chart::-webkit-scrollbar-thumb {
+  background: var(--aurora-primary);
+  border-radius: 4px;
+}
+
+.kp-bands-chart::-webkit-scrollbar-thumb:hover {
+  background: var(--aurora-primary-hover);
+}
+
+.kp-band-row {
+  flex: 0 0 340px;
+  padding: var(--aurora-spacing-l);
+  background: var(--aurora-chip);
+  border: 1px solid var(--aurora-border-light);
+  border-radius: var(--aurora-radius-m);
+  transition: transform var(--aurora-timing-fast) ease, box-shadow var(--aurora-timing-fast) ease;
+  scroll-snap-align: start;
+  min-height: 200px;
+}
+
+.kp-band-row:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--aurora-elevation-e1);
+}
+
+/* Kp Band Header */
+.kp-band-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--aurora-spacing-m);
+}
+
+.kp-band-row .city-name {
+  font-weight: 600;
+  color: var(--aurora-text-primary);
+  font-size: 1rem;
+}
+
+.kp-band-row .mlat-value {
+  color: var(--aurora-text-tertiary);
+  font-size: 0.875rem;
+}
+
+/* Kp Range Info */
+.kp-range-info {
+  margin-bottom: var(--aurora-spacing-m);
+}
+
+.kp-range-label {
+  color: var(--aurora-text-secondary);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--aurora-spacing-xs);
+}
+
+.kp-range-values {
+  display: flex;
+  gap: var(--aurora-spacing-xl);
+  margin-bottom: var(--aurora-spacing-s);
+}
+
+.kp-range-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.kp-range-item strong {
+  color: var(--aurora-text-primary);
+  font-size: 0.9rem;
+  margin-bottom: 2px;
+}
+
+.kp-range-item span {
+  color: var(--aurora-text-tertiary);
+  font-size: 0.75rem;
+}
+
+/* Kp Visual Bar */
+.kp-visual {
+  position: relative;
+}
+
+.kp-bar {
+  display: flex;
+  height: 32px;
+  border-radius: var(--aurora-radius-s);
+  overflow: hidden;
+  background: var(--aurora-bg-primary);
+  border: 1px solid var(--aurora-border-light);
+  position: relative;
+}
+
+/* Kp Scale Labels */
+.kp-scale {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--aurora-spacing-xs);
+  padding: 0 2px;
+}
+
+.kp-scale-label {
+  font-size: 0.65rem;
+  color: var(--aurora-text-tertiary);
+  flex: 1;
+  text-align: center;
+}
+
+.kp-segment {
+  flex: 1;
+  background: var(--aurora-chip);
+  border-right: 1px solid var(--aurora-bg-primary);
+  transition: all var(--aurora-timing-fast);
+  position: relative;
+}
+
+.kp-segment:last-child {
+  border-right: none;
+}
+
+.kp-segment.inactive {
+  background: var(--aurora-overlay-subtle);
+}
+
+.kp-segment.horizon {
+  background: var(--aurora-status-low-tint);
+}
+
+.kp-segment.noticeable {
+  background: var(--aurora-status-medium-tint);
+}
+
+.kp-segment.bright {
+  background: var(--aurora-status-high-strong);
+}
+
+/* Legend for Kp Bars */
+.kp-legend {
+  display: flex;
+  justify-content: center;
+  gap: var(--aurora-spacing-xl);
+  margin-top: var(--aurora-spacing-xl);
+  padding-top: var(--aurora-spacing-xl);
+  border-top: 1px solid var(--aurora-border-light);
+}
+
+.kp-legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--aurora-spacing-s);
+}
+
+.kp-legend-color {
+  width: 20px;
+  height: 12px;
+  border-radius: var(--aurora-radius-xs);
+}
+
+.kp-legend-color.bright {
+  background: var(--aurora-status-high-strong);
+}
+
+.kp-legend-color.noticeable {
+  background: var(--aurora-status-medium-tint);
+}
+
+.kp-legend-color.horizon {
+  background: var(--aurora-status-low-tint);
+}
+
+.kp-legend-label {
+  font-size: 0.8rem;
+  color: var(--aurora-text-secondary);
+}
+
+/* Dark Sky Locations Block (Bortle Sites) - Container width */
+.dark-sky-locations {
+  margin: var(--aurora-spacing-xxl) 0;
+  padding: var(--aurora-spacing-xxl);
+  background: var(--aurora-surface);
+  border: 1px solid var(--aurora-border-light);
+  border-radius: var(--aurora-radius-card);
+  max-width: 1200px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.dark-sky-locations h2 {
+  margin-bottom: var(--aurora-spacing-xl);
+  text-align: center;
+}
+
+/* Google Map Container */
+.dark-sky-map {
+  width: 100%;
+  height: 400px;
+  border-radius: var(--aurora-radius-m);
+  overflow: hidden;
+  margin-bottom: var(--aurora-spacing-xxl);
+  border: 1px solid var(--aurora-border-light);
+  background: var(--aurora-chip);
+  position: relative;
+}
+
+.dark-sky-map iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.map-description {
+  text-align: center;
+  color: var(--aurora-text-secondary);
+  font-size: 0.875rem;
+  margin-bottom: var(--aurora-spacing-l);
+  font-style: italic;
+}
+
+.bortle-sites-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 360px));
+  gap: var(--aurora-spacing-l);
+  margin-top: var(--aurora-spacing-xl);
+  width: 100%;
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+  justify-content: center;
+}
+
+.bortle-site-card {
+  padding: var(--aurora-spacing-xl);
+  background: var(--aurora-chip);
+  border: 1px solid var(--aurora-border-light);
+  border-radius: var(--aurora-radius-card);
+  position: relative;
+  transition: transform var(--aurora-timing-fast) ease, box-shadow var(--aurora-timing-fast) ease;
+  box-shadow: var(--aurora-elevation-e1);
+  text-align: center;
+  width: 100%;
+  height: 100%;
+}
+
+.bortle-site-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--aurora-elevation-e2);
+}
+
+.bortle-badge {
+  position: absolute;
+  top: var(--aurora-spacing-l);
+  right: var(--aurora-spacing-l);
+  padding: var(--aurora-spacing-xs) var(--aurora-spacing-m);
+  background: var(--aurora-primary);
+  color: var(--aurora-on-primary);
+  border-radius: var(--aurora-radius-chip);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.bortle-site-card h3 {
+  margin-bottom: var(--aurora-spacing-s);
+  color: var(--aurora-text-primary);
+  font-size: 1.125rem;
+  max-width: calc(100% - 120px);
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 var(--aurora-spacing-s);
+}
+
+.site-description {
+  color: var(--aurora-text-secondary);
+  font-size: 0.875rem;
+  margin-bottom: var(--aurora-spacing-l);
+  line-height: 1.5;
+}
+
+.site-details {
+  padding-top: var(--aurora-spacing-l);
+  border-top: 1px solid var(--aurora-border-light);
+  text-align: center;
+}
+
+.site-details .distances {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--aurora-spacing-m);
+  margin-bottom: var(--aurora-spacing-s);
+  font-size: 0.875rem;
+  color: var(--aurora-text-secondary);
+  justify-content: center;
+}
+
+.site-details .access {
+  font-size: 0.875rem;
+  color: var(--aurora-text-tertiary);
+  font-style: italic;
+  text-align: center;
+}
+
+/* State Cities Grid Block - Full Width with Smaller Cards */
+.state-cities-gallery {
+  margin: var(--aurora-spacing-xxl) 0;
+  width: 100%;
+  position: relative;
+  padding: var(--aurora-spacing-xxl) 0;
+  background: var(--aurora-surface);
+  border-top: 1px solid var(--aurora-border-light);
+  border-bottom: 1px solid var(--aurora-border-light);
+}
+
+.state-cities-gallery h2 {
+  margin-bottom: var(--aurora-spacing-xl);
+  text-align: center;
+  padding: 0 var(--aurora-spacing-xl);
+}
+
+.state-cities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--aurora-spacing-l);
+  margin-top: var(--aurora-spacing-xl);
+  padding: 0 var(--aurora-spacing-xl);
+}
+
+/* Show more cities section */
+.more-cities-info {
+  margin-top: var(--aurora-spacing-xxl);
+  padding-top: var(--aurora-spacing-xl);
+  border-top: 1px solid var(--aurora-border-light);
+  text-align: center;
+}
+
+.more-cities-info p {
+  color: var(--aurora-text-secondary);
+  margin-bottom: var(--aurora-spacing-l);
+}
+
+.all-cities-list {
+  margin-top: var(--aurora-spacing-l);
+}
+
+.all-cities-list summary {
+  cursor: pointer;
+  color: var(--aurora-primary);
+  font-weight: 500;
+  padding: var(--aurora-spacing-m) var(--aurora-spacing-xl);
+  background: var(--aurora-chip);
+  border: 1px solid var(--aurora-border-light);
+  border-radius: var(--aurora-radius-button);
+  display: inline-block;
+  transition: all var(--aurora-timing-fast) ease;
+}
+
+.all-cities-list summary:hover {
+  background: var(--aurora-surface);
+  transform: translateY(-1px);
+}
+
+.all-cities-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--aurora-spacing-s);
+  margin-top: var(--aurora-spacing-xl);
+  justify-content: center;
+}
+
+.city-link {
+  display: inline-block;
+  padding: var(--aurora-spacing-xs) var(--aurora-spacing-m);
+  background: var(--aurora-chip);
+  color: var(--aurora-text-primary);
+  text-decoration: none;
+  border-radius: var(--aurora-radius-chip);
+  font-size: 0.875rem;
+  transition: all var(--aurora-timing-fast) ease;
+  border: 1px solid var(--aurora-border-light);
+}
+
+.city-link:hover {
+  background: var(--aurora-surface);
+  border-color: var(--aurora-primary);
+  transform: translateY(-1px);
+}
+
+/* Seasonal Guide Block */
+.seasonal-guide {
+  margin: var(--aurora-spacing-xxl) 0;
+  padding: var(--aurora-spacing-xxl);
+  background: var(--aurora-surface);
+  border: 1px solid var(--aurora-border-light);
+  border-radius: var(--aurora-radius-card);
+}
+
+.seasonal-guide h2 {
+  margin-bottom: var(--aurora-spacing-xl);
+  text-align: center;
+}
+
+.guide-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--aurora-spacing-l);
+  margin-top: var(--aurora-spacing-xl);
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.guide-card {
+  padding: var(--aurora-spacing-xl);
+  background: var(--aurora-chip);
+  border: 1px solid var(--aurora-border-light);
+  border-radius: var(--aurora-radius-card);
+  transition: transform var(--aurora-timing-fast) ease, box-shadow var(--aurora-timing-fast) ease;
+  position: relative;
+}
+
+.guide-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--aurora-elevation-e2);
+}
+
+/* Guide Card Color Themes */
+.guide-card-success {
+  border-left: 4px solid var(--aurora-success);
+}
+
+.guide-card-primary {
+  border-left: 4px solid var(--aurora-primary);
+}
+
+.guide-card-accent {
+  border-left: 4px solid var(--aurora-status-medium);
+}
+
+.guide-card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--aurora-spacing-m);
+  margin-bottom: var(--aurora-spacing-l);
+}
+
+.guide-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.guide-card h3 {
+  margin: 0;
+  color: var(--aurora-text-primary);
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.guide-highlights {
+  display: grid;
+  gap: var(--aurora-spacing-m);
+}
+
+.highlight-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--aurora-spacing-s) 0;
+  border-bottom: 1px solid var(--aurora-border-light);
+}
+
+.highlight-item:last-child {
+  border-bottom: none;
+}
+
+.highlight-label {
+  color: var(--aurora-text-secondary);
+  font-size: 0.875rem;
+  flex: 1;
+}
+
+.highlight-value {
+  color: var(--aurora-text-primary);
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.highlight-value.highlight-excellent {
+  color: var(--aurora-success);
+  background: var(--aurora-status-high-tint);
+  padding: var(--aurora-spacing-xs) var(--aurora-spacing-s);
+  border-radius: var(--aurora-radius-chip);
+  font-size: 0.8rem;
+}
+
+.highlight-value.highlight-good {
+  color: var(--aurora-status-medium);
+  background: var(--aurora-status-medium-tint);
+  padding: var(--aurora-spacing-xs) var(--aurora-spacing-s);
+  border-radius: var(--aurora-radius-chip);
+  font-size: 0.8rem;
+}
+
+/* Related Content Block */
+.related-content {
+  margin: var(--aurora-spacing-xxl) 0;
+  padding-top: var(--aurora-spacing-xxl);
+  border-top: 1px solid var(--aurora-border-light);
+  text-align: center;
+}
+
+.related-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--aurora-spacing-m);
+  margin-top: var(--aurora-spacing-l);
+  justify-content: center;
+}
+
+.related-link {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--aurora-spacing-m) var(--aurora-spacing-xl);
+  background: var(--aurora-chip);
+  border-radius: var(--aurora-radius-button);
+  text-decoration: none;
+  color: var(--aurora-text-primary);
+  font-size: 0.9375rem;
+  transition: all var(--aurora-timing-fast) ease;
+  border: 1px solid var(--aurora-border-light);
+}
+
+.related-link:hover {
+  background: var(--aurora-surface);
+  transform: translateY(-2px);
+  border-color: var(--aurora-primary);
+}
+
+/* Mobile Kp Legend - Inline for mobile */
+.kp-mobile-legend {
+  display: none;
+  margin-top: var(--aurora-spacing-m);
+  padding: var(--aurora-spacing-m);
+  background: var(--aurora-chip);
+  border-radius: var(--aurora-radius-s);
+  border: 1px solid var(--aurora-border-light);
+}
+
+.kp-mobile-legend-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--aurora-spacing-s);
+  text-align: center;
+}
+
+.kp-mobile-legend-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--aurora-spacing-xs);
+}
+
+.kp-mobile-legend-color {
+  width: 30px;
+  height: 8px;
+  border-radius: var(--aurora-radius-xs);
+}
+
+.kp-mobile-legend-text {
+  font-size: 0.7rem;
+  color: var(--aurora-text-secondary);
+  line-height: 1.2;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .state-page-container {
+    padding: 0 var(--aurora-spacing-l);
+    max-width: 100%;
+  }
+
+  .kp-bands-section,
+  .state-cities-gallery,
+  .state-page-container .cta-app {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: var(--aurora-spacing-l);
+    padding-right: var(--aurora-spacing-l);
+  }
+
+  .state-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .kp-bands-chart {
+    flex-direction: column;
+    padding: var(--aurora-spacing-l);
+    overflow-x: visible;
+  }
+
+  .kp-band-row {
+    flex: 1 1 auto;
+    padding: var(--aurora-spacing-l);
+    min-height: auto;
+  }
+
+  .kp-range-values {
+    flex-direction: column;
+    gap: var(--aurora-spacing-s);
+    text-align: center;
+  }
+
+  /* Show mobile legend, hide desktop legend */
+  .kp-mobile-legend {
+    display: block;
+  }
+
+  .kp-legend {
+    display: none;
+  }
+
+  .kp-mobile-legend-color.bright {
+    background: var(--aurora-status-high-strong);
+  }
+
+  .kp-mobile-legend-color.noticeable {
+    background: var(--aurora-status-medium-tint);
+  }
+
+  .kp-mobile-legend-color.horizon {
+    background: var(--aurora-status-low-tint);
+  }
+
+  .bortle-sites-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .state-cities-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--aurora-spacing-m);
+    padding: 0 var(--aurora-spacing-l);
+    max-width: none;
+  }
+
+  .guide-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .related-links {
+    flex-direction: column;
+  }
+
+  .related-link {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .state-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .bortle-badge {
+    font-size: 0.625rem;
+    padding: 0.125rem 0.5rem;
+  }
+}
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+  /* Disable parallax on mobile for better performance */
+  .state-header-parallax {
+    min-height: 50vh;
+    background-attachment: scroll;
+  }
+
+  .state-header {
+    padding: 2rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .state-header-parallax {
+    min-height: 45vh;
+  }
+
+  .state-header {
+    padding: 1.5rem 1rem;
+  }
+}

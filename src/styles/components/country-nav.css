@@ -1,0 +1,117 @@
+/**
+ * Country Navigation Component Styles
+ * Used by: components/CountryNav.astro
+ * Extracted from inline <style> block (98 lines)
+ * Date: 2025-11-24
+ * Features: Grid of country cards with city counts
+ */
+
+/* ==========================================================================
+   Section Container
+   ========================================================================== */
+
+.country-nav {
+  padding: 3rem 0;
+  text-align: center;
+}
+
+.country-nav__container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.country-nav h2 {
+  color: #FFFFFF;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+.nav-intro {
+  color: #C8C8C8;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin: 0 auto 3rem auto;
+  max-width: 600px;
+}
+
+.country-nav .city-search {
+  margin: 0 auto 2rem auto;
+}
+
+/* ==========================================================================
+   Countries Grid
+   ========================================================================== */
+
+.countries-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin: 0 auto;
+}
+
+.country-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 1.5rem;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  backdrop-filter: blur(10px);
+}
+
+.country-card:hover {
+  border-color: #6BE7A0;
+  transform: translateY(-3px);
+  background: rgba(107, 231, 160, 0.08);
+  box-shadow: 0 4px 20px rgba(107, 231, 160, 0.15);
+}
+
+.country-info h3 {
+  color: #FFFFFF;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem 0;
+  text-align: left;
+}
+
+.city-count {
+  color: #6BE7A0;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.country-flag {
+  font-size: 2rem;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-right: 0.25rem;
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 600px) {
+  .countries-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .country-card {
+    padding: 1.25rem;
+  }
+
+  .country-nav h2 {
+    font-size: 1.5rem;
+  }
+}

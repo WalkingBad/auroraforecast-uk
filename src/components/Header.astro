@@ -1,0 +1,145 @@
+---
+import '../styles/components/header.css';
+import StoreBadges from './StoreBadges.astro';
+import type { I18nPageHelper } from '../utils/i18n-page';
+
+export interface Props {
+  currentPath: string;
+  i18n?: I18nPageHelper;
+}
+
+const { currentPath, i18n } = Astro.props;
+
+// Active state detection
+const isHomePage = currentPath === '/';
+const isGuidesPage = currentPath.startsWith('/guides');
+
+// Translations
+const downloadApp = i18n ? i18n.t('header_download_app') : 'Download App:';
+const navHome = i18n ? i18n.t('nav_home') : 'Home';
+const navRegions = i18n ? i18n.t('nav_regions') : 'Regions';
+const navGuides = i18n ? i18n.t('nav_guides') : 'Guides';
+
+// Build language-aware href
+const buildHref = (slug: string) => {
+  if (i18n && i18n.lang !== 'en') {
+    return `/${i18n.lang}/${slug}`;
+  }
+  return `/${slug}`;
+};
+
+const homeHref = i18n && i18n.lang !== 'en' ? `/${i18n.lang}` : '/';
+const regionsHref = `${homeHref}#regions`;
+const guidesHref = buildHref('guides');
+---
+
+<header class="site-header">
+  <div class="header-container">
+    <!-- Logo -->
+    <a href={homeHref} class="header-logo">
+      AuroraMe
+    </a>
+
+    <!-- Desktop Navigation -->
+    <nav class="nav-menu" aria-label="Main navigation">
+      <ul class="nav-list">
+        <li>
+          <a
+            href={homeHref}
+            class={`nav-link ${isHomePage ? 'nav-link--active' : ''}`}
+            aria-current={isHomePage ? 'page' : undefined}
+          >
+            {navHome}
+          </a>
+        </li>
+        <li>
+          <a href={regionsHref} class="nav-link">
+            {navRegions}
+          </a>
+        </li>
+        <li>
+          <a
+            href={guidesHref}
+            class={`nav-link ${isGuidesPage ? 'nav-link--active' : ''}`}
+            aria-current={isGuidesPage ? 'page' : undefined}
+          >
+            {navGuides}
+          </a>
+        </li>
+        <li class="nav-item--cta">
+          <div class="app-download-menu">
+            <span class="download-label">{downloadApp}</span>
+            <StoreBadges
+              pageType="other"
+              placement="header"
+              size="compact"
+              showRatings={false}
+              enhanced={false}
+              className="header-store-badges"
+              i18n={i18n}
+            />
+          </div>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Mobile Menu Toggle -->
+    <button
+      class="menu-toggle"
+      aria-label="Toggle menu"
+      aria-expanded="false"
+      type="button"
+    >
+      <span class="hamburger"></span>
+    </button>
+  </div>
+</header>
+
+<script is:inline>
+(function() {
+  function initMenu() {
+    const menuToggle = document.querySelector('.menu-toggle');
+    const navMenu = document.querySelector('.nav-menu');
+
+    if (!menuToggle || !navMenu) {
+      return;
+    }
+
+    // Toggle menu
+    menuToggle.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
+      menuToggle.setAttribute('aria-expanded', String(!isExpanded));
+
+      if (!isExpanded) {
+        // Opening menu
+        navMenu.classList.add('active');
+        menuToggle.classList.add('active');
+      } else {
+        // Closing menu
+        navMenu.classList.remove('active');
+        menuToggle.classList.remove('active');
+      }
+    });
+
+    // Close menu when clicking a link
+    navMenu.addEventListener('click', function(e) {
+      const target = e.target;
+      if (target.closest('.nav-link, .badge-link')) {
+        navMenu.classList.remove('active');
+        menuToggle.classList.remove('active');
+        menuToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMenu);
+  } else {
+    initMenu();
+  }
+})();
+</script>

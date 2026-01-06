@@ -1,0 +1,67 @@
+/**
+ * Breadcrumbs Component Styles
+ * Used by: Breadcrumbs.astro
+ * Extracted from inline <style> block (47 lines)
+ * Date: 2025-11-24
+ * Features: Navigation breadcrumb trail
+ */
+
+/* ==========================================================================
+   Container
+   ========================================================================== */
+
+.breadcrumbs {
+  margin-top: var(--aurora-spacing-xl);
+  margin-bottom: var(--aurora-spacing-xl);
+}
+
+/* ==========================================================================
+   List
+   ========================================================================== */
+
+.breadcrumb-list {
+  display: flex;
+  align-items: center;
+  gap: var(--aurora-spacing-s);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 14px; /* bodyS from AuroraTypography */
+  color: var(--aurora-text-secondary);
+}
+
+.breadcrumb-item {
+  display: flex;
+  align-items: center;
+  gap: var(--aurora-spacing-s);
+}
+
+/* ==========================================================================
+   Links
+   ========================================================================== */
+
+.breadcrumb-link {
+  color: var(--aurora-text-secondary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+  opacity: 0.8;
+}
+
+.breadcrumb-link:hover {
+  color: var(--aurora-text);
+  text-decoration: underline;
+  opacity: 1;
+}
+
+.breadcrumb-current {
+  color: var(--aurora-text);
+  font-weight: 600; /* Medium weight from design system */
+  opacity: 1;
+}
+
+.breadcrumb-separator {
+  color: var(--aurora-text-tertiary);
+  font-weight: normal;
+  user-select: none;
+  opacity: 0.6;
+}

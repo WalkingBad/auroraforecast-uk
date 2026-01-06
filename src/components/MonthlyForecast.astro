@@ -1,0 +1,345 @@
+---
+import './MonthlyForecast.css';
+import AppDownloadCTA from './AppDownloadCTA.astro';
+
+interface Props {
+  days: Array<{
+    date: string;
+    status: string;
+    kp?: number;
+    observabilityScore?: number;
+    bestWindow?: { start: string; end: string };
+  }>;
+  monthly: {
+    bestWeek: number[];
+    peakDates: string[];
+    staticFactors: {
+      magneticLatitude: number;
+      seasonalMultiplier: number;
+    };
+  };
+  cityName: string;
+  citySlug?: string;
+  i18n?: any;
+}
+
+const { days, monthly, cityName, citySlug, i18n } = Astro.props;
+
+// Helper to get day name (M, T, W...)
+const dayNames = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+
+// Calculate good days count
+const goodDaysCount = days.filter(d => ['high', 'medium'].includes(d.status)).length || 5;
+
+// Build premium checkout URL with proper redirect params
+const siteBaseUrl = import.meta.env.DEV
+  ? 'http://localhost:4321'
+  : 'https://auroraforecast.me';
+const baseCheckoutUrl = import.meta.env.PUBLIC_LS_CHECKOUT_URL_EXTENDED || '#';
+const finalRedirectPath = citySlug ? `/${citySlug}` : '/';
+
+// Build redirect URL for LS checkout
+// CRITICAL: {order_id} must NOT be URL-encoded - LS needs to recognize it as template variable
+const redirectBase = encodeURIComponent(`${siteBaseUrl}/checkout/success?order_id=`);
+const redirectParams = encodeURIComponent(`&city=${citySlug || ''}&redirect=${encodeURIComponent(finalRedirectPath)}`);
+const redirectUrl = `${redirectBase}{order_id}${redirectParams}`;
+
+// Full checkout URL with redirect params
+const checkoutUrl = baseCheckoutUrl !== '#'
+  ? `${baseCheckoutUrl}?checkout[redirect_url]=${redirectUrl}&checkout[custom][city]=${citySlug || ''}&checkout[custom][redirect]=${encodeURIComponent(finalRedirectPath)}`
+  : '#';
+
+// i18n helper
+const t = (key: string, fallback: string) => i18n?.t(key, fallback) ?? fallback;
+
+const texts = {
+  title: t('monthly_trends_title', 'Monthly Trends'),
+  description: t('monthly_trends_description', 'This calendar shows likelihood trends based on aurora activity, darkness, aurora zone, moonlight, and historical data. Clouds are excluded due to low predictability. Use it to pick promising nights, then confirm with the 72h forecast closer to date.'),
+  feature27d: t('premium_feature_27d', '27-day calendar view'),
+  feature72h: t('premium_feature_72h', 'High-precision 72-hour forecast'),
+  feature1y: t('premium_feature_1y', '1-year trends for trip planning'),
+  legendUnlikely: t('legend_unlikely', 'Unlikely'),
+  legendLow: t('legend_low', 'Low'),
+  legendMedium: t('legend_medium', 'Medium'),
+  legendHigh: t('legend_high', 'High'),
+  // Day modal texts
+  dayDetails: t('day_details', 'Day Details'),
+  status: t('monthly_status', 'Status'),
+  kpIndex: t('monthly_kp_index', 'Kp Index'),
+  bestWindow: t('monthly_best_window', 'Best Window'),
+  observability: t('monthly_observability', 'Observability'),
+  statusHigh: t('status_high', 'Visible'),
+  statusMedium: t('status_medium', 'Likely Visible'),
+  statusLow: t('status_low', 'Might be Visible'),
+  statusVeryLow: t('status_very_low', 'Unlikely'),
+  bestDay: t('monthly_best_day', 'Best Day'),
+};
+
+// Helper to get status text
+function getStatusText(status: string): string {
+  switch(status) {
+    case 'high': return texts.statusHigh;
+    case 'medium': return texts.statusMedium;
+    case 'low': return texts.statusLow;
+    case 'very_low': return texts.statusVeryLow;
+    default: return status;
+  }
+}
+
+// Helper to get status color
+function getStatusColor(status: string): string {
+  switch(status) {
+    case 'high': return '#34C97B';
+    case 'medium': return '#FFEB3B';
+    case 'low': return '#FF9800';
+    case 'very_low': return '#FF4747';
+    default: return '#6B7280';
+  }
+}
+---
+
+<div class="monthly-forecast-card">
+  <div class="monthly-header">
+    <div class="header-left">
+      <span class="header-icon">📅</span>
+      <h3>{texts.title}</h3>
+    </div>
+  </div>
+  <p class="monthly-description">{texts.description}</p>
+
+  <div class="monthly-content" id="monthly-container">
+    <!-- TEASER (Default visible until JS checks premium) -->
+    <div class="monthly-teaser" id="monthly-overlay">
+      <div class="teaser-calendar blurred">
+        <div class="weekdays">
+          {dayNames.map(d => <span class="weekday">{d}</span>)}
+        </div>
+        <div class="days-grid">
+          {days.slice(0, 28).map((day, i) => (
+            <div class={`day-cell status-${day.status === 'unknown' ? 'low' : day.status}`}>
+              <span class="day-number">{i + 1}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- A/B Test: App Download CTA (replacing Lemon Squeezy checkout) -->
+      <div class="teaser-overlay">
+        <AppDownloadCTA block="27d" citySlug={citySlug} i18n={i18n} />
+      </div>
+
+      <!-- LEGACY: Lemon Squeezy checkout - commented for A/B test, restore if needed
+      <div class="teaser-overlay">
+        <span class="teaser-lock">🔒</span>
+        <div class="teaser-features">
+          <div class="teaser-feature">{texts.feature27d}</div>
+          <div class="teaser-feature">{texts.feature72h}</div>
+          <div class="teaser-feature">{texts.feature1y}</div>
+        </div>
+        <a href={checkoutUrl} class="teaser-cta" rel="nofollow noopener">
+          <span class="cta-main">Unlock All</span>
+          <span class="cta-sub">Premium</span>
+        </a>
+      </div>
+      -->
+    </div>
+
+    <!-- FULL CONTENT (Hidden by default, shown if premium) -->
+    <div class="monthly-full hidden" id="monthly-full">
+      <p class="aurora-summary">
+        In {cityName} {goodDaysCount} auroras will be visible, choose the best nights
+      </p>
+
+      <div class="calendar-container">
+        <div class="weekdays">
+          {dayNames.map(d => <span class="weekday">{d}</span>)}
+        </div>
+        <div class="days-grid" id="monthly-days-grid">
+          {days.slice(0, 28).map((day, i) => {
+            const isPeakDay = monthly.peakDates?.includes(day.date);
+            return (
+              <div
+                class={`day-cell status-${day.status} ${isPeakDay ? 'peak-day' : ''}`}
+                data-day={i + 1}
+                data-date={day.date}
+                data-status={day.status}
+                data-kp={day.kp ?? ''}
+                data-score={day.observabilityScore ?? ''}
+                data-window-start={day.bestWindow?.start ?? ''}
+                data-window-end={day.bestWindow?.end ?? ''}
+                data-peak={isPeakDay ? 'true' : ''}
+              >
+                <span class="day-number">{i + 1}</span>
+                {isPeakDay && <span class="peak-star">★</span>}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div class="calendar-legend">
+        <div class="legend-item"><span class="dot unlikely"></span>{texts.legendUnlikely}</div>
+        <div class="legend-item"><span class="dot low"></span>{texts.legendLow}</div>
+        <div class="legend-item"><span class="dot medium"></span>{texts.legendMedium}</div>
+        <div class="legend-item"><span class="dot high"></span>{texts.legendHigh}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Day Details Modal -->
+  <div class="day-modal hidden" id="day-modal"
+    data-text-high={texts.statusHigh}
+    data-text-medium={texts.statusMedium}
+    data-text-low={texts.statusLow}
+    data-text-very-low={texts.statusVeryLow}
+    data-text-best-day={texts.bestDay}
+  >
+    <div class="day-modal-content">
+      <div class="day-modal-header">
+        <div class="day-indicator" id="modal-day-indicator">
+          <span class="day-num" id="modal-day-num"></span>
+        </div>
+        <div class="modal-title-wrap">
+          <span class="day-modal-title">{texts.dayDetails}</span>
+          <span class="best-day-badge hidden" id="modal-best-badge">★ {texts.bestDay}</span>
+        </div>
+        <button class="close-modal" id="close-modal">×</button>
+      </div>
+      <div class="day-modal-body">
+        <div class="detail-row">
+          <span class="detail-label">{texts.status}</span>
+          <span class="detail-value" id="modal-status"></span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">{texts.kpIndex}</span>
+          <span class="detail-value" id="modal-kp"></span>
+        </div>
+        <div class="detail-row" id="modal-window-row">
+          <span class="detail-label">{texts.bestWindow}</span>
+          <span class="detail-value" id="modal-window"></span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">{texts.observability}</span>
+          <span class="detail-value" id="modal-observability"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Status colors
+  const STATUS_COLORS: Record<string, string> = {
+    'high': '#34C97B',
+    'medium': '#FFEB3B',
+    'low': '#FF9800',
+    'very_low': '#FF4747'
+  };
+
+  function checkPremium() {
+    const cookies = document.cookie.split(';');
+    // Check for both aurora_premium (JWT) and aurora_premium_flag (simple flag)
+    const isPremium = cookies.some(c => {
+      const trimmed = c.trim();
+      return trimmed.startsWith('aurora_premium=') || trimmed.startsWith('aurora_premium_flag=');
+    });
+
+    if (isPremium) {
+      document.getElementById('monthly-overlay')?.classList.add('hidden');
+      document.getElementById('monthly-full')?.classList.remove('hidden');
+    }
+  }
+
+  function setupDayClicks() {
+    const grid = document.getElementById('monthly-days-grid');
+    const modal = document.getElementById('day-modal');
+    const closeBtn = document.getElementById('close-modal');
+
+    if (!grid || !modal) return;
+
+    // Get localized status text from data attributes
+    const STATUS_TEXT: Record<string, string> = {
+      'high': modal.getAttribute('data-text-high') || 'Visible',
+      'medium': modal.getAttribute('data-text-medium') || 'Likely Visible',
+      'low': modal.getAttribute('data-text-low') || 'Might be Visible',
+      'very_low': modal.getAttribute('data-text-very-low') || 'Unlikely'
+    };
+
+    // Click on day cell
+    grid.addEventListener('click', (e) => {
+      const cell = (e.target as HTMLElement).closest('.day-cell');
+      if (!cell) return;
+
+      const dayNum = cell.getAttribute('data-day');
+      const date = cell.getAttribute('data-date');
+      const status = cell.getAttribute('data-status') || 'unknown';
+      const kp = cell.getAttribute('data-kp');
+      const score = cell.getAttribute('data-score');
+      const windowStart = cell.getAttribute('data-window-start');
+      const windowEnd = cell.getAttribute('data-window-end');
+      const isPeak = cell.getAttribute('data-peak') === 'true';
+
+      // Populate modal
+      const dayIndicator = document.getElementById('modal-day-indicator');
+      const dayNumEl = document.getElementById('modal-day-num');
+      const statusEl = document.getElementById('modal-status');
+      const kpEl = document.getElementById('modal-kp');
+      const windowEl = document.getElementById('modal-window');
+      const obsEl = document.getElementById('modal-observability');
+      const bestBadge = document.getElementById('modal-best-badge');
+
+      if (dayIndicator) {
+        dayIndicator.style.borderColor = STATUS_COLORS[status] || '#6B7280';
+      }
+      if (dayNumEl) dayNumEl.textContent = dayNum || '';
+      if (statusEl) {
+        statusEl.textContent = STATUS_TEXT[status] || status;
+        statusEl.style.color = STATUS_COLORS[status] || '#ffffff';
+      }
+      if (kpEl) {
+        kpEl.textContent = kp ? `${parseFloat(kp).toFixed(1)}` : '—';
+      }
+      if (windowEl) {
+        windowEl.textContent = (windowStart && windowEnd) ? `${windowStart}–${windowEnd}` : '—';
+      }
+      if (obsEl) {
+        const scoreNum = parseFloat(score || '0');
+        obsEl.textContent = scoreNum > 0 ? `${Math.round(scoreNum * 100)}%` : '—';
+      }
+      // Show/hide best day badge
+      if (bestBadge) {
+        bestBadge.classList.toggle('hidden', !isPeak);
+      }
+
+      // Show modal
+      modal.classList.remove('hidden');
+    });
+
+    // Close modal
+    closeBtn?.addEventListener('click', () => {
+      modal.classList.add('hidden');
+    });
+
+    // Click outside to close
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.classList.add('hidden');
+      }
+    });
+
+    // ESC to close
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+        modal.classList.add('hidden');
+      }
+    });
+  }
+
+  function init() {
+    checkPremium();
+    setupDayClicks();
+  }
+
+  init();
+  document.addEventListener('astro:page-load', init);
+</script>

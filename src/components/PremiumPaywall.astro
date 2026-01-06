@@ -1,0 +1,92 @@
+---
+import '../styles/components/premium-paywall.css';
+import AppDownloadCTA from './AppDownloadCTA.astro';
+
+interface Props {
+  citySlug: string;
+  cityName: string;
+  country: string;
+  region?: string;
+  i18n?: any; // i18n helper for localization
+}
+
+const { citySlug, cityName, country, region, i18n } = Astro.props;
+
+// Build final redirect URL (where user goes after activating access on success page)
+// City pages are at /{citySlug} (e.g., /fairbanks), not nested by country/region
+const finalRedirectPath = `/${citySlug}`;
+
+// Base URL for redirects (localhost for dev, production for prod)
+const siteBaseUrl = import.meta.env.DEV
+  ? 'http://localhost:4321'
+  : 'https://auroraforecast.me';
+
+// Lemon Squeezy checkout URL (from env)
+const checkoutUrl = import.meta.env.PUBLIC_LS_CHECKOUT_URL;
+
+// Build redirect URL for LS checkout
+// CRITICAL: {order_id} must NOT be URL-encoded - LS needs to recognize it as template variable
+// We encode the parts around it separately, then concatenate with raw {order_id}
+const redirectBase = encodeURIComponent(`${siteBaseUrl}/checkout/success?order_id=`);
+const redirectParams = encodeURIComponent(`&city=${citySlug}&redirect=${encodeURIComponent(finalRedirectPath)}`);
+// Final: .../success?order_id={order_id}&city=... (where {order_id} is NOT encoded)
+const redirectUrl = `${redirectBase}{order_id}${redirectParams}`;
+
+// Full checkout URL:
+// - checkout[redirect_url]: Where LS redirects after purchase (our success page)
+// - checkout[custom][city]: City slug for tracking
+// - checkout[custom][redirect]: Final destination after activation
+const fullCheckoutUrl = `${checkoutUrl}?checkout[redirect_url]=${redirectUrl}&checkout[custom][city]=${citySlug}&checkout[custom][redirect]=${encodeURIComponent(finalRedirectPath)}`;
+---
+
+<div class="premium-paywall">
+  <!-- A/B Test: App Download CTA (replacing Lemon Squeezy checkout) -->
+  <AppDownloadCTA block="72h" citySlug={citySlug} i18n={i18n} />
+
+  <!-- LEGACY: Lemon Squeezy checkout - commented for A/B test, restore if needed
+  <div class="locked-features-container">
+    <div class="paywall-header">
+      <div class="lock-icon-badge">🔒</div>
+      <h3 class="unlock-title">{i18n ? i18n.t('paywall_unlock_72h', 'Unlock 72-hour forecast') : 'Unlock 72-hour forecast'}</h3>
+    </div>
+
+    <a href={fullCheckoutUrl} class="unlock-button" data-city={citySlug} rel="nofollow noopener">
+      {i18n ? i18n.t('paywall_week_pass', 'Get Week Pass – €2.99') : 'Get Week Pass – €2.99'}
+    </a>
+
+    <div class="payment-methods">
+      <img src="/payment-icons/Visa.svg" alt="Visa" class="payment-logo" />
+      <img src="/payment-icons/Mastercard.svg" alt="Mastercard" class="payment-logo" />
+      <img src="/payment-icons/PayPal.svg" alt="PayPal" class="payment-logo" />
+      <img src="/payment-icons/GooglePay.svg" alt="Google Pay" class="payment-logo" />
+      <img src="/payment-icons/ApplePay.svg" alt="Apple Pay" class="payment-logo" />
+    </div>
+  </div>
+  -->
+</div>
+
+<script>
+  // Track GA4 event when paywall is viewed
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'paywall_view', {
+      city: document.querySelector('.unlock-button')?.getAttribute('data-city'),
+      page_location: window.location.pathname
+    });
+  }
+
+  // Track checkout start when button clicked
+  document.querySelectorAll('.unlock-button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const city = btn.getAttribute('data-city');
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'checkout_start', {
+          city,
+          product: 'week_72h',
+          price: 2.99,
+          currency: 'EUR'
+        });
+      }
+    });
+  });
+</script>
+

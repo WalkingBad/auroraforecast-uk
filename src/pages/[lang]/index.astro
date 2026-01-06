@@ -1,0 +1,200 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import "../../styles/components/store-badges.css";
+import StoreBadges from "../../components/StoreBadges.astro";
+import SocialLinks from "../../components/SocialLinks.astro";
+import Hero from "../../components/Hero.astro";
+import LiveForecastBar from "../../components/LiveForecastBar.astro";
+import AppHero from "../../components/AppHero.astro";
+import FeaturesSection from "../../components/FeaturesSection.astro";
+import SocialProofSection from "../../components/SocialProofSection.astro";
+import ComparisonTable from "../../components/ComparisonTable.astro";
+import FAQ from "../../components/FAQ.astro";
+import CountryNav from "../../components/CountryNav.astro";
+import RegionsNav from "../../components/RegionsNav.astro";
+import type { SupportedLanguage } from '@config/language-targeting';
+import { SUPPORTED_LANGUAGES } from '@config/language-targeting';
+import { createPageI18n } from '../../utils/i18n-page';
+import { generatePageHreflangTags } from '../../utils/hreflang';
+
+// Generate paths for all supported languages (excluding English)
+export async function getStaticPaths() {
+  return SUPPORTED_LANGUAGES
+    .filter(lang => lang !== 'en') // English handled by original route
+    .map(lang => ({
+      params: { lang },
+      props: { lang }
+    }));
+}
+
+const { lang } = Astro.props;
+
+// Initialize i18n (temporarily keeping English text, will add translations later)
+const i18n = await createPageI18n(lang);
+
+// Generate hreflang tags for all language variants
+const hreflangTags = generatePageHreflangTags(
+  '/',
+  SUPPORTED_LANGUAGES
+);
+
+const canonicalUrl = `https://auroraforecast.me/${lang}`;
+---
+
+<BaseLayout
+  title={i18n.t('home_meta_title')}
+  description={i18n.t('home_meta_description')}
+  canonical={canonicalUrl}
+  lang={lang}
+  hreflangTags={hreflangTags}
+  i18n={i18n}
+>
+  <!-- Hero with parallax background and store badges -->
+  <Hero i18n={i18n} />
+
+  <!-- Live Forecast Bar: Global Kp, Search, Top 5 Cities -->
+  <LiveForecastBar i18n={i18n} />
+
+  <main>
+    <!-- App showcase with phone screens -->
+    <AppHero pageType="homepage" placement="hero" i18n={i18n} />
+
+    <!-- Why AuroraMe is Different (4 feature cards) -->
+    <FeaturesSection i18n={i18n} />
+
+    <!-- Social Proof: Stats + Testimonials -->
+    <SocialProofSection i18n={i18n} />
+
+    <!-- Comparison Table: AuroraMe vs Competitors -->
+    <ComparisonTable i18n={i18n} />
+
+    <!-- Navigation by country with search -->
+    <CountryNav i18n={i18n} lang={lang} showSearch={true} />
+
+    <!-- Navigation by regions -->
+    <RegionsNav i18n={i18n} lang={lang} />
+
+    <!-- FAQ section -->
+    <div class="container">
+      <FAQ i18n={i18n} />
+    </div>
+
+    <!-- Social links -->
+    <div class="social-footer">
+      <SocialLinks position="footer" />
+    </div>
+  </main>
+
+  <!-- Sticky footer with store badges (shows from AppHero onwards) -->
+  <StoreBadges pageType="homepage" placement="sticky_footer" sticky={true} enhanced={true} i18n={i18n} />
+
+  <!-- Real-time status sync for LiveForecastBar -->
+  <script src="/scripts/aurora-sync.js?v=3" defer></script>
+
+  <!-- Show sticky footer only after AppHero -->
+  <script>
+    // Intersection Observer to show sticky footer after AppHero
+    const observer = new IntersectionObserver((entries) => {
+      const stickyFooter = document.querySelector('.store-badges.sticky');
+      if (!stickyFooter) return;
+
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // AppHero is visible - hide footer (still on AppHero block)
+          stickyFooter.style.display = 'none';
+        } else {
+          // AppHero is not visible
+          if (entry.boundingClientRect.top < 0) {
+            // User has scrolled past AppHero - show footer
+            stickyFooter.style.display = 'flex';
+          } else {
+            // User hasn't reached AppHero yet - hide footer
+            stickyFooter.style.display = 'none';
+          }
+        }
+      });
+    }, {
+      threshold: 0,
+      rootMargin: '0px'
+    });
+
+    // Observe AppHero section
+    document.addEventListener('DOMContentLoaded', () => {
+      const appHero = document.querySelector('.app-hero');
+      if (appHero) {
+        observer.observe(appHero);
+      }
+    });
+  </script>
+
+  <!-- FAQ JSON-LD structured data -->
+  <script
+    type="application/ld+json"
+    set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": i18n.t('faq_q1_question'),
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": i18n.t('faq_q1_answer')
+          }
+        },
+        {
+          "@type": "Question",
+          "name": i18n.t('faq_q2_question'),
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": i18n.t('faq_q2_answer')
+          }
+        },
+        {
+          "@type": "Question",
+          "name": i18n.t('faq_q3_question'),
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": i18n.t('faq_q3_answer')
+          }
+        },
+        {
+          "@type": "Question",
+          "name": i18n.t('faq_q4_question'),
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": i18n.t('faq_q4_answer')
+          }
+        },
+        {
+          "@type": "Question",
+          "name": i18n.t('faq_q5_question'),
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": i18n.t('faq_q5_answer')
+          }
+        },
+        {
+          "@type": "Question",
+          "name": i18n.t('faq_q6_question'),
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": i18n.t('faq_q6_answer')
+          }
+        }
+      ]
+    })}
+  ></script>
+</BaseLayout>
+
+<style is:global>
+  /* Hide sticky footer initially on homepage */
+  .store-badges.sticky {
+    display: none;
+  }
+
+  .social-footer {
+    padding: 2rem 0;
+    text-align: center;
+  }
+</style>

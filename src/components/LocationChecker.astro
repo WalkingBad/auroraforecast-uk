@@ -1,0 +1,261 @@
+---
+import '../styles/components/location-checker.css';
+
+interface Props {
+  cities: Array<{
+    slug: string;
+    name: string;
+    country: string;
+    countryCode: string;
+    lat: number;
+    lon: number;
+    magneticLat: number;
+    status: {
+      status: string;
+      statusText: string;
+      color: string;
+    };
+  }>;
+}
+
+const { cities } = Astro.props;
+---
+
+<section class="location-checker">
+  <div class="container">
+    <h2>🌍 Check Your Location</h2>
+    <p class="checker-subtitle">
+      Find out if northern lights are visible in your area tonight
+    </p>
+
+    <div class="checker-controls">
+      <!-- Geolocation button -->
+      <button id="detectLocation" class="detect-btn">
+        📍 Use My Location
+      </button>
+
+      <div class="or-divider">or</div>
+
+      <!-- Manual search -->
+      <div class="search-wrapper">
+        <input
+          type="search"
+          id="citySearch"
+          placeholder="Enter your city..."
+          autocomplete="off"
+        />
+        <div id="searchResults" class="search-results"></div>
+      </div>
+    </div>
+
+    <!-- Result display (hidden by default) -->
+    <div id="forecastResult" class="forecast-result" style="display: none;">
+      <!-- Populated by JavaScript -->
+    </div>
+
+    <!-- Embed city data for client-side -->
+    <script
+      id="cityData"
+      type="application/json"
+      set:html={JSON.stringify(cities)}
+    ></script>
+  </div>
+</section>
+
+
+<script>
+  // Client-side geolocation + search logic
+  const detectBtn = document.getElementById('detectLocation') as HTMLButtonElement;
+  const citySearch = document.getElementById('citySearch') as HTMLInputElement;
+  const searchResults = document.getElementById('searchResults') as HTMLDivElement;
+  const resultDiv = document.getElementById('forecastResult') as HTMLDivElement;
+  const cityDataElem = document.getElementById('cityData');
+
+  let cities: any[] = [];
+  if (cityDataElem?.textContent) {
+    try {
+      cities = JSON.parse(cityDataElem.textContent);
+    } catch (e) {
+      console.error('Failed to parse city data', e);
+    }
+  }
+
+  // Normalize text for search
+  function normalizeText(value: string): string {
+    return value
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase();
+  }
+
+  // Escape HTML
+  function escapeHtml(value: string): string {
+    const str = String(value);
+    return str.replace(/[&<>"']/g, (char) => {
+      switch (char) {
+        case '&': return '&amp;';
+        case '<': return '&lt;';
+        case '>': return '&gt;';
+        case '"': return '&quot;';
+        case "'": return '&#39;';
+        default: return char;
+      }
+    });
+  }
+
+  // Calculate distance between two coordinates using Haversine formula
+  function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+    const R = 6371; // Earth's radius in km
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // Distance in km
+  }
+
+  // Find nearest city to coordinates
+  function findNearestCity(lat: number, lon: number): any {
+    let nearest = cities[0];
+    let minDist = Infinity;
+
+    cities.forEach(city => {
+      const dist = haversineDistance(lat, lon, city.lat, city.lon);
+      if (dist < minDist) {
+        minDist = dist;
+        nearest = city;
+      }
+    });
+
+    return nearest;
+  }
+
+  // Show forecast result
+  function showForecast(city: any) {
+    const isVisible = city.status.status !== 'very_low' && city.status.status !== 'unknown';
+
+    resultDiv.innerHTML = `
+      <h3>📍 ${escapeHtml(city.name)}, ${escapeHtml(city.country)}</h3>
+      <div class="result-status">
+        ${isVisible ? '✅ Visible Tonight' : '❌ Not Visible Tonight'}
+      </div>
+      <div class="result-details">
+        <strong>Status:</strong> ${escapeHtml(city.status.statusText)}<br>
+        <strong>Magnetic Latitude:</strong> ${city.magneticLat.toFixed(1)}°<br>
+        ${isVisible
+          ? 'Aurora may be visible tonight if skies are clear!'
+          : 'No aurora activity expected at your location tonight.'}
+      </div>
+      <a href="/${escapeHtml(city.slug)}" class="view-forecast-btn">
+        View Full Forecast →
+      </a>
+    `;
+    resultDiv.style.display = 'block';
+    resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  // Geolocation handler
+  detectBtn?.addEventListener('click', async () => {
+    if (!navigator.geolocation) {
+      alert('Geolocation is not supported by your browser');
+      return;
+    }
+
+    detectBtn.disabled = true;
+    detectBtn.textContent = '🔄 Detecting location...';
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        console.log('User coordinates:', latitude, longitude);
+
+        const nearest = findNearestCity(latitude, longitude);
+        console.log('Nearest city:', nearest.name, 'Distance:', haversineDistance(latitude, longitude, nearest.lat, nearest.lon).toFixed(1), 'km');
+
+        if (nearest) {
+          showForecast(nearest);
+        }
+
+        detectBtn.disabled = false;
+        detectBtn.textContent = '📍 Use My Location';
+      },
+      (error) => {
+        console.error('Geolocation error:', error);
+        alert('Unable to access your location. Please allow location access or search manually.');
+        detectBtn.disabled = false;
+        detectBtn.textContent = '📍 Use My Location';
+      }
+    );
+  });
+
+  // City search handler
+  const searchableCities = cities.map(city => ({
+    ...city,
+    searchIndex: normalizeText(`${city.name} ${city.country} ${city.countryCode}`)
+  }));
+
+  citySearch?.addEventListener('input', (event) => {
+    const target = event.target as HTMLInputElement;
+    const query = target.value.trim();
+
+    if (query.length < 2) {
+      searchResults.style.display = 'none';
+      return;
+    }
+
+    const normalizedQuery = normalizeText(query);
+    const matches = searchableCities
+      .filter(city => city.searchIndex.includes(normalizedQuery))
+      .slice(0, 8);
+
+    if (matches.length === 0) {
+      searchResults.innerHTML = '<div style="padding: 16px; text-align: center; color: var(--aurora-textSecondary);">City not found</div>';
+      searchResults.style.display = 'block';
+      return;
+    }
+
+    const resultsMarkup = matches.map(city => {
+      const locationLabel = `${escapeHtml(city.name)}, ${escapeHtml(city.country)}`;
+      return `
+        <div style="padding: 12px; cursor: pointer; border-radius: 12px; transition: background 0.2s ease;"
+             class="search-result-item"
+             data-city='${JSON.stringify({ slug: city.slug, name: city.name, country: city.country, magneticLat: city.magneticLat, status: city.status, lat: city.lat, lon: city.lon })}'>
+          <div style="font-weight: 600; color: var(--aurora-textPrimary);">${locationLabel}</div>
+          <div style="font-size: 0.85rem; color: var(--aurora-textSecondary); margin-top: 4px;">
+            MLAT ${city.magneticLat.toFixed(1)}° — ${escapeHtml(city.status.statusText)}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    searchResults.innerHTML = resultsMarkup;
+    searchResults.style.display = 'block';
+
+    // Add click handlers to results
+    searchResults.querySelectorAll('.search-result-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const cityData = JSON.parse((item as HTMLElement).getAttribute('data-city') || '{}');
+        showForecast(cityData);
+        citySearch.value = '';
+        searchResults.style.display = 'none';
+      });
+
+      item.addEventListener('mouseenter', () => {
+        (item as HTMLElement).style.background = 'rgba(107, 231, 160, 0.1)';
+      });
+
+      item.addEventListener('mouseleave', () => {
+        (item as HTMLElement).style.background = 'transparent';
+      });
+    });
+  });
+
+  // Close search results when clicking outside
+  document.addEventListener('click', (event) => {
+    if (!citySearch?.contains(event.target as Node) && !searchResults?.contains(event.target as Node)) {
+      searchResults.style.display = 'none';
+    }
+  });
+</script>

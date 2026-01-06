@@ -1,0 +1,296 @@
+.app-hero {
+  padding: 4rem 0;
+  background: linear-gradient(135deg, rgba(10, 10, 10, 0.9) 0%, rgba(17, 18, 20, 0.95) 100%);
+  position: relative;
+  overflow: hidden;
+  max-width: 100vw;
+}
+
+.app-hero__container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  box-sizing: border-box;
+}
+
+.app-hero__content {
+  display: grid;
+  grid-template-columns: 1fr 0.8fr;
+  align-items: center;
+  gap: 3rem;
+  min-height: 450px;
+}
+
+.app-hero__text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.app-hero__title {
+  color: var(--aurora-text-primary, #FFFFFF);
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.01em;
+}
+
+.app-hero__subtitle {
+  color: var(--aurora-text-secondary, #C8C8C8);
+  font-size: clamp(1rem, 1.8vw, 1.25rem);
+  line-height: 1.5;
+  margin-bottom: 2rem;
+  max-width: 85%;
+  font-weight: 400;
+}
+
+.app-hero__stores {
+  display: flex;
+  gap: 1rem;
+}
+
+.app-hero__visual {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+/* Desktop: 3 screenshots in cascade */
+.app-hero__screenshots {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: -30px;
+  position: relative;
+}
+
+.app-hero__screenshot {
+  width: 140px;
+  height: auto;
+  border-radius: 1rem;
+  box-shadow:
+    0 15px 30px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.app-hero__screenshot--1 {
+  z-index: 3;
+  transform: translateY(0) scale(1);
+}
+
+.app-hero__screenshot--2 {
+  z-index: 2;
+  transform: translateX(-20px) translateY(15px) scale(0.95);
+}
+
+.app-hero__screenshot--3 {
+  z-index: 1;
+  transform: translateX(-40px) translateY(30px) scale(0.9);
+}
+
+.app-hero__screenshot:hover {
+  transform: scale(1.05);
+  z-index: 10;
+}
+
+/* Mobile slider - hidden on desktop */
+.app-hero__slider {
+  display: none;
+}
+
+.app-hero__slider-track {
+  display: flex;
+  transition: transform 0.3s ease;
+}
+
+.app-hero__slider-item {
+  min-width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 0 1rem;
+}
+
+.app-hero__slider-item img {
+  max-width: 200px;
+  height: auto;
+  border-radius: 1rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.app-hero__slider-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.app-hero__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.2s ease;
+}
+
+.app-hero__dot.active {
+  background: var(--aurora-green, #4ade80);
+}
+
+/* Tablet Layout */
+@media (max-width: 1024px) {
+  .app-hero {
+    padding: 3rem 0;
+  }
+
+  .app-hero__container {
+    padding: 0 1.5rem;
+  }
+
+  .app-hero__content {
+    gap: 2.5rem;
+    min-height: 400px;
+  }
+
+  .app-hero__title {
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+  }
+
+  .app-hero__subtitle {
+    font-size: clamp(0.95rem, 1.8vw, 1.1rem);
+  }
+
+  .app-hero__screenshot {
+    width: 120px;
+  }
+}
+
+/* Mobile Layout */
+@media (max-width: 768px) {
+  .app-hero {
+    padding: 2rem 0;
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  .app-hero__container {
+    padding: 0 1rem;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    /* Ensure container clips content */
+  }
+
+  .app-hero__content {
+    display: flex;
+    /* Use flex instead of grid for simpler stacking */
+    flex-direction: column;
+    gap: 2rem;
+    text-align: center;
+    min-height: auto;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .app-hero__text {
+    order: 2;
+    width: 100%;
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    /* Legacy support */
+    box-sizing: border-box;
+    padding: 0 0.5rem;
+    /* Add slight padding */
+  }
+
+  .app-hero__title {
+    font-size: 1.75rem;
+    /* Explicit size */
+    line-height: 1.2;
+    max-width: 100%;
+    margin-bottom: 1rem;
+    overflow-wrap: break-word;
+  }
+
+  .app-hero__subtitle {
+    max-width: 100% !important;
+    font-size: 1rem;
+    padding: 0 1rem;
+  }
+
+  .app-hero__visual {
+    order: 1;
+    width: 100%;
+    max-width: 100vw;
+    overflow: hidden;
+  }
+
+  /* Hide desktop screenshots, show slider */
+  .app-hero__screenshots {
+    display: none;
+  }
+
+  .app-hero__slider {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .app-hero__stores {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .app-hero__stores .store-badges {
+    width: 100%;
+    margin: 1rem 0;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+  .app-hero {
+    padding: 1.5rem 0;
+  }
+
+  .app-hero__content {
+    gap: 1.5rem;
+  }
+
+  .app-hero__title {
+    font-size: 1.25rem !important;
+    line-height: 1.3;
+  }
+
+  .app-hero__subtitle {
+    font-size: 0.875rem !important;
+    line-height: 1.5;
+    max-width: 100%;
+  }
+
+  .app-hero__slider-item img {
+    max-width: 180px;
+  }
+}
+
+/* Extra Small Mobile (iPhone SE) */
+@media (max-width: 375px) {
+  .app-hero__title {
+    font-size: 1.1rem !important;
+  }
+
+  .app-hero__subtitle {
+    font-size: 0.8rem !important;
+  }
+}

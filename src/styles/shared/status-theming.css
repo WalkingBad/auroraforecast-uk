@@ -1,0 +1,84 @@
+/**
+ * Aurora Status Theming - Shared Utilities
+ * Universal status color system used across all components
+ *
+ * Usage:
+ * Add status classes to elements that should respond to aurora status levels
+ * The --status-color variable will be automatically set and can be used in component-specific styling
+ */
+
+/* Base Status Color Variables */
+.status-very_low {
+  --status-color: var(--aurora-status-very-low);
+}
+
+.status-low {
+  --status-color: var(--aurora-status-low);
+}
+
+.status-medium {
+  --status-color: var(--aurora-status-medium);
+}
+
+.status-high {
+  --status-color: var(--aurora-status-high);
+}
+
+.status-unknown {
+  --status-color: var(--aurora-status-unknown);
+}
+
+/* Legacy status level classes (for .level-* prefix compatibility) */
+.level-very_low {
+  --status-color: var(--aurora-status-very-low);
+}
+
+.level-low {
+  --status-color: var(--aurora-status-low);
+}
+
+.level-medium {
+  --status-color: var(--aurora-status-medium);
+}
+
+.level-high {
+  --status-color: var(--aurora-status-high);
+}
+
+.level-unknown {
+  --status-color: var(--aurora-status-unknown);
+}
+
+/* Utility Classes - Apply status color to common properties */
+
+/* Border utilities */
+.status-border-left {
+  border-left-color: var(--status-color);
+}
+
+.status-border {
+  border-color: var(--status-color);
+}
+
+.status-border-important {
+  border-color: var(--status-color) !important;
+}
+
+/* Text utilities */
+.status-text {
+  color: var(--status-color);
+}
+
+.status-text-important {
+  color: var(--status-color) !important;
+}
+
+/* Background utilities */
+.status-bg {
+  background-color: var(--status-color);
+}
+
+.status-bg-tint {
+  background: var(--status-color);
+  opacity: 0.1;
+}

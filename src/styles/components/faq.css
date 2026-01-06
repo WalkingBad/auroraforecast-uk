@@ -1,0 +1,398 @@
+/* FAQ Component with Aurora Status Block Styling */
+/* Matches city-cards.css design patterns for consistency */
+
+.faq-section {
+  --faq-min-width: 280px;
+  --faq-grid-gap: var(--aurora-spacing-xl);
+  --faq-card-padding: 2rem;
+  --faq-border-width: 4px;
+  --faq-heading-align: center;
+  margin: var(--aurora-spacing-xxl) 0;
+}
+
+.faq-section h2 {
+  text-align: var(--faq-heading-align);
+  margin-bottom: var(--aurora-spacing-xl);
+  font-size: clamp(2rem, 5vw, 2.5rem);
+  font-weight: 700;
+  color: #FFFFFF;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+.faq-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--faq-min-width, 280px), 1fr));
+  gap: var(--faq-grid-gap, var(--aurora-spacing-xl));
+  margin-top: var(--aurora-spacing-xl);
+}
+
+.faq-section.faq-section--wide {
+  --faq-min-width: 360px;
+}
+
+.faq-section.faq-section--compact {
+  --faq-grid-gap: var(--aurora-spacing-l);
+  --faq-card-padding: var(--aurora-spacing-l);
+}
+
+.faq-section.faq-section--left {
+  --faq-heading-align: left;
+}
+
+/* FAQ Item - Aurora Status Block Styling */
+.faq-item {
+  display: block;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: var(--faq-border-width, 4px) solid var(--faq-color, #6BE7A0);
+  border-radius: 24px;
+  padding: var(--faq-card-padding, 2rem);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  backdrop-filter: blur(10px);
+}
+
+/* Subtle tinted overlay using FAQ color */
+.faq-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, var(--faq-color), transparent);
+  opacity: 0.05;
+  pointer-events: none;
+}
+
+/* Ensure content sits above the tint */
+.faq-item>* {
+  position: relative;
+  z-index: 1;
+}
+
+/* FAQ Color Themes */
+.faq-item.faq-theme-primary {
+  --faq-color: #6BE7A0;
+  border-left-color: #6BE7A0;
+}
+
+.faq-item.faq-theme-secondary {
+  --faq-color: #34C97B;
+  border-left-color: #34C97B;
+}
+
+.faq-item.faq-theme-tertiary {
+  --faq-color: #2196F3;
+  border-left-color: #2196F3;
+}
+
+.faq-item:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.faq-item h3 {
+  margin-bottom: var(--aurora-spacing-m);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #FFFFFF;
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+  gap: var(--aurora-spacing-s);
+}
+
+.faq-item p {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.faq-item .factor-info-hint {
+  flex-shrink: 0;
+}
+
+.faq-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: var(--aurora-spacing-xl);
+  margin-top: var(--aurora-spacing-l);
+}
+
+.faq-accordion details {
+  background: rgba(17, 18, 20, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: var(--aurora-spacing-xl);
+  transition: all 0.3s ease;
+}
+
+.faq-accordion details[open] {
+  background: rgba(17, 18, 20, 0.8);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.faq-accordion details:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.faq-accordion summary {
+  font-weight: 600;
+  font-size: 1.25rem;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--aurora-spacing-m);
+  color: var(--aurora-text-primary);
+  transition: color 0.2s ease;
+  line-height: 1.5;
+}
+
+.faq-accordion summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-accordion summary::before {
+  content: '▼';
+  display: inline-block;
+  font-size: 0.75rem;
+  transition: transform 0.3s ease;
+  color: var(--aurora-primary);
+  flex-shrink: 0;
+  margin-top: 0.35rem;
+}
+
+.faq-accordion details:not([open]) summary::before {
+  content: '▶';
+}
+
+.faq-accordion summary:hover {
+  color: var(--aurora-primary);
+}
+
+.faq-accordion p {
+  margin: var(--aurora-spacing-l) 0 0 calc(var(--aurora-spacing-m) + 0.75rem);
+  line-height: 1.8;
+  color: var(--aurora-text-secondary);
+  font-size: 1rem;
+}
+
+.faq-accordion p:last-child {
+  margin-bottom: 0;
+}
+
+.faq-accordion ul {
+  margin: var(--aurora-spacing-m) 0;
+  padding-left: calc(var(--aurora-spacing-xl) + var(--aurora-spacing-m) + 0.75rem);
+}
+
+.faq-accordion li {
+  margin: var(--aurora-spacing-s) 0;
+  line-height: 1.8;
+  color: var(--aurora-text-secondary);
+}
+
+.faq-accordion strong {
+  color: var(--aurora-text-primary);
+  font-weight: 600;
+}
+
+.city-faq {
+  margin: var(--aurora-spacing-xxl) 0;
+  padding: var(--aurora-spacing-xxl) 0;
+  border-top: 1px solid var(--aurora-border-light);
+}
+
+.city-faq h2 {
+  font-size: 1.75rem;
+  margin-bottom: var(--aurora-spacing-xl);
+  color: var(--aurora-text-primary);
+  font-weight: 500;
+}
+
+.city-faq .faq-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--aurora-spacing-l);
+  margin-bottom: var(--aurora-spacing-xxl);
+}
+
+.city-faq .stat-card {
+  background: #111214;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--aurora-radius-card);
+  padding: var(--aurora-spacing-l);
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.city-faq .stat-card:hover {
+  background: rgba(30, 41, 59, 0.6);
+  border-color: var(--aurora-border);
+  transform: translateY(-2px);
+  box-shadow: var(--aurora-elevation-e1);
+}
+
+.city-faq .stat-label {
+  font-size: 0.875rem;
+  color: var(--aurora-text-tertiary);
+  margin-bottom: var(--aurora-spacing-s);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.city-faq .stat-value {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--aurora-primary);
+}
+
+.city-faq .faq-accordion {
+  gap: var(--aurora-spacing-xl);
+}
+
+.city-faq .tonight-verdict {
+  padding: var(--aurora-spacing-l);
+  border-radius: var(--aurora-radius-s);
+  background: var(--verdict-bg);
+  border-left: 4px solid var(--verdict-color);
+}
+
+.city-faq .tonight-verdict.status-high {
+  --verdict-bg: color-mix(in srgb, var(--aurora-status-high) 15%, var(--aurora-surface));
+  --verdict-color: var(--aurora-status-high);
+}
+
+.city-faq .tonight-verdict.status-medium {
+  --verdict-bg: color-mix(in srgb, var(--aurora-status-medium) 15%, var(--aurora-surface));
+  --verdict-color: var(--aurora-status-medium);
+}
+
+.city-faq .tonight-verdict.status-low,
+.city-faq .tonight-verdict.status-very_low {
+  --verdict-bg: color-mix(in srgb, var(--aurora-status-very-low) 15%, var(--aurora-surface));
+  --verdict-color: var(--aurora-status-very-low);
+}
+
+.best-time-faq {
+  --faq-min-width: 360px;
+}
+
+.state-faq {
+  --faq-border-width: 6px;
+  --faq-min-width: 350px;
+  --faq-card-padding: var(--aurora-spacing-l);
+}
+
+.guide-faq {
+  --faq-heading-align: left;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .faq-section {
+    margin: var(--aurora-spacing-xl) 0;
+  }
+
+  .faq-grid {
+    grid-template-columns: 1fr;
+    gap: var(--faq-grid-gap, var(--aurora-spacing-xl));
+  }
+
+  .faq-item {
+    padding: var(--aurora-spacing-m);
+  }
+
+  .faq-item h3 {
+    font-size: 1rem;
+    margin-bottom: var(--aurora-spacing-s);
+  }
+
+  .faq-item p {
+    font-size: 0.85rem;
+  }
+
+  .faq-accordion summary {
+    font-size: 1rem;
+  }
+
+  .faq-accordion p {
+    font-size: 0.9375rem;
+  }
+
+  .city-faq {
+    margin: var(--aurora-spacing-xl) 0;
+    padding: var(--aurora-spacing-xl) 0;
+  }
+
+  .city-faq h2 {
+    font-size: 1.5rem;
+  }
+
+  .city-faq .faq-stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .faq-item {
+    padding: var(--aurora-spacing-s);
+  }
+
+  .faq-item h3 {
+    font-size: 0.95rem;
+    gap: var(--aurora-spacing-xs);
+  }
+
+  .faq-item p {
+    font-size: 0.8rem;
+  }
+}
+
+/* Desktop optimizations */
+@media (min-width: 768px) {
+  .faq-grid {
+    grid-template-columns: repeat(auto-fit, minmax(var(--faq-min-width, 320px), 1fr));
+  }
+
+  .faq-item:hover {
+    transform: translateY(-3px);
+  }
+}
+
+@media (min-width: 1024px) {
+  .faq-grid {
+    grid-template-columns: repeat(auto-fit, minmax(var(--faq-min-width, 350px), 1fr));
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .faq-item {
+    transition: none;
+  }
+
+  .faq-item:hover {
+    transform: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .faq-item {
+    border-width: 2px;
+  }
+
+  .faq-item h3 {
+    font-weight: 700;
+  }
+}

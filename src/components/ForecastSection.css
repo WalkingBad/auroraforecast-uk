@@ -1,0 +1,182 @@
+/**
+ * ForecastSection.css - Tab container styles
+ * Matches app's Forecast section design exactly
+ */
+
+.forecast-section {
+  width: 100%;
+}
+
+.forecast-tabs-container {
+  background: var(--aurora-surface);
+  border-radius: var(--aurora-radius-card);
+  border: 1px solid var(--aurora-border-light);
+  overflow: hidden;
+}
+
+/* Section Header - "Forecast" with icon */
+.forecast-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--aurora-spacing-l);
+  padding-bottom: var(--aurora-spacing-m);
+}
+
+.forecast-section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--aurora-spacing-s);
+}
+
+.forecast-section-icon {
+  width: 32px;
+  height: 32px;
+  background: rgba(52, 201, 123, 0.15);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.forecast-section-icon svg {
+  width: 18px;
+  height: 18px;
+  color: var(--aurora-success);
+}
+
+.forecast-section-title h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--aurora-text-primary);
+}
+
+.forecast-section-collapse {
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--aurora-text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.forecast-section-collapse svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Tab Navigation - pill style matching app */
+.forecast-tabs {
+  display: flex;
+  padding: 0 var(--aurora-spacing-l);
+  padding-bottom: var(--aurora-spacing-m);
+  gap: var(--aurora-spacing-s);
+}
+
+.forecast-tab {
+  flex: 1;
+  padding: var(--aurora-spacing-s) var(--aurora-spacing-l);
+  background: transparent;
+  border: 1px solid var(--aurora-border-light);
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--aurora-text-secondary);
+  cursor: pointer;
+  transition: all var(--aurora-timing-fast);
+  white-space: nowrap;
+  text-align: center;
+}
+
+.forecast-tab:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--aurora-text-primary);
+}
+
+.forecast-tab.active {
+  background: var(--aurora-chip);
+  border-color: var(--aurora-chip);
+  color: var(--aurora-text-primary);
+  font-weight: 600;
+}
+
+/* Tab Panels */
+.forecast-panels {
+  padding: 0;
+}
+
+.forecast-panel {
+  display: none;
+}
+
+.forecast-panel.active {
+  display: block;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.forecast-panel[hidden] {
+  display: none;
+}
+
+/* Panel Content Wrapper */
+.forecast-panel > * {
+  border-radius: 0;
+  border: none;
+}
+
+/* First panel (12h) uses ForecastPreview which has its own container */
+.forecast-panel[data-panel="12h"] > .forecast-preview-container {
+  border-radius: 0;
+  border: none;
+}
+
+/* Other panels use our new components */
+.forecast-panel[data-panel="27d"] > .monthly-forecast-container,
+.forecast-panel[data-panel="1y"] > .yearly-forecast-container {
+  border-radius: 0;
+  border: none;
+  padding: var(--aurora-spacing-l);
+}
+
+/* Paywall Anchor */
+.paywall-anchor {
+  margin-top: var(--aurora-spacing-xl);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .forecast-tabs {
+    padding: 0 var(--aurora-spacing-m);
+    padding-bottom: var(--aurora-spacing-s);
+    gap: var(--aurora-spacing-xs);
+  }
+
+  .forecast-tab {
+    padding: var(--aurora-spacing-xs) var(--aurora-spacing-m);
+    font-size: 12px;
+  }
+
+  .forecast-section-header {
+    padding: var(--aurora-spacing-m);
+  }
+
+  .forecast-panel[data-panel="27d"] > .monthly-forecast-container,
+  .forecast-panel[data-panel="1y"] > .yearly-forecast-container {
+    padding: var(--aurora-spacing-m);
+  }
+}

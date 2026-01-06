@@ -1,0 +1,176 @@
+/**
+ * Location Checker Component Styles
+ * Used by: components/LocationChecker.astro
+ * Extracted from inline <style> block (150 lines)
+ * Date: 2025-11-24
+ * Features: Geolocation button, city search, forecast results
+ */
+
+/* ==========================================================================
+   Section Container
+   ========================================================================== */
+
+.location-checker {
+  padding: var(--aurora-spacing-xxl, 32px) 0;
+  background: var(--aurora-backgroundPrimary, #0A0A0A);
+}
+
+.location-checker .container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 var(--aurora-spacing-l, 16px);
+}
+
+.location-checker h2 {
+  text-align: center;
+  margin-bottom: var(--aurora-spacing-m, 12px);
+  font-weight: 500;
+  color: var(--aurora-textPrimary, #FFFFFF);
+}
+
+.checker-subtitle {
+  text-align: center;
+  color: var(--aurora-textSecondary, #C8C8C8);
+  margin-bottom: var(--aurora-spacing-xl, 24px);
+  font-size: 0.95rem;
+}
+
+/* ==========================================================================
+   Controls
+   ========================================================================== */
+
+.checker-controls {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.detect-btn {
+  width: 100%;
+  padding: var(--aurora-spacing-m, 12px) var(--aurora-spacing-l, 16px);
+  background: var(--aurora-primary, #6BE7A0);
+  color: #000;
+  border: none;
+  border-radius: var(--aurora-radiusChip, 16px);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.detect-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.detect-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.or-divider {
+  text-align: center;
+  color: var(--aurora-textTertiary, #8A8A8A);
+  margin: var(--aurora-spacing-m, 12px) 0;
+  font-size: 0.9rem;
+}
+
+/* ==========================================================================
+   Search
+   ========================================================================== */
+
+.search-wrapper {
+  position: relative;
+}
+
+#citySearch {
+  width: 100%;
+  padding: var(--aurora-spacing-m, 12px) var(--aurora-spacing-l, 16px);
+  border: 1px solid var(--aurora-borderLight, #2A2A2A);
+  border-radius: var(--aurora-radiusChip, 16px);
+  font-size: 1rem;
+  background: var(--aurora-surface, #111214);
+  color: var(--aurora-textPrimary, #FFFFFF);
+  transition: border-color 0.2s ease;
+}
+
+#citySearch:focus {
+  outline: none;
+  border-color: var(--aurora-primary, #6BE7A0);
+}
+
+.search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: rgba(14, 16, 19, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--aurora-radiusCard, 18px);
+  margin-top: var(--aurora-spacing-s, 8px);
+  padding: var(--aurora-spacing-xs, 10px);
+  max-height: 420px;
+  overflow-y: auto;
+  z-index: 10;
+  display: none;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.32);
+}
+
+/* ==========================================================================
+   Forecast Result
+   ========================================================================== */
+
+.forecast-result {
+  background: var(--aurora-surface, #111214);
+  border: 2px solid var(--aurora-primary, #6BE7A0);
+  border-radius: var(--aurora-radiusCard, 20px);
+  padding: var(--aurora-spacing-xl, 24px);
+  margin-top: var(--aurora-spacing-xl, 24px);
+  text-align: center;
+}
+
+.forecast-result h3 {
+  color: var(--aurora-textPrimary, #FFFFFF);
+  margin-bottom: var(--aurora-spacing-m, 12px);
+  font-size: 1.3rem;
+}
+
+.result-status {
+  font-size: 2rem;
+  margin: var(--aurora-spacing-l, 16px) 0;
+}
+
+.result-details {
+  color: var(--aurora-textSecondary, #C8C8C8);
+  margin: var(--aurora-spacing-m, 12px) 0;
+  line-height: 1.6;
+}
+
+.view-forecast-btn {
+  display: inline-block;
+  margin-top: var(--aurora-spacing-l, 16px);
+  padding: var(--aurora-spacing-m, 12px) var(--aurora-spacing-xl, 24px);
+  background: var(--aurora-primary, #6BE7A0);
+  color: #000;
+  border-radius: var(--aurora-radiusChip, 16px);
+  text-decoration: none;
+  font-weight: 600;
+  transition: transform 0.2s ease;
+}
+
+.view-forecast-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .location-checker .container {
+    padding: 0 var(--aurora-spacing-m, 12px);
+  }
+
+  .detect-btn {
+    font-size: 0.95rem;
+    padding: var(--aurora-spacing-s, 8px) var(--aurora-spacing-m, 12px);
+  }
+}

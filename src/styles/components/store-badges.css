@@ -1,0 +1,397 @@
+/* Store Badges Component Styles */
+/* Uses Aurora Design System tokens from global.css - no hardcoded values */
+
+.store-badges {
+  display: flex;
+  gap: var(--aurora-spacing-l);
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: var(--aurora-spacing-xxl) 0;
+}
+
+.store-badges.compact {
+  gap: var(--aurora-spacing-s);
+  justify-content: flex-start;
+  align-items: center;
+  margin: 0;
+  flex-wrap: nowrap;
+}
+
+.store-badges.text {
+  display: inline-flex;
+  flex-direction: row;
+  gap: var(--aurora-spacing-xs);
+  justify-content: flex-start;
+  align-items: center;
+  margin: 0;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+
+.store-badges.sticky {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--aurora-bg-fullscreen) 95%, transparent) 0%,
+    color-mix(in srgb, var(--aurora-bg-primary) 85%, transparent) 60%,
+    transparent 100%
+  );
+  padding: var(--aurora-spacing-l) 0 0 0; /* Only top padding when fixed */
+  margin: 0; /* Remove all margins when fixed */
+  z-index: 10;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  /* Soften the top edge using a mask */
+  mask-image: linear-gradient(to top, black 80%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to top, black 80%, transparent 100%);
+  border-top: none;
+}
+
+/* Landed state - when scrolled to bottom */
+.store-badges.sticky.landed {
+  position: relative;
+  padding: var(--aurora-spacing-l) 0;
+  background: transparent;
+  mask-image: none;
+  -webkit-mask-image: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.store-badges.sticky.landed::before,
+.store-badges.sticky.landed::after {
+  display: none;
+}
+
+/* Realistic Aurora Effect using Radial Gradients */
+.store-badges.sticky::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  right: -50%;
+  bottom: -50%;
+  background:
+    radial-gradient(circle at 50% 100%, color-mix(in srgb, var(--aurora-primary) 45%, transparent) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, color-mix(in srgb, var(--aurora-status-high) 38%, transparent) 0%, transparent 40%),
+    radial-gradient(circle at 20% 80%, color-mix(in srgb, var(--aurora-blue) 35%, transparent) 0%, transparent 40%);
+  filter: blur(40px);
+  opacity: 0.6;
+  z-index: -1;
+  animation: aurora-move 15s ease-in-out infinite alternate;
+  transform-origin: center bottom;
+}
+
+.store-badges.sticky::after {
+  content: '';
+  position: absolute;
+  top: -30%;
+  left: -30%;
+  right: -30%;
+  bottom: -30%;
+  background:
+    radial-gradient(ellipse at 60% 90%, color-mix(in srgb, var(--aurora-status-high) 32%, transparent) 0%, transparent 60%),
+    radial-gradient(ellipse at 40% 90%, color-mix(in srgb, var(--aurora-primary) 22%, transparent) 0%, transparent 60%);
+  filter: blur(60px);
+  opacity: 0.4;
+  z-index: -1;
+  animation: aurora-pulse 10s ease-in-out infinite alternate;
+}
+
+@keyframes aurora-move {
+  0% {
+    transform: translateX(-10%) scale(1);
+  }
+
+  100% {
+    transform: translateX(10%) scale(1.1);
+  }
+}
+
+@keyframes aurora-pulse {
+  0% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0.5;
+    transform: scale(1.05);
+  }
+}
+
+.badge-link {
+  display: inline-block;
+}
+
+.code-badge {
+  background:
+    radial-gradient(circle at 20% 20%, color-mix(in srgb, var(--aurora-primary) 16%, transparent) 0%, transparent 42%),
+    color-mix(in srgb, var(--aurora-surface) 72%, transparent);
+  color: var(--aurora-text-primary);
+  border-radius: var(--aurora-radius-button);
+  padding: var(--aurora-spacing-m) var(--aurora-spacing-xl);
+  min-width: 240px;
+  text-decoration: none;
+  border: 1px solid var(--aurora-border-light);
+  box-shadow: var(--aurora-elevation-e1);
+  transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(6px);
+}
+
+.code-badge:hover {
+  transform: translateY(-3px);
+  background:
+    radial-gradient(circle at 20% 20%, color-mix(in srgb, var(--aurora-primary) 24%, transparent) 0%, transparent 42%),
+    color-mix(in srgb, var(--aurora-surface) 82%, transparent);
+  border-color: color-mix(in srgb, var(--aurora-primary) 40%, transparent);
+  box-shadow: var(--aurora-elevation-e2);
+}
+
+.store-badges.compact .code-badge {
+  min-width: auto;
+  padding: var(--aurora-spacing-s) var(--aurora-spacing-m);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--aurora-surface) 82%, transparent);
+  border: 1px solid var(--aurora-border-light);
+  box-shadow: none;
+  backdrop-filter: blur(4px);
+}
+
+.store-badges.compact .code-badge:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--aurora-primary) 35%, transparent);
+  box-shadow: 0 6px 20px color-mix(in srgb, #000000 25%, transparent), 0 0 14px color-mix(in srgb, var(--aurora-primary) 15%, transparent);
+}
+
+.store-badges.text .badge-link {
+  color: var(--aurora-text-primary);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  white-space: nowrap;
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.store-badges.text .badge-link:hover {
+  color: var(--aurora-primary);
+  text-decoration: underline;
+}
+
+.store-badges.text .text-separator {
+  color: var(--aurora-text-tertiary);
+  font-size: 0.9rem;
+}
+
+.badge-inner {
+  display: flex;
+  align-items: center;
+  gap: var(--aurora-spacing-m);
+  position: relative;
+}
+
+.store-badges.compact .badge-inner {
+  gap: var(--aurora-spacing-s);
+}
+
+.icon {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+}
+
+.icon svg {
+  width: 24px;
+  height: 24px;
+  display: block;
+}
+
+.store-badges.compact .icon {
+  width: 22px;
+  height: 22px;
+}
+
+.store-badges.compact .icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+  flex: 1;
+}
+
+.text .overline {
+  font-size: 12px;
+  opacity: 0.9;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.text .brand {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.store-badges.compact .text .overline {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+}
+
+.store-badges.compact .text .brand {
+  font-size: 15px;
+}
+
+/* Enhanced mode styling */
+.badge-accent {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+
+.rating {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--aurora-warning);
+  background: color-mix(in srgb, var(--aurora-warning) 18%, transparent);
+  padding: var(--aurora-spacing-xs) var(--aurora-spacing-s);
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--aurora-warning) 48%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--aurora-surface-inverse) 12%, transparent);
+}
+
+/* Large size variant */
+.store-badges.large .code-badge {
+  min-width: 260px;
+  padding: var(--aurora-spacing-l) var(--aurora-spacing-xxl);
+}
+
+.store-badges.large .icon {
+  width: 32px;
+  height: 32px;
+}
+
+.store-badges.large .icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.store-badges.large .text .overline {
+  font-size: 13px;
+}
+
+.store-badges.large .text .brand {
+  font-size: 22px;
+}
+
+/* Enhanced styling improvements */
+.store-badges.enhanced .code-badge {
+  background:
+    radial-gradient(circle at 20% 20%, color-mix(in srgb, var(--aurora-primary) 18%, transparent) 0%, transparent 45%),
+    linear-gradient(135deg, color-mix(in srgb, var(--aurora-chip) 80%, transparent) 0%, color-mix(in srgb, var(--aurora-bg-primary) 88%, transparent) 100%);
+  border: 1.5px solid color-mix(in srgb, var(--aurora-primary) 32%, var(--aurora-border-light) 68%);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--aurora-primary) 12%, transparent), var(--aurora-elevation-e1);
+}
+
+.store-badges.enhanced .code-badge:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--aurora-primary) 42%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--aurora-primary) 18%, transparent), var(--aurora-elevation-e2);
+}
+
+.store-badges.compact .badge-accent {
+  display: none;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .store-badges {
+    flex-direction: column;
+    gap: calc(var(--aurora-spacing-l) * 0.75);
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .store-badges.text {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--aurora-spacing-s);
+    white-space: normal;
+  }
+
+  .store-badges.text .badge-link {
+    white-space: normal;
+  }
+
+  .store-badges.compact {
+    gap: var(--aurora-spacing-s);
+  }
+
+  .code-badge {
+    width: 100%;
+    min-width: unset !important;
+    max-width: 100%;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+
+  /* Override large variant min-width on mobile */
+  .store-badges.large .code-badge {
+    min-width: unset;
+    padding: 12px 16px;
+  }
+
+  .store-badges.large .text .brand {
+    font-size: 18px;
+  }
+
+  .store-badges.large .text .overline {
+    font-size: 10px;
+  }
+
+  /* Reduce aurora intensity on mobile */
+  .store-badges.sticky::before {
+    background: linear-gradient(to top,
+        color-mix(in srgb, var(--aurora-primary) 40%, transparent) 0%,
+        color-mix(in srgb, var(--aurora-status-high) 35%, transparent) 12%,
+        color-mix(in srgb, var(--aurora-status-high-strong) 28%, transparent) 25%,
+        color-mix(in srgb, var(--aurora-primary-hover) 18%, transparent) 45%,
+        transparent 70%);
+  }
+
+  .store-badges.sticky::after {
+    opacity: 0.5;
+  }
+}
+
+@media (max-width: 768px) {
+  .store-badges.compact {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .store-badges.compact .code-badge {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Accessibility - respect motion preferences */
+@media (prefers-reduced-motion: reduce) {
+
+  .store-badges.sticky::before,
+  .store-badges.sticky::after {
+    animation: none;
+  }
+}

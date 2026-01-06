@@ -1,0 +1,97 @@
+---
+import '../styles/components/country-nav.css';
+import citiesData from '../data/cities.json';
+import type { I18nPageHelper } from '../utils/i18n-page';
+import { getTranslatedCountry } from '../utils/country-region-names';
+import CitySearch from './CitySearch.astro';
+
+export interface Props {
+  i18n?: I18nPageHelper;
+  lang?: string;
+  showSearch?: boolean;
+}
+
+const { i18n, lang = 'en', showSearch = false } = Astro.props;
+
+// Convert ISO 2-letter country code to flag emoji
+const countryCodeToFlag = (code: string): string => {
+  if (!code || code.length !== 2) return '🌍';
+  const codePoints = code
+    .toUpperCase()
+    .split('')
+    .map(char => 127397 + char.charCodeAt(0));
+  return String.fromCodePoint(...codePoints);
+};
+
+// Translation with fallback to English
+const title = i18n ? i18n.t('country_nav_title') : 'Aurora Destinations by Country';
+const intro = i18n ? i18n.t('country_nav_intro') : 'Explore the best northern lights viewing locations across different countries. Each destination offers unique advantages for aurora photography and viewing.';
+const locationSingular = i18n ? i18n.t('country_nav_location') : 'location';
+const locationPlural = i18n ? i18n.t('country_nav_locations') : 'locations';
+
+// Generate country navigation links
+const countriesMap = new Map();
+citiesData.forEach(city => {
+  const countryKey = city.country.toLowerCase().replace(/\s+/g, '-');
+  if (!countriesMap.has(countryKey)) {
+    countriesMap.set(countryKey, {
+      name: city.country,
+      translatedName: getTranslatedCountry(city.country, i18n),
+      countryCode: city.countryCode,
+      flag: countryCodeToFlag(city.countryCode),
+      cityCount: 0
+    });
+  }
+  countriesMap.get(countryKey).cityCount++;
+});
+
+const countries = Array.from(countriesMap.entries())
+  .map(([slug, data]) => ({ slug, ...data }))
+  .sort((a, b) => b.cityCount - a.cityCount); // Sort by city count descending
+---
+
+<section class="country-nav">
+  <div class="country-nav__container">
+    <h2>{title}</h2>
+    <p class="nav-intro">{intro}</p>
+
+    {showSearch && <CitySearch i18n={i18n} lang={lang} />}
+
+    <div class="countries-grid">
+      {countries.map(country => (
+        <a href={lang === 'en' ? `/country/${country.slug}` : `/${lang}/country/${country.slug}`} class="country-card">
+          <div class="country-flag">
+            {country.flag}
+          </div>
+          <div class="country-info">
+            <h3>{country.translatedName}</h3>
+            <span class="city-count">{country.cityCount} {country.cityCount === 1 ? locationSingular : locationPlural}</span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  // Show sticky footer when this component is visible, hide when not
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const stickyFooter = document.querySelector('.store-badges--sticky');
+      if (stickyFooter) {
+        if (entry.isIntersecting) {
+          stickyFooter.style.display = 'block';
+          stickyFooter.style.setProperty('display', 'block', 'important');
+        } else {
+          stickyFooter.style.setProperty('display', 'none', 'important');
+        }
+      }
+    });
+  }, { threshold: 0.1 });
+
+  const countryNav = document.querySelector('.country-nav');
+  if (countryNav) {
+    observer.observe(countryNav);
+  }
+</script>
+

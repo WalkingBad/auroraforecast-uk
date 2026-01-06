@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UTM Parameters Test</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+    .badge-link {
+      display: inline-block;
+      padding: 12px 24px;
+      margin: 10px;
+      background: #007AFF;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+    }
+    .badge-link:hover {
+      background: #0051D5;
+    }
+    #console {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 20px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      margin-top: 30px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .log-entry {
+      margin: 8px 0;
+      padding: 8px;
+      background: #2d2d2d;
+      border-radius: 4px;
+    }
+    .log-success {
+      color: #4EC9B0;
+    }
+  </style>
+</head>
+<body>
+  <h1>UTM Parameters Test</h1>
+  <p>Click any badge below to see UTM parameters in console</p>
+
+  <h2>Homepage Hero</h2>
+  <div class="store-badges">
+    <a
+      href="https://apps.apple.com/app/123?utm_source=website&utm_medium=organic&utm_campaign=homepage&utm_content=homepage_hero"
+      class="badge-link"
+      data-platform="ios"
+      data-utm="homepage"
+      data-utm-source="website"
+      data-utm-medium="organic"
+      data-utm-campaign="homepage"
+      data-utm-content="homepage_hero"
+    >
+      Download iOS (Homepage Hero)
+    </a>
+  </div>
+
+  <h2>City Page Hero (Fairbanks)</h2>
+  <div class="store-badges">
+    <a
+      href="https://apps.apple.com/app/123?utm_source=website&utm_medium=organic&utm_campaign=fairbanks&utm_content=city_hero"
+      class="badge-link"
+      data-platform="ios"
+      data-utm="fairbanks"
+      data-utm-source="website"
+      data-utm-medium="organic"
+      data-utm-campaign="fairbanks"
+      data-utm-content="city_hero"
+    >
+      Download iOS (City Hero)
+    </a>
+  </div>
+
+  <h2>Country Hub (US)</h2>
+  <div class="store-badges">
+    <a
+      href="https://play.google.com/store/apps/details?id=com.walkingbad.aurorame?utm_source=website&utm_medium=organic&utm_campaign=US&utm_content=country_hub_hero"
+      class="badge-link"
+      data-platform="android"
+      data-utm="US"
+      data-utm-source="website"
+      data-utm-medium="organic"
+      data-utm-campaign="US"
+      data-utm-content="country_hub_hero"
+    >
+      Download Android (Country Hub)
+    </a>
+  </div>
+
+  <h2>State Page (us_ak)</h2>
+  <div class="store-badges">
+    <a
+      href="https://play.google.com/store/apps/details?id=com.walkingbad.aurorame?utm_source=website&utm_medium=organic&utm_campaign=us_ak&utm_content=state_page_footer"
+      class="badge-link"
+      data-platform="android"
+      data-utm="us_ak"
+      data-utm-source="website"
+      data-utm-medium="organic"
+      data-utm-campaign="us_ak"
+      data-utm-content="state_page_footer"
+    >
+      Download Android (State Page)
+    </a>
+  </div>
+
+  <div id="console">
+    <div class="log-success">Console Output (tracking script loaded)</div>
+  </div>
+
+  <script src="/scripts/store-tracking.js"></script>
+  <script>
+    // Capture console.log to show in page
+    const consoleDiv = document.getElementById('console');
+    const originalLog = console.log;
+
+    console.log = function(...args) {
+      originalLog.apply(console, args);
+
+      // Show in page console
+      const entry = document.createElement('div');
+      entry.className = 'log-entry';
+      entry.textContent = args.map(a =>
+        typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a)
+      ).join(' ');
+      consoleDiv.appendChild(entry);
+      consoleDiv.scrollTop = consoleDiv.scrollHeight;
+    };
+
+    console.log('✅ Test page loaded. Click any badge to see UTM tracking.');
+  </script>
+</body>
+</html>

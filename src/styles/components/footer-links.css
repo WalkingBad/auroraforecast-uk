@@ -1,0 +1,82 @@
+/**
+ * Footer Links Component Styles
+ * Used by: FooterLinks.astro
+ * Extracted from inline <style> block (58 lines)
+ * Date: 2025-11-24
+ * Features: Footer navigation links grid
+ */
+
+/* ==========================================================================
+   Container
+   ========================================================================== */
+
+.footer-links {
+  padding: 2rem 0;
+  padding-bottom: 2rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.footer-links__container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  text-align: center;
+}
+
+/* ==========================================================================
+   Legal Links
+   ========================================================================== */
+
+.footer-legal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.footer-link {
+  color: #C8C8C8;
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: color 0.2s ease;
+}
+
+.footer-link:hover {
+  color: #6BE7A0;
+}
+
+.footer-divider {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 0.875rem;
+}
+
+/* ==========================================================================
+   Copyright
+   ========================================================================== */
+
+.footer-copyright {
+  margin-top: 1rem;
+}
+
+.footer-copyright p {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.75rem;
+  margin: 0;
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 480px) {
+  .footer-legal {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .footer-divider {
+    display: none;
+  }
+}

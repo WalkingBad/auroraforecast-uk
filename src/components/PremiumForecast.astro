@@ -1,0 +1,375 @@
+---
+import './PremiumForecast.css';
+import { DEFAULT_STATUS_COLORS, DEFAULT_STATUS_TEXTS } from '../data/status-defaults';
+
+interface Props {
+  lat: number;
+  lon: number;
+  statusTexts?: Record<string, string>;
+  i18n?: any;
+}
+
+const { lat, lon, statusTexts = DEFAULT_STATUS_TEXTS, i18n } = Astro.props;
+const apiBase = import.meta.env.PUBLIC_API_BASE_URL || 'https://europe-west1-aurorame-621f6.cloudfunctions.net';
+
+// Day labels for localization
+const dayLabels = {
+  today: i18n ? i18n.t('day_today', 'Today') : 'Today',
+  tomorrow: i18n ? i18n.t('day_tomorrow', 'Tomorrow') : 'Tomorrow',
+  weekdays: i18n ? [
+    i18n.t('day_sunday', 'Sunday'),
+    i18n.t('day_monday', 'Monday'),
+    i18n.t('day_tuesday', 'Tuesday'),
+    i18n.t('day_wednesday', 'Wednesday'),
+    i18n.t('day_thursday', 'Thursday'),
+    i18n.t('day_friday', 'Friday'),
+    i18n.t('day_saturday', 'Saturday')
+  ] : ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+};
+
+// Status text mapping - matching app
+const statusTextMap = {
+  high: i18n ? i18n.t('status_high', 'Visible') : (statusTexts.high || 'Visible'),
+  good: i18n ? i18n.t('status_medium', 'Likely Visible') : (statusTexts.medium || 'Likely Visible'),
+  medium: i18n ? i18n.t('status_medium', 'Likely Visible') : (statusTexts.medium || 'Likely Visible'),
+  low: i18n ? i18n.t('status_low', 'Might be Visible') : (statusTexts.low || 'Might be Visible'),
+  very_low: i18n ? i18n.t('status_very_low', 'Unlikely') : (statusTexts.very_low || 'Unlikely'),
+};
+
+const headerLabels = {
+  title: i18n ? i18n.t('forecast_title', 'Forecast') : 'Forecast',
+  time: i18n ? i18n.t('forecast_time', 'Time') : 'Time',
+  kp: 'Kp',
+  visibility: i18n ? i18n.t('forecast_visibility', 'Visibility') : 'Visibility',
+  bestTime: i18n ? i18n.t('forecast_best_time', 'Best time') : 'Best time',
+  showBestTime: i18n ? i18n.t('forecast_show_best_time', 'Best time') : 'Best time',
+  showAll: i18n ? i18n.t('forecast_show_all', 'Show all') : 'Show all',
+};
+---
+
+<div id="premium-forecast" class="premium-forecast-container" data-lat={lat} data-lon={lon} data-api-base={apiBase}>
+  <div class="premium-forecast-header">
+    <div class="header-content">
+      <div class="header-title-row">
+        <div class="header-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+            <polyline points="17 6 23 6 23 12"></polyline>
+          </svg>
+        </div>
+        <h3>{headerLabels.title}</h3>
+      </div>
+      <!-- Best Time filter button (hidden by default, shown when best times exist) -->
+      <button id="best-time-toggle" class="best-time-toggle" style="display: none;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+        </svg>
+        <span id="best-time-toggle-text">{headerLabels.showBestTime}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading state -->
+  <div id="forecast-loading" class="loading">
+    <div class="spinner"></div>
+    <p>Loading forecast data...</p>
+  </div>
+
+  <!-- Error state -->
+  <div id="forecast-error" class="error" style="display: none;">
+    <p id="error-message">Failed to load forecast</p>
+    <button id="retry-btn" class="retry-button">Retry</button>
+  </div>
+
+  <!-- Forecast content (populated by JS) -->
+  <div id="forecast-content" style="display: none;">
+    <div class="forecast-table-header">
+      <div class="header-cell time-col">{headerLabels.time}</div>
+      <div class="header-cell kp-col">{headerLabels.kp}</div>
+      <div class="header-cell visibility-col">{headerLabels.visibility}</div>
+    </div>
+    <div id="forecast-entries"></div>
+  </div>
+
+  <!-- SVG templates for JS use -->
+  <template id="calendar-icon-template">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+      <line x1="16" y1="2" x2="16" y2="6"></line>
+      <line x1="8" y1="2" x2="8" y2="6"></line>
+      <line x1="3" y1="10" x2="21" y2="10"></line>
+    </svg>
+  </template>
+  <template id="star-icon-template">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+    </svg>
+  </template>
+</div>
+
+<script define:vars={{ apiBase, statusTextMap, dayLabels, DEFAULT_STATUS_COLORS, headerLabels }}>
+  const container = document.querySelector('.premium-forecast-container');
+  const loadingDiv = document.getElementById('forecast-loading');
+  const errorDiv = document.getElementById('forecast-error');
+  const errorMessage = document.getElementById('error-message');
+  const contentDiv = document.getElementById('forecast-content');
+  const entriesDiv = document.getElementById('forecast-entries');
+  const retryBtn = document.getElementById('retry-btn');
+  const calendarTemplate = document.getElementById('calendar-icon-template');
+  const starTemplate = document.getElementById('star-icon-template');
+  const bestTimeToggle = document.getElementById('best-time-toggle');
+  const bestTimeToggleText = document.getElementById('best-time-toggle-text');
+
+  const lat = container?.dataset.lat;
+  const lon = container?.dataset.lon;
+  const apiBaseUrl = container?.dataset.apiBase || apiBase;
+
+  // State for filtering
+  let allEntries = [];
+  let showOnlyBestTime = false;
+
+  function getStatusText(status) {
+    return statusTextMap[status] || statusTextMap.very_low || status;
+  }
+
+  function formatDayLabel(date, now) {
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const entryDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const daysDiff = Math.floor((entryDay - today) / (1000 * 60 * 60 * 24));
+
+    const dateStr = String(date.getDate()).padStart(2, '0') + '.' + String(date.getMonth() + 1).padStart(2, '0');
+
+    if (daysDiff === 0) return dateStr + ', ' + dayLabels.today;
+    if (daysDiff === 1) return dateStr + ', ' + dayLabels.tomorrow;
+    return dateStr + ', ' + dayLabels.weekdays[date.getDay()];
+  }
+
+  function groupByDay(entries) {
+    const groups = {};
+    const now = new Date();
+
+    for (const entry of entries) {
+      const date = new Date(entry.time);
+      const dayLabel = formatDayLabel(date, now);
+
+      if (!groups[dayLabel]) {
+        groups[dayLabel] = [];
+      }
+      groups[dayLabel].push(entry);
+    }
+
+    return groups;
+  }
+
+  // Create day header with cloned SVG calendar icon
+  function createDayHeader(dayLabel) {
+    const header = document.createElement('div');
+    header.className = 'day-header';
+
+    const iconSpan = document.createElement('span');
+    iconSpan.className = 'calendar-icon';
+    if (calendarTemplate) {
+      iconSpan.appendChild(calendarTemplate.content.cloneNode(true));
+    }
+    header.appendChild(iconSpan);
+
+    const text = document.createElement('span');
+    text.textContent = dayLabel;
+    header.appendChild(text);
+
+    return header;
+  }
+
+  function createForecastRow(entry) {
+    const isBestTime = entry.isBestTimeOfDay && entry.isDark;
+
+    const row = document.createElement('div');
+    row.className = 'hour-row status-' + entry.status + (isBestTime ? ' best-time' : '');
+
+    // Best time badge (only for best time rows)
+    if (isBestTime) {
+      const badge = document.createElement('span');
+      badge.className = 'best-time-badge';
+      if (starTemplate) {
+        badge.appendChild(starTemplate.content.cloneNode(true));
+      }
+      const badgeText = document.createTextNode(headerLabels.bestTime);
+      badge.appendChild(badgeText);
+      row.appendChild(badge);
+    }
+
+    // Time column
+    const timeCol = document.createElement('div');
+    timeCol.className = 'time-col';
+    timeCol.textContent = entry.localTime || '--:--';
+    row.appendChild(timeCol);
+
+    // Kp column
+    const kpCol = document.createElement('div');
+    kpCol.className = 'kp-col';
+    kpCol.textContent = Number(entry.kp).toFixed(1);
+    row.appendChild(kpCol);
+
+    // Visibility column
+    const visCol = document.createElement('div');
+    visCol.className = 'visibility-col';
+
+    const statusText = document.createElement('span');
+    statusText.textContent = getStatusText(entry.status);
+    visCol.appendChild(statusText);
+
+    row.appendChild(visCol);
+
+    return row;
+  }
+
+  function renderForecast(data, isInitialLoad) {
+    const entries = data.hourlyForecast || [];
+
+    if (entries.length === 0) {
+      errorMessage.textContent = 'No forecast data available';
+      loadingDiv.style.display = 'none';
+      errorDiv.style.display = 'block';
+      return;
+    }
+
+    // Store all entries for filtering
+    if (isInitialLoad) {
+      allEntries = entries;
+    }
+
+    // Check if there are any best times (not all unlikely)
+    const hasBestTimes = entries.some(function(e) {
+      return e.isBestTimeOfDay && e.isDark && e.status !== 'very_low';
+    });
+
+    // Show/hide best time button
+    if (bestTimeToggle) {
+      bestTimeToggle.style.display = hasBestTimes ? 'flex' : 'none';
+    }
+
+    // Filter entries if showing only best times
+    const displayEntries = showOnlyBestTime
+      ? entries.filter(function(e) { return e.isBestTimeOfDay && e.isDark; })
+      : entries;
+
+    const dayGroups = groupByDay(displayEntries);
+
+    // Clear existing content safely
+    while (entriesDiv.firstChild) {
+      entriesDiv.removeChild(entriesDiv.firstChild);
+    }
+
+    for (const [dayLabel, dayEntries] of Object.entries(dayGroups)) {
+      // Add day header
+      entriesDiv.appendChild(createDayHeader(dayLabel));
+
+      // Add entries for this day
+      for (const entry of dayEntries) {
+        entriesDiv.appendChild(createForecastRow(entry));
+      }
+    }
+
+    loadingDiv.style.display = 'none';
+    errorDiv.style.display = 'none';
+    contentDiv.style.display = 'block';
+
+    // Track view (only on initial load)
+    if (isInitialLoad && typeof gtag !== 'undefined') {
+      gtag('event', 'premium_forecast_viewed', {
+        lat: lat,
+        lon: lon,
+        entries_count: entries.length,
+      });
+    }
+  }
+
+  // Toggle best time filter
+  function toggleBestTimeFilter() {
+    showOnlyBestTime = !showOnlyBestTime;
+
+    // Update button text and style
+    if (bestTimeToggleText) {
+      bestTimeToggleText.textContent = showOnlyBestTime ? headerLabels.showAll : headerLabels.showBestTime;
+    }
+    if (bestTimeToggle) {
+      bestTimeToggle.classList.toggle('active', showOnlyBestTime);
+    }
+
+    // Re-render with filtered data
+    renderForecast({ hourlyForecast: allEntries }, false);
+  }
+
+  // Get token from localStorage (fallback for blocked 3rd-party cookies)
+  function getStoredToken() {
+    try {
+      const token = localStorage.getItem('aurora_premium_token');
+      const expires = localStorage.getItem('aurora_premium_expires');
+      if (token && expires) {
+        // Check if token is still valid
+        if (new Date(expires) > new Date()) {
+          return token;
+        } else {
+          // Clean up expired token
+          localStorage.removeItem('aurora_premium_token');
+          localStorage.removeItem('aurora_premium_expires');
+        }
+      }
+    } catch (e) {
+      // localStorage not available
+    }
+    return null;
+  }
+
+  async function loadForecast() {
+    loadingDiv.style.display = 'flex';
+    errorDiv.style.display = 'none';
+    contentDiv.style.display = 'none';
+
+    try {
+      // Build headers - include Authorization if we have a stored token
+      const headers = {
+        'Accept': 'application/json',
+      };
+      const storedToken = getStoredToken();
+      if (storedToken) {
+        headers['Authorization'] = 'Bearer ' + storedToken;
+      }
+
+      const response = await fetch(apiBaseUrl + '/premiumForecast?lat=' + lat + '&lon=' + lon, {
+        method: 'GET',
+        credentials: 'include', // Also try cookies
+        headers: headers,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(function() { return {}; });
+        throw new Error(errorData.error || 'HTTP ' + response.status);
+      }
+
+      const data = await response.json();
+      renderForecast(data, true);
+
+    } catch (error) {
+      console.error('Failed to load premium forecast:', error);
+      errorMessage.textContent = error.message || 'Failed to load forecast';
+      loadingDiv.style.display = 'none';
+      errorDiv.style.display = 'block';
+    }
+  }
+
+  // Initial load
+  if (lat && lon) {
+    loadForecast();
+  }
+
+  // Retry button
+  if (retryBtn) {
+    retryBtn.addEventListener('click', loadForecast);
+  }
+
+  // Best time filter button
+  if (bestTimeToggle) {
+    bestTimeToggle.addEventListener('click', toggleBestTimeFilter);
+  }
+</script>

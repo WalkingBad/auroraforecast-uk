@@ -1,0 +1,87 @@
+---
+import FactorInfoHint from './FactorInfoHint.astro';
+import { DEFAULT_STATUS_COLORS, DEFAULT_STATUS_TEXTS, ALL_STATUSES } from '../data/status-defaults';
+import { toTitleCase } from '../utils/formatters';
+import { resolveVisibility } from '../utils/visibility';
+import webStrings from '../data/web-strings/en.json';
+
+interface Props {
+  statusLevel: string;
+  uiData: any;
+  citySlug: string;
+  magneticLatitude: number;
+  kpIndex: number;
+  probability?: number;
+  i18n?: any;
+}
+
+const {
+  statusLevel,
+  uiData,
+  citySlug,
+  magneticLatitude,
+  kpIndex,
+  probability,
+  i18n
+} = Astro.props;
+
+const statusColor = uiData.statusColors?.[statusLevel] || DEFAULT_STATUS_COLORS[statusLevel] || '#34C97B';
+const statusText = i18n 
+  ? i18n.t(`status_${statusLevel}`, DEFAULT_STATUS_TEXTS[statusLevel])
+  : (uiData.statusTexts?.[statusLevel] || DEFAULT_STATUS_TEXTS[statusLevel] || toTitleCase(statusLevel));
+const chanceValue = typeof probability === 'number' && !Number.isNaN(probability)
+  ? Math.round(probability)
+  : null;
+const chanceText = chanceValue !== null
+  ? (i18n
+      ? i18n.tpl(i18n.t('now_chance', 'Chance {value}%'), { value: chanceValue })
+      : `Chance ${chanceValue}%`)
+  : null;
+
+const visibilityKey = resolveVisibility(magneticLatitude, kpIndex);
+const hasVisibilityText = visibilityKey !== 'aurora_visibility_not_visible';
+const visibilityText = i18n
+  ? i18n.t(visibilityKey, 'Aurora not visible.')
+  : (webStrings[visibilityKey] || webStrings['aurora_visibility_not_visible']);
+
+const hintText = i18n 
+  ? i18n.t('city_aurora_visibility_desc', 'Real-time aurora visibility status based on magnetic activity, weather conditions, moon phase and sky darkness.')
+  : "Real-time aurora visibility status based on magnetic activity, weather conditions, moon phase and sky darkness.";
+
+const statuses = i18n ? [
+  { label: i18n.t('status_very_low', 'Unlikely'), colorType: 'danger', description: i18n.t('status_desc_very_low', 'Aurora is unlikely to be visible.') },
+  { label: i18n.t('status_low', 'Might be Visible'), colorType: 'orange', description: i18n.t('status_desc_low', 'Aurora might be visible on the horizon.') },
+  { label: i18n.t('status_medium', 'Likely Visible'), colorType: 'yellow', description: i18n.t('status_desc_medium', 'Aurora likely visible, possibly overhead.') },
+  { label: i18n.t('status_high', 'Visible'), colorType: 'success', description: i18n.t('status_desc_high', 'Aurora visible overhead and very bright.') },
+] : ALL_STATUSES;
+
+const visibilityTitle = i18n ? i18n.t('aurora_visibility_now', 'aurora visibility now') : 'aurora visibility now';
+---
+
+<div
+  class={`status-card level-${statusLevel}`}
+  style={`--status-color:${statusColor}`}
+  data-city-status-card={citySlug}
+>
+  <div class="status-header">
+    <div class="status-info-icon">
+      <FactorInfoHint
+        i18n={i18n}
+        simple={true}
+        text={hintText}
+        statuses={statuses}
+      />
+    </div>
+    <div class="status-title-large" style={`color:${statusColor}`}>{statusText}</div>
+    {chanceText && statusLevel !== 'very_low' && statusLevel !== 'none' && (
+      <div class="status-chance">{chanceText}</div>
+    )}
+    <div class="status-subtitle">{visibilityTitle}</div>
+    {statusLevel !== 'very_low' && statusLevel !== 'none' && hasVisibilityText && (
+      <div class="status-sub">
+        {visibilityText}
+      </div>
+    )}
+    <div id="aurora-warnings"></div>
+  </div>
+</div>

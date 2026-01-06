@@ -1,0 +1,341 @@
+/**
+ * Location Selector Component Styles
+ * Used by: components/LocationSelector.astro
+ * Extracted from inline <style> block (304 lines)
+ * Date: 2025-11-24
+ * Features: Dropdown location picker with search
+ */
+
+/* ==========================================================================
+   Container
+   ========================================================================== */
+
+.location-selector {
+  position: relative;
+  margin-bottom: 2rem;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ==========================================================================
+   Current Location Display
+   ========================================================================== */
+
+.current-location {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--aurora-surface, #111214);
+  border: 1px solid var(--aurora-borderLight, rgba(255,255,255,0.15));
+  border-radius: 12px;
+  padding: var(--aurora-spacing-m, 16px);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.current-location:hover {
+  border-color: rgba(59, 130, 246, 0.5);
+  transform: translateY(-1px);
+}
+
+.location-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.location-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.location-name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--aurora-textPrimary, #FFFFFF);
+  line-height: 1.2;
+}
+
+.location-country {
+  margin: 2px 0 0 0;
+  font-size: 13px;
+  color: var(--aurora-textSecondary, #A1A1AA);
+  line-height: 1.2;
+}
+
+/* ==========================================================================
+   Change Location Button
+   ========================================================================== */
+
+.change-location-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: none;
+  color: var(--aurora-textSecondary, #A1A1AA);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+}
+
+.change-location-btn:hover {
+  color: var(--aurora-textPrimary, #FFFFFF);
+  background: rgba(255,255,255,0.05);
+}
+
+.chevron-icon {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s ease;
+}
+
+.change-location-btn[aria-expanded="true"] .chevron-icon {
+  transform: rotate(180deg);
+}
+
+/* ==========================================================================
+   Dropdown
+   ========================================================================== */
+
+.location-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: var(--aurora-surface, #111214);
+  border: 1px solid var(--aurora-borderLight, rgba(255,255,255,0.15));
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  z-index: 100;
+  max-height: 400px;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.2s ease;
+}
+
+.location-dropdown[aria-hidden="false"] {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.dropdown-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--aurora-spacing-m, 16px);
+  border-bottom: 1px solid var(--aurora-borderLight, rgba(255,255,255,0.15));
+}
+
+.dropdown-header h4 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--aurora-textPrimary, #FFFFFF);
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  color: var(--aurora-textSecondary, #A1A1AA);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  line-height: 1;
+}
+
+.close-btn:hover {
+  color: var(--aurora-textPrimary, #FFFFFF);
+  background: rgba(255,255,255,0.05);
+}
+
+/* ==========================================================================
+   Search
+   ========================================================================== */
+
+.location-search {
+  padding: var(--aurora-spacing-m, 16px);
+  border-bottom: 1px solid var(--aurora-borderLight, rgba(255,255,255,0.15));
+}
+
+.search-input {
+  width: 100%;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--aurora-borderLight, rgba(255,255,255,0.15));
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: var(--aurora-textPrimary, #FFFFFF);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.search-input:focus {
+  border-color: #3B82F6;
+}
+
+.search-input::placeholder {
+  color: var(--aurora-textSecondary, #A1A1AA);
+}
+
+/* ==========================================================================
+   Locations List
+   ========================================================================== */
+
+.locations-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.location-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 12px var(--aurora-spacing-m, 16px);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.location-item:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+.location-item:focus {
+  background: rgba(59, 130, 246, 0.1);
+  outline: none;
+}
+
+.location-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.item-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--aurora-textPrimary, #FFFFFF);
+}
+
+.item-country {
+  font-size: 12px;
+  color: var(--aurora-textSecondary, #A1A1AA);
+}
+
+.location-coords {
+  font-size: 12px;
+  color: var(--aurora-textSecondary, #A1A1AA);
+  font-family: monospace;
+}
+
+/* ==========================================================================
+   Current Location Option
+   ========================================================================== */
+
+.current-location-option {
+  border-top: 1px solid var(--aurora-borderLight, rgba(255,255,255,0.15));
+  padding: var(--aurora-spacing-m, 16px);
+}
+
+.use-current-location {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--aurora-borderLight, rgba(255,255,255,0.15));
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: var(--aurora-textSecondary, #A1A1AA);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.use-current-location:hover {
+  color: var(--aurora-textPrimary, #FFFFFF);
+  border-color: #3B82F6;
+}
+
+.use-current-location .location-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* ==========================================================================
+   Overlay
+   ========================================================================== */
+
+.dropdown-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.3);
+  z-index: 50;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+}
+
+.dropdown-overlay[aria-hidden="false"] {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ==========================================================================
+   Scrollbar Styling
+   ========================================================================== */
+
+.locations-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.locations-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.locations-list::-webkit-scrollbar-thumb {
+  background: var(--aurora-borderLight, rgba(255,255,255,0.15));
+  border-radius: 3px;
+}
+
+.locations-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .location-selector {
+    margin-bottom: 1.5rem;
+  }
+
+  .location-dropdown {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-radius: 12px 12px 0 0;
+    max-height: 70vh;
+  }
+
+  .locations-list {
+    max-height: calc(50vh - 120px);
+  }
+}

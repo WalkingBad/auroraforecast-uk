@@ -1,0 +1,80 @@
+---
+import '../styles/components/social-proof.css';
+import type { I18nPageHelper } from '../utils/i18n-page';
+
+export interface Props {
+  i18n?: I18nPageHelper;
+}
+
+const { i18n } = Astro.props;
+
+// Translation with fallback to English
+const title = i18n ? i18n.t('social_proof_title') : "Why Users Trust AuroraMe";
+
+const stats = [
+  {
+    value: i18n ? i18n.t('stat1_value') : '150K+',
+    label: i18n ? i18n.t('stat1_label') : 'Active Users'
+  },
+  {
+    value: i18n ? i18n.t('stat2_value') : '970+',
+    label: i18n ? i18n.t('stat2_label') : 'Locations Worldwide'
+  },
+  {
+    value: i18n ? i18n.t('stat3_value') : '3+ Years',
+    label: i18n ? i18n.t('stat3_label') : 'Historical Data'
+  }
+];
+
+const testimonials = [
+  {
+    text: i18n ? i18n.t('testimonial1_text') : "Finally an app that actually works! Got alerts 2 hours before the aurora appeared. Perfect timing to get outside and see an amazing show.",
+    author: i18n ? i18n.t('testimonial1_author') : "Sarah M.",
+    location: i18n ? i18n.t('testimonial1_location') : "Tromsø, Norway"
+  },
+  {
+    text: i18n ? i18n.t('testimonial2_text') : "The historical data helped me plan my Iceland trip perfectly. Knew exactly when and where to go. Saw incredible auroras every night!",
+    author: i18n ? i18n.t('testimonial2_author') : "James K.",
+    location: i18n ? i18n.t('testimonial2_location') : "Reykjavik, Iceland"
+  },
+  {
+    text: i18n ? i18n.t('testimonial3_text') : "Smart notifications with quiet hours are a game changer. No more 3 AM alerts when I'm sleeping. Only get notified when I can actually see it.",
+    author: i18n ? i18n.t('testimonial3_author') : "Emma L.",
+    location: i18n ? i18n.t('testimonial3_location') : "Fairbanks, Alaska"
+  }
+];
+---
+
+<section class="social-proof-section">
+  <div class="social-proof-container">
+    <h2 class="section-title">{title}</h2>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      {stats.map(stat => (
+        <div class="stat-card">
+          <div class="stat-value">{stat.value}</div>
+          <div class="stat-label">{stat.label}</div>
+        </div>
+      ))}
+    </div>
+
+    <!-- Testimonials -->
+    <div class="testimonials-grid">
+      {testimonials.map(testimonial => (
+        <blockquote class="testimonial-card">
+          <div class="testimonial-quote">
+            <svg class="quote-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z"/>
+            </svg>
+            <p class="testimonial-text">{testimonial.text}</p>
+          </div>
+          <cite class="testimonial-author">
+            <span class="author-name">{testimonial.author}</span>
+            <span class="author-location">{testimonial.location}</span>
+          </cite>
+        </blockquote>
+      ))}
+    </div>
+  </div>
+</section>

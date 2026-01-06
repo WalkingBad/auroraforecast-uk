@@ -1,0 +1,343 @@
+---
+import ForecastPreview from './ForecastPreview.astro';
+import MonthlyForecast from './MonthlyForecast.astro';
+import YearlyForecast from './YearlyForecast.astro';
+
+interface Props {
+  lat: number;
+  lon: number;
+  citySlug: string;
+  cityName: string;
+  country?: string;
+  region?: string;
+  timezone?: string;
+  h12: any[];
+  d27Full: any[]; // Full 27-day data
+  monthly: any;   // Monthly metadata
+  historyMini: any;
+  kpThreshold?: number;
+  i18n?: any;
+}
+
+const { lat, lon, citySlug, cityName, country, region, timezone, i18n } = Astro.props;
+
+// Real data only - no mock fallbacks
+const h12 = Astro.props.h12 || [];
+const d27Full = Astro.props.d27Full || [];
+const monthly = Astro.props.monthly || {};
+const historyMini = Astro.props.historyMini || {};
+
+// Check if we have valid data
+const hasH12Data = h12.length > 0;
+const hasD27Data = d27Full.length > 0;
+const hasYearlyData = historyMini.bestMonths?.length > 0 || historyMini.localThreshold;
+---
+
+<div class="forecast-section" id="forecast-section">
+  <div class="forecast-header">
+    <div class="header-content">
+      <div class="header-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="12" fill="#14532D" fill-opacity="0.2"/>
+          <path d="M7 17L10.3333 13.6667L12.8333 16.1667L17 12M17 12V14.5M17 12H14.5" stroke="#22C55E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h2>Forecast</h2>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="forecast-tabs-container">
+    <div class="forecast-tabs">
+      <button class="forecast-tab active" data-tab="12h" id="tab-btn-12h">
+        <span class="tab-text-free">6 hours</span>
+        <span class="tab-text-premium hidden">72 hours</span>
+      </button>
+      <button class="forecast-tab" data-tab="27d">27 days</button>
+      <button class="forecast-tab" data-tab="1y">1 year</button>
+    </div>
+  </div>
+
+  <!-- Tab Content -->
+  <div class="tab-content active" id="tab-12h">
+    <ForecastPreview initialForecast={h12} lat={lat} lon={lon} timezone={timezone} citySlug={citySlug} cityName={cityName} country={country} region={region} i18n={i18n} />
+  </div>
+
+  <div class="tab-content" id="tab-27d">
+    {hasD27Data ? (
+      <MonthlyForecast
+        days={d27Full}
+        monthly={monthly}
+        cityName={cityName}
+        citySlug={citySlug}
+        i18n={i18n}
+      />
+    ) : (
+      <div class="no-data-message">
+        <div class="no-data-icon">📅</div>
+        <h3>27-Day Forecast</h3>
+        <p>Download our app for the full 27-day calendar with daily aurora predictions.</p>
+        <div class="app-store-links">
+          <a href="https://apps.apple.com/app/aurorame/id6738949498" target="_blank" class="store-btn">
+            <span>App Store</span>
+          </a>
+          <a href="https://play.google.com/store/apps/details?id=me.auroraforecast.aurora" target="_blank" class="store-btn">
+            <span>Google Play</span>
+          </a>
+        </div>
+      </div>
+    )}
+  </div>
+
+  <div class="tab-content" id="tab-1y">
+    <YearlyForecast
+      lat={lat}
+      lon={lon}
+      cityName={cityName}
+      citySlug={citySlug}
+      history={historyMini}
+    />
+  </div>
+</div>
+
+<style>
+  .forecast-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+    /* Match "What affects visibility" container style */
+    background: var(--aurora-surface, #111827);
+    border: 1px solid var(--aurora-border-light, rgba(255, 255, 255, 0.1));
+    border-radius: var(--aurora-radius-card, 20px);
+    padding: 24px;
+    box-shadow: var(--aurora-elevation-e2, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
+  }
+
+  /* Header Styles */
+  .forecast-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px; /* Increased from 8px */
+  }
+
+  .header-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .header-icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+  }
+
+  .forecast-header h2 {
+    font-size: 16px; /* Match standard card header */
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7); /* Match standard card header color */
+    margin: 0;
+  }
+
+  /* Tabs Container - Segmented Control Style */
+  .forecast-tabs-container {
+      background-color: #1F2937; /* Lighter dark for tab track */
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 8px;
+  }
+
+  .forecast-tabs {
+    display: flex;
+    position: relative;
+  }
+
+  /* Individual Tab */
+  .forecast-tab {
+    flex: 1;
+    padding: 10px 0;
+    border: none;
+    background: transparent;
+    color: #9CA3AF; /* Gray inactive text */
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 1;
+  }
+
+  .forecast-tab:hover {
+    color: #E5E7EB;
+  }
+
+  .forecast-tab.active {
+    background-color: #111827; /* Darker bg for active tab pill */
+    color: #FFFFFF;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+
+  /* Tab Content */
+  .tab-content {
+    display: none;
+    transition: opacity 0.2s ease-in-out;
+    /* min-height: 300px; Remove if it causes gaps */
+  }
+
+  .tab-content.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Tab text toggle */
+  .tab-text-free,
+  .tab-text-premium {
+    display: inline;
+  }
+
+  .tab-text-free.hidden,
+  .tab-text-premium.hidden {
+    display: none;
+  }
+
+  /* No Data Message */
+  .no-data-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 20px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .no-data-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.7;
+  }
+
+  .no-data-message h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+    margin: 0 0 8px;
+  }
+
+  .no-data-message p {
+    font-size: 14px;
+    color: #9CA3AF;
+    margin: 0 0 20px;
+    max-width: 300px;
+  }
+
+  .app-store-links {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .store-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: #374151;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: background 0.2s;
+  }
+
+  .store-btn:hover {
+    background: #4B5563;
+  }
+</style>
+
+<script>
+  function setupTabs() {
+    const tabs = document.querySelectorAll('.forecast-tab');
+    const contents = document.querySelectorAll('.tab-content');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        // Remove active class from all
+        tabs.forEach(t => t.classList.remove('active'));
+        contents.forEach(c => c.classList.remove('active'));
+
+        // Add active to current
+        tab.classList.add('active');
+        
+        // Show content
+        const tabId = tab.getAttribute('data-tab');
+        const content = document.getElementById(`tab-${tabId}`);
+        if (content) {
+          content.classList.add('active');
+        }
+      });
+    });
+  }
+
+  function setupPremiumLogic() {
+    const section = document.getElementById('forecast-section');
+    if (!section) return;
+
+    // Check if premium and update UI
+    // Cookie can be either aurora_premium (JWT) or aurora_premium_flag (simple flag)
+    const updatePremiumUI = () => {
+      const cookies = document.cookie.split(';');
+      const isPremium = cookies.some(c => {
+        const trimmed = c.trim();
+        return trimmed.startsWith('aurora_premium=') || trimmed.startsWith('aurora_premium_flag=');
+      });
+
+      // Get elements fresh each time
+      const tabFreeText = document.querySelector('.tab-text-free');
+      const tabPremiumText = document.querySelector('.tab-text-premium');
+
+      if (isPremium) {
+        section.classList.add('is-premium');
+        // Toggle tab text
+        tabFreeText?.classList.add('hidden');
+        tabPremiumText?.classList.remove('hidden');
+      } else {
+        section.classList.remove('is-premium');
+        // Toggle tab text
+        tabFreeText?.classList.remove('hidden');
+        tabPremiumText?.classList.add('hidden');
+      }
+      return isPremium;
+    };
+    updatePremiumUI();
+  }
+
+  // Run on load and View Transitions
+  function init() {
+    setupTabs();
+    setupPremiumLogic();
+  }
+
+  // Ensure DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  document.addEventListener('astro:page-load', init);
+</script>

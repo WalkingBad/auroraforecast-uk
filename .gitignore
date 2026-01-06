@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.astro/
+.DS_Store
+*.log
+.env.production
+
+# Environment variables (local overrides)
+.env.local
+.env.*.local
+
+# Keep .env and .env.development for defaults
+# !.env
+# !.env.development

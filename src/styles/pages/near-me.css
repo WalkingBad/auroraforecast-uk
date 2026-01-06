@@ -1,0 +1,129 @@
+/* Northern Lights Near Me Page Styles */
+
+.near-me-page {
+    padding-bottom: 4rem;
+}
+
+.hero-section-content {
+    padding: 4rem 1rem;
+    text-align: center;
+    color: white;
+}
+
+.locate-button {
+    background: #00ff88;
+    color: #000;
+    border: none;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.locate-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 255, 136, 0.4);
+}
+
+.locate-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.location-status {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+    min-height: 1.5em;
+}
+
+.manual-search {
+    margin-top: 3rem;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.search-wrapper {
+    position: relative;
+}
+
+/* Note: .search-input, .search-results, .search-result-item are reused from live-forecast-bar.css */
+
+.info-section {
+    padding: 4rem 1rem;
+    /* background: #fff; Removed to keep dark theme consistent with city page style */
+    color: white;
+}
+
+.info-section h2 {
+    text-align: center;
+    margin-bottom: 3rem;
+    font-size: 2rem;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.info-card {
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.05);
+    /* Dark theme card */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.info-card h3 {
+    color: #00ff88;
+    /* Accent color */
+    margin-bottom: 1rem;
+}
+
+.regions-section {
+    padding: 4rem 1rem;
+    /* background: #f0f2f5; Removed */
+}
+
+.regions-section h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: white;
+}
+
+.regions-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.region-card {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.2s;
+}
+
+.region-card:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #00ff88;
+    color: #00ff88;
+}

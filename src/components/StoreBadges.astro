@@ -1,0 +1,199 @@
+---
+import { buildStoreUrl, buildUtmParams, type PageType } from '../utils/utm-builder.ts';
+import { IOS_STORE_URL, ANDROID_STORE_URL, IOS_SEARCH_URL } from '../config/store-urls.ts';
+import '../styles/components/store-badges.css';
+import type { I18nPageHelper } from '../utils/i18n-page';
+
+export interface Props {
+  // Page context for UTM generation
+  pageType: PageType;
+  citySlug?: string;
+  countryCode?: string;
+  stateCode?: string;
+  guideSlug?: string;
+  placement?: string;
+
+  // Legacy utm prop for backwards compatibility
+  utm?: string;
+
+  // UI options
+  sticky?: boolean;
+  enhanced?: boolean;
+  size?: 'normal' | 'large' | 'compact';
+  className?: string;
+  showRatings?: boolean;
+  variant?: 'badges' | 'text';
+
+  // i18n support
+  i18n?: I18nPageHelper;
+}
+
+const {
+  pageType,
+  citySlug,
+  countryCode,
+  stateCode,
+  guideSlug,
+  placement = 'default',
+  utm = 'web', // legacy fallback
+  sticky = false,
+  enhanced = false,
+  size = 'normal',
+  className = '',
+  showRatings,
+  variant = 'badges',
+  i18n
+} = Astro.props;
+
+const isCompact = size === 'compact';
+const isTextVariant = variant === 'text';
+const shouldShowRatings = typeof showRatings === 'boolean' ? showRatings : (!isCompact && !isTextVariant);
+const containerClass = [
+  'store-badges',
+  sticky ? 'sticky' : '',
+  enhanced ? 'enhanced' : '',
+  size,
+  variant,
+  className
+].filter(Boolean).join(' ');
+
+// Base store URLs from centralized config
+const baseAppStoreUrl = IOS_STORE_URL || IOS_SEARCH_URL;
+const basePlayStoreUrl = ANDROID_STORE_URL;
+
+// Generate UTM parameters dynamically
+const utmParams = buildUtmParams(pageType, {
+  citySlug,
+  countryCode,
+  stateCode,
+  guideSlug,
+  placement
+});
+
+// Build full URLs with UTM parameters
+const appStoreUrl = buildStoreUrl(baseAppStoreUrl, utmParams);
+const playStoreUrl = buildStoreUrl(basePlayStoreUrl, utmParams);
+
+// Legacy utm string for data attribute (backwards compatibility with tracking script)
+const legacyUtmString = utmParams.campaign || utm;
+
+// Translations with fallback
+const appStoreGet = i18n ? i18n.t('store_badge_app_store_get') : 'Download on the';
+const appStore = i18n ? i18n.t('store_badge_app_store') : 'App Store';
+const googlePlayGet = i18n ? i18n.t('store_badge_google_play_get') : 'GET IT ON';
+const googlePlay = i18n ? i18n.t('store_badge_google_play') : 'Google Play';
+---
+
+{isTextVariant ? (
+  <div class={containerClass}>
+    <a
+      href={appStoreUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`${appStoreGet} ${appStore}`}
+      class="badge-link text-link"
+      data-platform="ios"
+      data-page-type={pageType}
+      data-utm={legacyUtmString}
+      data-utm-source={utmParams.source}
+      data-utm-medium={utmParams.medium}
+      data-utm-campaign={utmParams.campaign}
+      data-utm-content={utmParams.content}
+    >
+      {appStore}
+    </a>
+    <span class="text-separator">/</span>
+    <a
+      href={playStoreUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`${googlePlayGet} ${googlePlay}`}
+      class="badge-link text-link"
+      data-platform="android"
+      data-page-type={pageType}
+      data-utm={legacyUtmString}
+      data-utm-source={utmParams.source}
+      data-utm-medium={utmParams.medium}
+      data-utm-campaign={utmParams.campaign}
+      data-utm-content={utmParams.content}
+    >
+      {googlePlay}
+    </a>
+  </div>
+)
+: (
+  <div class={containerClass}>
+    <!-- App Store button rendered with SVG icon and text -->
+    <a
+      href={appStoreUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`${appStoreGet} ${appStore}`}
+      class="badge-link code-badge"
+      data-platform="ios"
+      data-page-type={pageType}
+      data-utm={legacyUtmString}
+      data-utm-source={utmParams.source}
+      data-utm-medium={utmParams.medium}
+      data-utm-campaign={utmParams.campaign}
+      data-utm-content={utmParams.content}
+    >
+      <div class="badge-inner">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path fill="#ffffff" d="M16.365 12.195c-.014-2.09 1.71-3.1 1.783-3.145-0.972-1.422-2.48-1.616-3.012-1.64-1.28-.13-2.497.744-3.146.744-.648 0-1.65-.725-2.715-.705-1.396.02-2.69.813-3.41 2.06-1.458 2.53-.371 6.266 1.05 8.312.71 1.02 1.55 2.17 2.65 2.13 1.07-.04 1.47-.69 2.76-.69s1.65.69 2.78.67c1.15-.02 1.88-1.04 2.59-2.06.81-1.18 1.15-2.32 1.16-2.38-.025-.01-2.23-.855-2.49-2.296zM13.64 5.885c.57-.69.955-1.65.85-2.6-.82.03-1.81.545-2.4 1.235-.53.615-.996 1.596-.87 2.54.92.07 1.86-.47 2.42-1.175z"/>
+          </svg>
+        </div>
+        <div class="text">
+          <span class="overline">{appStoreGet}</span>
+          <span class="brand">{appStore}</span>
+        </div>
+        {shouldShowRatings && (
+          <div class="badge-accent">
+            <span class="rating">4.8★</span>
+          </div>
+        )}
+      </div>
+    </a>
+
+    <!-- Google Play button rendered with SVG icon and text -->
+    <a
+      href={playStoreUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`${googlePlayGet} ${googlePlay}`}
+      class="badge-link code-badge"
+      data-platform="android"
+      data-page-type={pageType}
+      data-utm={legacyUtmString}
+      data-utm-source={utmParams.source}
+      data-utm-medium={utmParams.medium}
+      data-utm-campaign={utmParams.campaign}
+      data-utm-content={utmParams.content}
+    >
+      <div class="badge-inner">
+        <div class="icon">
+          <svg viewBox="0 0 40 40" aria-hidden="true" focusable="false" class="kOqhQd">
+            <path fill="none" d="M0,0h40v40H0V0z"></path>
+            <g>
+              <path d="M19.7,19.2L4.3,35.3c0,0,0,0,0,0c0.5,1.7,2.1,3,4,3c0.8,0,1.5-0.2,2.1-0.6l0,0l17.4-9.9L19.7,19.2z" fill="#EA4335"></path>
+              <path d="M35.3,16.4L35.3,16.4l-7.5-4.3l-8.4,7.4l8.5,8.3l7.5-4.2c1.3-0.7,2.2-2.1,2.2-3.6C37.5,18.5,36.6,17.1,35.3,16.4z" fill="#FBBC04"></path>
+              <path d="M4.3,4.7C4.2,5,4.2,5.4,4.2,5.8v28.5c0,0.4,0,0.7,0.1,1.1l16-15.7L4.3,4.7z" fill="#4285F4"></path>
+              <path d="M19.8,20l8-7.9L10.5,2.3C9.9,1.9,9.1,1.7,8.3,1.7c-1.9,0-3.6,1.3-4,3c0,0,0,0,0,0L19.8,20z" fill="#34A853"></path>
+            </g>
+          </svg>
+        </div>
+        <div class="text">
+          <span class="overline">{googlePlayGet}</span>
+          <span class="brand">{googlePlay}</span>
+        </div>
+        {shouldShowRatings && (
+          <div class="badge-accent">
+            <span class="rating">4.7★</span>
+          </div>
+        )}
+      </div>
+    </a>
+  </div>
+)}
+

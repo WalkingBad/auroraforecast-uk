@@ -1,0 +1,459 @@
+/**
+ * Aurora Tracker Page Styles
+ * Used by: /aurora-tracker.astro, /[lang]/aurora-tracker.astro
+ * Extracted from inline <style> blocks (383 lines)
+ * Date: 2025-11-24
+ * Features: City search widget, KP display, live status grid
+ */
+
+/* ==========================================================================
+   Container Widths
+   ========================================================================== */
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 var(--aurora-spacing-l, 16px);
+}
+
+.container-wide {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--aurora-spacing-l, 16px);
+}
+
+/* ==========================================================================
+   Hero Section
+   ========================================================================== */
+
+.tracker-hero {
+  background: var(--aurora-backgroundPrimary, #0A0A0A);
+  padding: var(--aurora-spacing-xxl, 32px) 0;
+  text-align: center;
+}
+
+.tracker-hero h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 300;
+  margin-bottom: var(--aurora-spacing-m, 12px);
+  color: var(--aurora-textPrimary, #FFFFFF);
+}
+
+.hero-subtitle {
+  color: var(--aurora-textSecondary, #C8C8C8);
+  font-size: 1.1rem;
+  margin-bottom: var(--aurora-spacing-xl, 24px);
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   Current KP Display - styled like city status blocks
+   ========================================================================== */
+
+.current-kp-display {
+  background: var(--aurora-surface, #111214);
+  border: 1px solid var(--aurora-borderLight, #2A2A2A);
+  border-left: 6px solid var(--aurora-primary, #6BE7A0);
+  /* Color set inline via style */
+  border-radius: var(--aurora-radiusCard, 20px);
+  padding: var(--aurora-spacing-xxl, 32px);
+  max-width: 500px;
+  margin: var(--aurora-spacing-xl, 24px) auto 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.kp-label {
+  font-size: 0.85rem;
+  color: var(--aurora-textTertiary, #8A8A8A);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: var(--aurora-spacing-xs, 4px);
+}
+
+.kp-value {
+  font-size: 3.5rem;
+  font-weight: 300;
+  line-height: 1;
+  margin-bottom: var(--aurora-spacing-s, 8px);
+  /* Color set inline via style attribute based on KP level */
+}
+
+.kp-status {
+  font-size: 1.2rem;
+  color: var(--aurora-textPrimary, #FFFFFF);
+  font-weight: 500;
+  margin-bottom: var(--aurora-spacing-m, 12px);
+}
+
+.kp-cities {
+  font-size: 0.95rem;
+  color: var(--aurora-textSecondary, #C8C8C8);
+  padding-top: var(--aurora-spacing-m, 12px);
+  border-top: 1px solid var(--aurora-borderLight, #2A2A2A);
+}
+
+/* ==========================================================================
+   City Search Section
+   ========================================================================== */
+
+.city-search-section {
+  padding: var(--aurora-spacing-xxl, 32px) 0;
+  background: var(--aurora-backgroundPrimary, #0A0A0A);
+}
+
+.city-search-section h2 {
+  text-align: center;
+  margin-bottom: var(--aurora-spacing-m, 12px);
+  font-weight: 500;
+}
+
+.search-explanation {
+  text-align: center;
+  color: var(--aurora-textSecondary, #C8C8C8);
+  margin-bottom: var(--aurora-spacing-xl, 24px);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 0.95rem;
+}
+
+.city-search-widget {
+  position: relative;
+  max-width: 600px;
+  margin: var(--aurora-spacing-l, 16px) auto;
+}
+
+#citySearchInput {
+  width: 100%;
+  padding: var(--aurora-spacing-m, 12px) var(--aurora-spacing-l, 16px);
+  border: 1px solid var(--aurora-borderLight, #2A2A2A);
+  border-radius: var(--aurora-radiusChip, 16px);
+  font-size: 1rem;
+  background: var(--aurora-surface, #111214);
+  color: var(--aurora-textPrimary, #FFFFFF);
+  transition: border-color 0.2s ease;
+}
+
+#citySearchInput:focus {
+  outline: none;
+  border-color: var(--aurora-primary, #6BE7A0);
+}
+
+/* ==========================================================================
+   Search Results Dropdown
+   ========================================================================== */
+
+:global(#searchResults) {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: rgba(14, 16, 19, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--aurora-radiusCard, 18px);
+  margin-top: var(--aurora-spacing-s, 8px);
+  padding: var(--aurora-spacing-xs, 10px);
+  max-height: 420px;
+  overflow-y: auto;
+  z-index: 10;
+  display: none;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.32);
+  overflow-x: hidden;
+}
+
+:global(#searchResults .search-results-list) {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--aurora-spacing-xs, 6px);
+}
+
+:global(#searchResults .search-results-item) {
+  margin: 0;
+  padding: 0;
+}
+
+:global(#searchResults a.search-result-item) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--aurora-spacing-m, 12px);
+  padding: 14px 20px;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: rgba(255, 255, 255, 0.9);
+  text-underline-offset: 6px;
+  color: var(--aurora-textPrimary, #FFFFFF);
+  border-radius: var(--aurora-radiusCard, 14px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(24, 27, 30, 0.6);
+  transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease, color 0.18s ease, text-decoration-color 0.18s ease;
+  cursor: pointer;
+}
+
+:global(#searchResults a.search-result-item:hover),
+:global(#searchResults a.search-result-item:focus-visible) {
+  background: rgba(34, 38, 42, 0.96);
+  border-color: rgba(107, 231, 160, 0.45);
+  transform: translateY(-1px);
+  text-decoration-color: rgba(107, 231, 160, 0.85);
+}
+
+:global(#searchResults a.search-result-item:focus-visible) {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(107, 231, 160, 0.18);
+}
+
+:global(#searchResults .location-name) {
+  font-weight: 600;
+  color: var(--aurora-textPrimary, #F7F7F7);
+  font-size: 1rem;
+  line-height: 1.2;
+  margin: 0;
+  padding: 0;
+  letter-spacing: 0.01em;
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+:global(#searchResults .chevron) {
+  font-size: 1.15rem;
+  color: var(--aurora-textSecondary, #C8C8C8);
+  transition: transform 0.18s ease, color 0.18s ease;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+:global(#searchResults a.search-result-item:hover .chevron),
+:global(#searchResults a.search-result-item:focus-visible .chevron) {
+  transform: translateX(4px);
+  color: var(--aurora-primary, #6BE7A0);
+}
+
+:global(#searchResults .no-results) {
+  padding: var(--aurora-spacing-l, 16px);
+  text-align: center;
+  color: var(--aurora-textSecondary, #C8C8C8);
+  font-size: 0.9rem;
+}
+
+/* ==========================================================================
+   Popular Cities Quick Links
+   ========================================================================== */
+
+.popular-cities-quick {
+  text-align: center;
+  margin-top: var(--aurora-spacing-xl, 24px);
+}
+
+.popular-cities-quick p {
+  color: var(--aurora-textSecondary, #C8C8C8);
+  margin-bottom: var(--aurora-spacing-m, 12px);
+  font-size: 0.9rem;
+}
+
+.quick-cities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--aurora-spacing-m, 12px);
+  justify-content: center;
+}
+
+.quick-city-link {
+  padding: var(--aurora-spacing-s, 8px) var(--aurora-spacing-l, 16px);
+  background: var(--aurora-chip, #1A1C1F);
+  border: 1px solid var(--aurora-borderLight, #2A2A2A);
+  border-radius: var(--aurora-radiusChip, 16px);
+  text-decoration: none;
+  color: var(--aurora-textPrimary, #FFFFFF);
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.quick-city-link:hover {
+  border-color: var(--aurora-primary, #6BE7A0);
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   Gallery Subtitle
+   ========================================================================== */
+
+.gallery-subtitle {
+  text-align: center;
+  color: var(--aurora-textSecondary, #C8C8C8);
+  margin-bottom: var(--aurora-spacing-xl, 24px);
+  font-size: 0.95rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ==========================================================================
+   Cities Grid - Wider Layout
+   ========================================================================== */
+
+.cities-grid-tracker {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--aurora-spacing-l, 16px);
+  margin-top: var(--aurora-spacing-xl, 24px);
+}
+
+/* ==========================================================================
+   KP Explanation Section
+   ========================================================================== */
+
+.kp-explanation {
+  background: var(--aurora-surface, #111214);
+  padding: var(--aurora-spacing-xxl, 32px) 0;
+}
+
+.kp-explanation h2 {
+  text-align: center;
+  margin-bottom: var(--aurora-spacing-l, 16px);
+  font-weight: 500;
+}
+
+.kp-explanation>.container>p {
+  text-align: center;
+  color: var(--aurora-textSecondary, #C8C8C8);
+  margin-bottom: var(--aurora-spacing-xl, 24px);
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}
+
+.kp-scale {
+  display: grid;
+  gap: var(--aurora-spacing-m, 12px);
+  max-width: 700px;
+  margin: 0 auto var(--aurora-spacing-xl, 24px);
+}
+
+.kp-range {
+  background: var(--aurora-chip, #1A1C1F);
+  padding: var(--aurora-spacing-m, 12px) var(--aurora-spacing-l, 16px);
+  border-radius: var(--aurora-radiusS, 12px);
+  border-left: 4px solid var(--aurora-primary, #6BE7A0);
+  color: var(--aurora-textSecondary, #C8C8C8);
+}
+
+.kp-range strong {
+  color: var(--aurora-textPrimary, #FFFFFF);
+  font-weight: 600;
+}
+
+.kp-disclaimer {
+  background: rgba(107, 231, 160, 0.08);
+  border: 1px solid rgba(107, 231, 160, 0.2);
+  border-radius: var(--aurora-radiusCard, 20px);
+  padding: var(--aurora-spacing-l, 16px);
+  max-width: 700px;
+  margin: 0 auto;
+  color: var(--aurora-textSecondary, #C8C8C8);
+  line-height: 1.6;
+}
+
+.kp-disclaimer strong {
+  color: var(--aurora-primary, #6BE7A0);
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 var(--aurora-spacing-m, 12px);
+  }
+
+  .container-wide {
+    padding: 0 var(--aurora-spacing-m, 12px);
+  }
+
+  .tracker-hero h1 {
+    font-size: 1.8rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+
+  .kp-value {
+    font-size: 3rem;
+  }
+
+  .current-kp-display {
+    padding: var(--aurora-spacing-l, 16px);
+  }
+
+  .cities-grid-tracker {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: var(--aurora-spacing-m, 12px);
+  }
+
+  .quick-cities {
+    gap: var(--aurora-spacing-s, 8px);
+  }
+
+  .quick-city-link {
+    font-size: 0.85rem;
+    padding: var(--aurora-spacing-xs, 4px) var(--aurora-spacing-m, 12px);
+  }
+}
+
+@media (min-width: 1024px) {
+  .cities-grid-tracker {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+}
+
+/* ==========================================================================
+   Map Section
+   ========================================================================== */
+
+.map-section {
+  padding: 2rem 0;
+  background: #0f172a;
+  text-align: center;
+}
+
+.map-section h2 {
+  color: white;
+  margin-bottom: 1.5rem;
+}
+
+.map-container {
+  max-width: 800px;
+  margin: 0 auto;
+  background: #000;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.noaa-map {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.map-credit {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.8rem;
+  padding: 0.5rem;
+  margin: 0;
+  background: rgba(0, 0, 0, 0.5);
+}

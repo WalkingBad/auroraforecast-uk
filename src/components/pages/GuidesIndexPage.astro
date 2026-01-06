@@ -1,0 +1,167 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import StoreBadges from '../StoreBadges.astro';
+import Breadcrumbs from '../Breadcrumbs.astro';
+import '../../styles/pages/guide.css';
+import '../../styles/pages/guides-index.css';
+import { createPageI18n } from '../../utils/i18n-page';
+import {
+  SUPPORTED_LANGUAGES,
+  getCitiesForLanguage,
+  type SupportedLanguage
+} from '@config/language-targeting';
+import {
+  generatePageHreflangTags,
+  getPageCanonicalUrl
+} from '../../utils/hreflang';
+import citiesData from '../../data/cities.json';
+
+interface Props {
+  lang: SupportedLanguage;
+}
+
+const { lang } = Astro.props as Props;
+
+const i18n = await createPageI18n(lang);
+const canonicalUrl = getPageCanonicalUrl('guides', lang);
+const hreflangTags = generatePageHreflangTags('guides', SUPPORTED_LANGUAGES);
+
+const homeHref = lang === 'en' ? '/' : `/${lang}`;
+const guidesHref = lang === 'en' ? '/guides' : `/${lang}/guides`;
+
+const breadcrumbs = [
+  { title: i18n.t('breadcrumb_home'), href: homeHref },
+  { title: i18n.t('breadcrumb_guides'), href: guidesHref }
+];
+
+const readingTime = (minutes: number) =>
+  i18n.tpl(i18n.t('guides_reading_time'), { minutes });
+
+const guides = [
+  {
+    title: i18n.t('guide_tonight_title'),
+    description: i18n.t('guide_tonight_description'),
+    slug: 'northern-lights-tonight',
+    readingTime: readingTime(8),
+    category: i18n.t('guide_tonight_category'),
+    publishDate: '2025-10-20'
+  },
+  {
+    title: i18n.t('guide_forecast_title'),
+    description: i18n.t('guide_forecast_description'),
+    slug: 'aurora-forecast-tracker',
+    readingTime: readingTime(7),
+    category: i18n.t('guide_forecast_category'),
+    publishDate: '2025-10-20'
+  },
+  {
+    title: i18n.t('guide_alerts_title'),
+    description: i18n.t('guide_alerts_description'),
+    slug: 'aurora-alerts-setup',
+    readingTime: readingTime(6),
+    category: i18n.t('guide_alerts_category'),
+    publishDate: '2025-10-20'
+  },
+  {
+    title: i18n.t('guide_kp_title'),
+    description: i18n.t('guide_kp_description'),
+    slug: 'kp-index-explained',
+    readingTime: readingTime(6),
+    category: i18n.t('guide_kp_category'),
+    publishDate: '2025-10-20'
+  },
+  {
+    title: i18n.t('guide_besttime_title'),
+    description: i18n.t('guide_besttime_description'),
+    slug: 'best-time-northern-lights',
+    readingTime: readingTime(7),
+    category: i18n.t('guide_besttime_category'),
+    publishDate: '2025-10-20'
+  }
+];
+
+const localizedCitySlugs = new Set(
+  getCitiesForLanguage(citiesData as any, lang)
+    .map(city => city.slug)
+);
+
+const buildCityHref = (slug: string) => {
+  if (lang === 'en') {
+    return `/${slug}`;
+  }
+  return localizedCitySlugs.has(slug) ? `/${lang}/${slug}` : `/${slug}`;
+};
+
+const dateLocale = lang === 'en' ? 'en-US' : `${lang}-${lang.toUpperCase()}`;
+const dateFormatter = new Intl.DateTimeFormat(dateLocale, {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+});
+---
+
+<BaseLayout
+  title={i18n.t('guides_seo_title')}
+  description={i18n.t('guides_seo_description')}
+  canonical={canonicalUrl}
+  lang={lang}
+  hreflangTags={hreflangTags}
+  i18n={i18n}
+>
+  <main class="guides-index">
+    <div class="guides-index__container">
+      <Breadcrumbs items={breadcrumbs} i18n={i18n} />
+
+      <header class="guides-index__header">
+        <h1 class="guides-index__title">{i18n.t('guides_header_title')}</h1>
+        <p class="guides-index__subtitle">
+          {i18n.t('guides_header_subtitle')}
+        </p>
+      </header>
+
+      <section class="guides-index__grid">
+        {guides.map((guide) => (
+          <a href={`/guides/${guide.slug}`} class="guide-card">
+            <div class="guide-card__content">
+              <span class="guide-card__category">{guide.category}</span>
+              <h2 class="guide-card__title">
+                {guide.title}
+              </h2>
+              <p class="guide-card__description">{guide.description}</p>
+              <div class="guide-card__meta">
+                <time class="guide-card__date" datetime={guide.publishDate}>
+                  {dateFormatter.format(new Date(guide.publishDate))}
+                </time>
+                <span class="guide-card__separator">•</span>
+                <span class="guide-card__reading-time">{guide.readingTime}</span>
+              </div>
+            </div>
+          </a>
+        ))}
+      </section>
+
+      <section class="guides-index__cities">
+        <h2>{i18n.t('guides_cta_title')}</h2>
+        <p>{i18n.t('guides_cta_subtitle')}</p>
+        <div class="guides-index__cities-links">
+          <a href={buildCityHref('fairbanks')} class="city-quick-link">🇺🇸 Fairbanks</a>
+          <a href={buildCityHref('anchorage')} class="city-quick-link">🇺🇸 Anchorage</a>
+          <a href={buildCityHref('yellowknife')} class="city-quick-link">🇨🇦 Yellowknife</a>
+          <a href={buildCityHref('reykjavk')} class="city-quick-link">🇮🇸 Reykjavík</a>
+          <a href={buildCityHref('troms')} class="city-quick-link">🇳🇴 Tromsø</a>
+          <a href={buildCityHref('rovaniemi')} class="city-quick-link">🇫🇮 Rovaniemi</a>
+        </div>
+        <a href={homeHref} class="guides-index__regions-btn">{i18n.t('guides_cta_regions_btn')}</a>
+      </section>
+
+    </div>
+
+    <StoreBadges
+      pageType="guide"
+      placement="sticky_footer"
+      sticky={true}
+      enhanced={true}
+    />
+  </main>
+</BaseLayout>
+

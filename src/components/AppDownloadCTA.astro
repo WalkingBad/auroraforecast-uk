@@ -1,0 +1,58 @@
+---
+/**
+ * AppDownloadCTA - CTA for app download
+ * Winner from A/B testing: question-style headlines
+ *
+ * Test Results (Jan 2026):
+ * - Round 1: B beat A (+40% CR) - questions vs imperatives
+ * - Round 2: B beat C - questions vs social proof
+ */
+import StoreBadges from './StoreBadges.astro';
+import '../styles/components/app-download-cta.css';
+import type { I18nPageHelper } from '../utils/i18n-page';
+
+export interface Props {
+  block: '72h' | '27d' | 'yearly';
+  citySlug?: string;
+  i18n?: I18nPageHelper;
+}
+
+const { block, citySlug, i18n } = Astro.props;
+
+// Winning texts from A/B testing (question-style)
+const texts = {
+  '72h': {
+    icon: '🎯',
+    title: i18n?.t('cta_72h_title', 'See Exactly When to Look Up') ?? 'See Exactly When to Look Up',
+    subtitle: i18n?.t('cta_72h_subtitle', '3-day precision forecast — know the best hour') ?? '3-day precision forecast — know the best hour',
+  },
+  '27d': {
+    icon: '🗓️',
+    title: i18n?.t('cta_27d_title', 'Which Nights Are Best?') ?? 'Which Nights Are Best?',
+    subtitle: i18n?.t('cta_27d_subtitle', '27-day calendar shows your aurora chances') ?? '27-day calendar shows your aurora chances',
+  },
+  'yearly': {
+    icon: '✈️',
+    title: i18n?.t('cta_yearly_title', 'When Should You Visit?') ?? 'When Should You Visit?',
+    subtitle: i18n?.t('cta_yearly_subtitle', 'Historical patterns reveal the best months') ?? 'Historical patterns reveal the best months',
+  },
+};
+
+const content = texts[block];
+---
+
+<div class="app-download-cta" data-block={block} data-city={citySlug || ''}>
+  <div class="cta-header">
+    <span class="cta-icon">{content.icon}</span>
+    <h3 class="cta-title">{content.title}</h3>
+  </div>
+  <p class="cta-subtitle">{content.subtitle}</p>
+
+  <StoreBadges
+    pageType="city_page"
+    citySlug={citySlug}
+    placement={`cta_${block}`}
+    showRatings={true}
+    i18n={i18n}
+  />
+</div>

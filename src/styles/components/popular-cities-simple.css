@@ -1,0 +1,99 @@
+/* Popular Cities Simple - lightweight city links for guides */
+/* Uses design tokens from city-cards.css but simplified layout */
+
+.popular-cities {
+  margin: var(--aurora-spacing-xxl) 0;
+  padding: var(--aurora-spacing-xl);
+  background: var(--aurora-surface);
+  border: 1px solid var(--aurora-border-light);
+  border-radius: var(--aurora-radius-card);
+}
+
+.popular-cities__title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--aurora-text-primary);
+  margin: 0 0 var(--aurora-spacing-m);
+  text-align: center;
+}
+
+.popular-cities__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--aurora-spacing-s);
+  margin-bottom: var(--aurora-spacing-l);
+}
+
+.city-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--aurora-spacing-xs);
+  padding: var(--aurora-spacing-m) var(--aurora-spacing-s);
+  background: var(--aurora-bg-primary);
+  border: 1px solid var(--aurora-border-light);
+  border-radius: var(--aurora-radius-s);
+  text-decoration: none;
+  transition: all var(--aurora-timing-fast) ease;
+}
+
+.city-link:hover {
+  border-color: var(--aurora-primary);
+  background: var(--cross-link-hover-bg);
+  transform: translateY(-2px);
+}
+
+.city-link__flag {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.city-link__name {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--aurora-text-primary);
+  text-align: center;
+}
+
+.city-link__country {
+  font-size: 0.75rem;
+  color: var(--aurora-text-tertiary);
+}
+
+.popular-cities__footer {
+  text-align: center;
+  padding-top: var(--aurora-spacing-m);
+  border-top: 1px solid var(--aurora-border-light);
+}
+
+.regions-link {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--aurora-primary);
+  text-decoration: none;
+  transition: color var(--aurora-timing-base) ease;
+}
+
+.regions-link:hover {
+  color: var(--aurora-primary-hover);
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .popular-cities {
+    padding: var(--aurora-spacing-l);
+  }
+
+  .popular-cities__grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: var(--aurora-spacing-xs);
+  }
+
+  .city-link {
+    padding: var(--aurora-spacing-s);
+  }
+
+  .city-link__name {
+    font-size: 0.875rem;
+  }
+}

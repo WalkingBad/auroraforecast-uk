@@ -1,0 +1,364 @@
+/**
+ * Legacy City Page Styles
+ *
+ * IMPORTANT: This file contains actively used styles for city pages.
+ * Despite the "legacy" name, these styles are REQUIRED for proper rendering.
+ *
+ * Context:
+ * - Created: September 2025 during city page redesign
+ * - Purpose: Styles that were not extracted to component modules
+ * - Synced with: app/lib/constants/design_system.dart
+ *
+ * Contents:
+ * 1. City Hero Section (.city-hero, .city-meta, .city-description)
+ * 2. Aurora Status Card variants (.aurora-status-card.status-*)
+ * 3. Visibility Factors Section (.visibility-factors-section)
+ * 4. Forecast Section (.forecast-section, .forecast-grid)
+ * 5. City Info Section (.city-info, .info-grid)
+ * 6. App CTA Section (.app-cta)
+ * 7. Mobile Responsive overrides (@media max-width: 768px)
+ *
+ * Migration Status: NOT PLANNED
+ * Reason: These styles are page-specific and well-organized as-is.
+ * The "legacy" name is misleading - consider renaming to "city-sections.css"
+ *
+ * @todo Consider renaming to city-sections.css for clarity
+ * @sync app/lib/constants/design_system.dart
+ */
+@import '../shared/status-theming.css';
+
+/* City Hero Section */
+.city-hero {
+  padding: var(--aurora-spacing-xxl) 0;
+  text-align: center;
+}
+
+.city-meta {
+  display: flex;
+  justify-content: center;
+  gap: var(--aurora-spacing-xl);
+  margin-bottom: var(--aurora-spacing-l);
+  color: var(--aurora-text-secondary);
+  font-size: 13px; /* caption from AuroraTypography */
+  font-weight: 400;
+}
+
+.city-description {
+  font-size: 16px; /* bodyM from AuroraTypography */
+  font-weight: 400;
+  color: var(--aurora-text-secondary);
+  max-width: 480px;
+  margin: 0 auto var(--aurora-spacing-xxl);
+  line-height: 1.6;
+}
+
+/* Aurora Status Card Variants */
+.aurora-status-card {
+  background: var(--aurora-surface);
+  border-radius: var(--aurora-radius-card);
+  padding: var(--aurora-spacing-xxl);
+  margin: var(--aurora-spacing-xxl) auto;
+  max-width: 600px;
+  border: 1px solid var(--aurora-border-light);
+  box-shadow: var(--aurora-elevation-e2);
+  transition: all 0.3s ease;
+}
+
+/* Status theming applied via shared/status-theming.css */
+.aurora-status-card.status-very_low,
+.aurora-status-card.status-low,
+.aurora-status-card.status-medium,
+.aurora-status-card.status-high {
+  background: var(--aurora-chip);
+  border: 1px solid var(--status-color);
+}
+
+.status-main-header {
+  text-align: center;
+  margin-bottom: var(--aurora-spacing-xl);
+}
+
+.status-title {
+  font-size: 36px; /* displayXL from AuroraTypography */
+  font-weight: 300;
+  letter-spacing: -0.5px;
+  margin: 0 0 var(--aurora-spacing-s) 0;
+}
+
+.status-subtitle {
+  font-size: 18px; /* titleS from AuroraTypography */
+  font-weight: 500;
+  color: var(--aurora-text-primary);
+  margin: 0;
+}
+
+/* Status Boost */
+.status-boost {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--aurora-spacing-s);
+  background: var(--aurora-chip);
+  border: 1px solid var(--aurora-danger);
+  border-radius: var(--aurora-radius-button);
+  padding: var(--aurora-spacing-m) var(--aurora-spacing-l);
+  margin-top: var(--aurora-spacing-l);
+}
+
+.boost-icon {
+  font-size: 16px;
+}
+
+.boost-text {
+  color: var(--aurora-danger);
+  font-size: 14px; /* labelM from AuroraTypography */
+  font-weight: 500;
+}
+
+/* Visibility Factors Section */
+.visibility-factors-section {
+  background: var(--aurora-surface);
+  border-radius: var(--aurora-radius-card);
+  padding: var(--aurora-spacing-l);
+  margin: var(--aurora-spacing-xxl) auto;
+  max-width: 600px;
+  border: 1px solid var(--aurora-border-light);
+}
+
+.factors-header {
+  display: flex;
+  align-items: center;
+  gap: var(--aurora-spacing-m);
+  margin-bottom: var(--aurora-spacing-l);
+}
+
+.factors-icon {
+  font-size: 16px;
+  color: var(--aurora-success);
+}
+
+.factors-header h3 {
+  flex: 1;
+  font-size: 18px; /* titleS from AuroraTypography */
+  font-weight: 500;
+  color: var(--aurora-text-primary);
+  margin: 0;
+}
+
+.expand-icon {
+  font-size: 16px;
+  color: var(--aurora-text-secondary);
+}
+
+.factor-value {
+  text-align: left;
+  margin-top: var(--aurora-spacing-m);
+}
+
+.factor-status {
+  font-size: 20px; /* titleM from AuroraTypography */
+  font-weight: 600;
+  display: block;
+  line-height: 1.2;
+  text-shadow: none;
+}
+
+.factor-number {
+  font-size: 14px; /* bodyS from AuroraTypography */
+  font-weight: 400;
+  color: var(--aurora-text-secondary);
+}
+
+.data-source {
+  text-align: center;
+  color: var(--aurora-text-tertiary);
+  font-style: italic;
+  font-size: 13px; /* caption from AuroraTypography */
+  font-weight: 400;
+}
+
+/* Forecast Section */
+.forecast-section {
+  padding: calc(var(--aurora-spacing-xxl) + var(--aurora-spacing-l)) 0;
+}
+
+.forecast-section h2 {
+  text-align: center;
+  margin-bottom: var(--aurora-spacing-xxl);
+  font-size: 30px; /* displayL from AuroraTypography */
+  font-weight: 300;
+  color: var(--aurora-text-primary);
+  font-family: 'Cormorant', serif;
+}
+
+.forecast-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: var(--aurora-spacing-l);
+  margin-bottom: var(--aurora-spacing-xxl);
+}
+
+.forecast-hour {
+  background: var(--aurora-surface);
+  border-radius: var(--aurora-radius-chip);
+  padding: var(--aurora-spacing-l);
+  text-align: left;
+  border: 1px solid var(--aurora-border-light);
+}
+
+.forecast-hour .time {
+  font-weight: 600;
+  color: var(--aurora-text-secondary);
+  margin-bottom: var(--aurora-spacing-s);
+  font-size: 14px;
+}
+
+.forecast-hour .probability {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--aurora-success);
+  margin-bottom: var(--aurora-spacing-xs);
+}
+
+.forecast-hour .clouds {
+  font-size: 13px;
+  color: var(--aurora-text-tertiary);
+}
+
+.forecast-note {
+  background: rgba(255, 184, 0, 0.1);
+  border: 1px solid var(--aurora-warning);
+  border-radius: var(--aurora-radius-chip);
+  padding: var(--aurora-spacing-l);
+  text-align: center;
+  color: var(--aurora-text-primary);
+}
+
+.forecast-note strong {
+  color: var(--aurora-warning);
+}
+
+/* City Info Section */
+.city-info {
+  padding: calc(var(--aurora-spacing-xxl) + var(--aurora-spacing-l)) 0;
+  background: rgba(17, 18, 20, 0.5);
+  margin: calc(var(--aurora-spacing-xxl) + var(--aurora-spacing-l)) calc(var(--aurora-spacing-l) * -1);
+  padding-left: var(--aurora-spacing-l);
+  padding-right: var(--aurora-spacing-l);
+}
+
+.city-info h2 {
+  text-align: center;
+  margin-bottom: var(--aurora-spacing-xxl);
+  font-size: clamp(24px, 4vw, 32px);
+  font-weight: 600;
+  color: var(--aurora-text-primary);
+  font-family: 'Cormorant', serif;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--aurora-spacing-xxl);
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.info-card {
+  background: var(--aurora-surface);
+  padding: var(--aurora-spacing-xxl);
+  border-radius: var(--aurora-radius-card);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.info-card h3 {
+  margin-bottom: var(--aurora-spacing-l);
+  color: var(--aurora-text-primary);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.months {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--aurora-spacing-s);
+}
+
+.month-badge {
+  background: var(--aurora-success);
+  color: var(--aurora-text-primary);
+  padding: var(--aurora-spacing-xs) var(--aurora-spacing-m);
+  border-radius: var(--aurora-radius-button);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.info-card ul {
+  list-style: none;
+  padding: 0;
+}
+
+.info-card li {
+  padding: var(--aurora-spacing-s) 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--aurora-text-secondary);
+  font-size: 14px;
+}
+
+.info-card li:last-child {
+  border-bottom: none;
+}
+
+/* App CTA Section */
+.app-cta {
+  text-align: center;
+  padding: calc(var(--aurora-spacing-xxl) * 2) 0;
+}
+
+.app-cta h2 {
+  margin-bottom: var(--aurora-spacing-l);
+  font-size: clamp(24px, 4vw, 32px);
+  font-weight: 600;
+  color: var(--aurora-text-primary);
+  font-family: 'Cormorant', serif;
+}
+
+.app-cta p {
+  font-size: 18px;
+  color: var(--aurora-text-secondary);
+  max-width: 600px;
+  margin: 0 auto var(--aurora-spacing-xxl);
+  line-height: 1.6;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .city-meta {
+    flex-direction: column;
+    gap: var(--aurora-spacing-s);
+  }
+
+  .status-title {
+    font-size: 28px;
+  }
+
+  .factors-header h3 {
+    font-size: 16px;
+  }
+
+  .forecast-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .city-info {
+    margin-left: calc(var(--aurora-spacing-m) * -1);
+    margin-right: calc(var(--aurora-spacing-m) * -1);
+    padding-left: var(--aurora-spacing-m);
+    padding-right: var(--aurora-spacing-m);
+  }
+}

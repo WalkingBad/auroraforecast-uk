@@ -1,0 +1,37 @@
+---
+import '../styles/components/how-it-works.css';
+import LocationSelector from './LocationSelector.astro';
+---
+
+<section class="hiw container">
+  <h2>Real-time Aurora Visibility</h2>
+  <p class="hiw__subtitle">Live conditions affecting northern lights visibility</p>
+
+  <!-- Location selection -->
+  <LocationSelector />
+
+  <!-- Note: Dynamic factor cards are available on city-specific pages -->
+  <div class="factors-preview">
+    <div class="factor-preview">
+      <h3>🧭 Magnetic Latitude</h3>
+      <p>Your distance from the magnetic pole affects aurora visibility</p>
+    </div>
+    <div class="factor-preview">
+      <h3>📊 Kp Index</h3>
+      <p>Global magnetic activity level - higher means stronger aurora</p>
+    </div>
+    <div class="factor-preview">
+      <h3>☁️ Weather</h3>
+      <p>Cloud coverage affects aurora visibility</p>
+    </div>
+    <div class="factor-preview">
+      <h3>🌙 Moon Phase</h3>
+      <p>Moon brightness impacts aurora photography and visibility</p>
+    </div>
+  </div>
+
+  <div class="hiw__cta">
+    <p>Get personalized forecasts and alerts for your location in the app</p>
+  </div>
+</section>
+

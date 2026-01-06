@@ -1,0 +1,125 @@
+---
+import '../styles/components/comparison-table.css';
+import type { I18nPageHelper } from '../utils/i18n-page';
+
+export interface Props {
+  i18n?: I18nPageHelper;
+}
+
+const { i18n } = Astro.props;
+
+// Translation with fallback to English
+const title = i18n ? i18n.t('comparison_title') : 'AuroraMe vs Other Forecast Apps';
+const subtitle = i18n ? i18n.t('comparison_subtitle') : 'See how we compare to other aurora forecast services';
+const featureCol = i18n ? i18n.t('comparison_feature_col') : 'Feature';
+const bestBadge = i18n ? i18n.t('comparison_best_badge') : '★ Best';
+
+// Features with translations
+const features = [
+  {
+    name: i18n ? i18n.t('comparison_feature_coverage') : 'Coverage',
+    auroraMe: i18n ? i18n.t('comparison_coverage_aurorame') : 'Worldwide + Custom Coordinates',
+    competitorA: i18n ? i18n.t('comparison_coverage_competitor_a') : 'Limited regions',
+    competitorB: i18n ? i18n.t('comparison_coverage_competitor_b') : 'Major cities only',
+    noaa: i18n ? i18n.t('comparison_coverage_noaa') : 'Global overview only'
+  },
+  {
+    name: i18n ? i18n.t('comparison_feature_forecast') : 'Forecast',
+    auroraMe: i18n ? i18n.t('comparison_forecast_aurorame') : 'Predictive (Now + Tonight + Month)',
+    competitorA: i18n ? i18n.t('comparison_forecast_competitor_a') : 'Current conditions only',
+    competitorB: i18n ? i18n.t('comparison_forecast_competitor_b') : '24-hour forecast',
+    noaa: i18n ? i18n.t('comparison_forecast_noaa') : '30-minute nowcast'
+  },
+  {
+    name: i18n ? i18n.t('comparison_feature_historical') : 'Historical Data',
+    auroraMe: i18n ? i18n.t('comparison_historical_aurorame') : '3+ Years Statistical Model',
+    competitorA: i18n ? i18n.t('comparison_historical_competitor_a') : 'None',
+    competitorB: i18n ? i18n.t('comparison_historical_competitor_b') : 'Basic statistics',
+    noaa: i18n ? i18n.t('comparison_historical_noaa') : 'Raw data archives'
+  },
+  {
+    name: i18n ? i18n.t('comparison_feature_notifications') : 'Push Notifications',
+    auroraMe: i18n ? i18n.t('comparison_notifications_aurorame') : 'Smart (Quiet Hours + Cooldown)',
+    competitorA: i18n ? i18n.t('comparison_notifications_competitor_a') : 'Basic alerts',
+    competitorB: i18n ? i18n.t('comparison_notifications_competitor_b') : 'No quiet hours',
+    noaa: i18n ? i18n.t('comparison_notifications_noaa') : 'Email only'
+  },
+  {
+    name: i18n ? i18n.t('comparison_feature_reality') : 'Reality Factors',
+    auroraMe: i18n ? i18n.t('comparison_reality_aurorame') : '4 Combined (Kp + Clouds + Moon + Darkness)',
+    competitorA: i18n ? i18n.t('comparison_reality_competitor_a') : 'Kp index only',
+    competitorB: i18n ? i18n.t('comparison_reality_competitor_b') : 'Kp + Clouds',
+    noaa: i18n ? i18n.t('comparison_reality_noaa') : 'Space weather only'
+  },
+  {
+    name: i18n ? i18n.t('comparison_feature_interface') : 'Interface',
+    auroraMe: i18n ? i18n.t('comparison_interface_aurorame') : 'Super Intuitive',
+    competitorA: i18n ? i18n.t('comparison_interface_competitor_a') : 'Complex',
+    competitorB: i18n ? i18n.t('comparison_interface_competitor_b') : 'Cluttered',
+    noaa: i18n ? i18n.t('comparison_interface_noaa') : 'Technical/Scientific'
+  }
+];
+
+const competitors = [
+  { id: 'auroraMe', name: i18n ? i18n.t('comparison_competitor_aurorame') : 'AuroraMe', highlight: true },
+  { id: 'competitorA', name: i18n ? i18n.t('comparison_competitor_app_a') : 'App A' },
+  { id: 'competitorB', name: i18n ? i18n.t('comparison_competitor_app_b') : 'App B' },
+  { id: 'noaa', name: i18n ? i18n.t('comparison_competitor_noaa') : 'NOAA' }
+];
+---
+
+<section class="comparison-section">
+  <div class="comparison-container">
+    <h2 class="section-title">{title}</h2>
+    <p class="section-subtitle">
+      {subtitle}
+    </p>
+
+    <div class="table-wrapper">
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th class="feature-col">{featureCol}</th>
+            {competitors.map(comp => (
+              <th class={comp.highlight ? 'highlight' : ''}>
+                {comp.name}
+                {comp.highlight && <span class="badge">{bestBadge}</span>}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {features.map(feature => (
+            <tr>
+              <td class="feature-name">{feature.name}</td>
+              <td class="highlight">{feature.auroraMe}</td>
+              <td>{feature.competitorA}</td>
+              <td>{feature.competitorB}</td>
+              <td>{feature.noaa}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Mobile-friendly cards (hidden on desktop) -->
+    <div class="comparison-cards">
+      {features.map(feature => (
+        <div class="feature-comparison-card">
+          <h3 class="card-feature-name">{feature.name}</h3>
+          <div class="card-comparisons">
+            {competitors.map(comp => (
+              <div class={`comparison-item ${comp.highlight ? 'highlight' : ''}`}>
+                <div class="comp-header">
+                  <span class="comp-name">{comp.name}</span>
+                  {comp.highlight && <span class="comp-badge">★</span>}
+                </div>
+                <div class="comp-value">{feature[comp.id]}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

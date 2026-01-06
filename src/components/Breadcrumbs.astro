@@ -1,0 +1,29 @@
+---
+import '../styles/components/breadcrumbs.css';
+
+// Simple breadcrumbs component
+export interface Props {
+  items: Array<{
+    title: string;
+    href?: string;
+  }>;
+}
+
+const { items } = Astro.props;
+---
+
+<nav aria-label="Breadcrumb" class="breadcrumbs">
+  <ol class="breadcrumb-list">
+    {items.map((item, index) => (
+      <li class="breadcrumb-item">
+        {item.href ? (
+          <a href={item.href} class="breadcrumb-link">{item.title}</a>
+        ) : (
+          <span class="breadcrumb-current" aria-current="page">{item.title}</span>
+        )}
+        {index < items.length - 1 && <span class="breadcrumb-separator">›</span>}
+      </li>
+    ))}
+  </ol>
+</nav>
+

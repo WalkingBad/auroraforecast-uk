@@ -1,0 +1,156 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import StoreBadges from '../components/StoreBadges.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import RelatedGuides from '../components/RelatedGuides.astro';
+import type { RelatedGuide } from '../components/RelatedGuides.astro';
+import type { I18n } from '../utils/i18n-page';
+import '../styles/pages/guide.css';
+
+export interface Props {
+  title: string;
+  description: string;
+  heroImage?: string;
+  heroImageAlt?: string;
+  publishDate?: string;
+  updateDate?: string;
+  author?: string;
+  readingTime?: string;
+  relatedGuides?: RelatedGuide[];
+  guideSlug?: string;
+  i18n?: I18n;
+}
+
+const {
+  title,
+  description,
+  heroImage,
+  heroImageAlt = '',
+  publishDate = new Date().toISOString(),
+  updateDate,
+  author = 'AuroraMe Team',
+  readingTime = '5 min read',
+  relatedGuides = [],
+  guideSlug,
+  i18n
+} = Astro.props;
+
+const breadcrumbs = [
+  { name: i18n?.t('breadcrumb_home') || 'Home', url: '/' },
+  { name: i18n?.t('breadcrumb_guides') || 'Guides', url: '/guides' },
+  { name: title, url: Astro.url.pathname }
+];
+---
+
+<BaseLayout title={title} description={description}>
+  <article class="guide">
+    <div class="guide__container">
+      <!-- Breadcrumbs -->
+      <Breadcrumbs items={breadcrumbs.map(b => ({ title: b.name, href: b.url }))} />
+
+      <!-- Header -->
+      <header class="guide__header">
+        <h1 class="guide__title">{title}</h1>
+        <div class="guide__meta">
+          <span class="guide__author">{author}</span>
+          <span class="guide__separator">•</span>
+          <time class="guide__date" datetime={publishDate}>
+            {new Date(publishDate).toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            })}
+          </time>
+          {updateDate && (
+            <>
+              <span class="guide__separator">•</span>
+              <span class="guide__updated">
+                Updated {new Date(updateDate).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </span>
+            </>
+          )}
+          <span class="guide__separator">•</span>
+          <span class="guide__reading-time">{readingTime}</span>
+        </div>
+        <p class="guide__description">{description}</p>
+      </header>
+
+      <!-- Hero Image -->
+      {heroImage && (
+        <div class="guide__hero">
+          <img
+            src={heroImage}
+            alt={heroImageAlt || 'Aurora guide hero image'}
+            class="guide__hero-image"
+            loading="eager"
+            decoding="async"
+          />
+        </div>
+      )}
+
+      <!-- Content -->
+      <div class="guide__content">
+        <slot />
+      </div>
+
+      <!-- CTA Section -->
+      <aside class="guide__cta">
+        <h3 class="guide__cta-title">{i18n?.t('guide_cta_title') || 'Get Aurora Alerts on Your Phone'}</h3>
+        <p class="guide__cta-text">
+          {i18n?.t('guide_cta_text') || 'Download AuroraMe to receive instant notifications when northern lights are visible in your area. Free 3-day forecast included.'}
+        </p>
+        <StoreBadges
+          pageType="guide"
+          guideSlug={guideSlug}
+          placement="content_cta"
+          enhanced={true}
+          size="large"
+        />
+      </aside>
+
+      <!-- Related Guides -->
+      {relatedGuides.length > 0 && (
+        <RelatedGuides guides={relatedGuides} />
+      )}
+    </div>
+  </article>
+
+  <!-- Sticky Footer CTA -->
+  <StoreBadges
+    pageType="guide"
+    guideSlug={guideSlug}
+    placement="sticky_footer"
+    sticky={true}
+    enhanced={true}
+  />
+
+  <!-- Schema.org markup for Article -->
+  <script
+    type="application/ld+json"
+    set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": title,
+      "description": description,
+      "image": heroImage ? new URL(heroImage, Astro.site).href : undefined,
+      "datePublished": publishDate,
+      "dateModified": updateDate || publishDate,
+      "author": {
+        "@type": "Organization",
+        "name": author
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "AuroraMe",
+        "logo": {
+          "@type": "ImageObject",
+          "url": `${Astro.site}favicon.svg`
+        }
+      }
+    })}
+  ></script>
+</BaseLayout>

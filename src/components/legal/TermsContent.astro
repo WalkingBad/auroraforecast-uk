@@ -1,0 +1,136 @@
+---
+import '../../styles/components/legal.css';
+import type { PageI18nContext } from '../../utils/i18n-page';
+import type { SupportedLanguage } from '@config/language-targeting';
+
+export interface Props {
+  i18n: PageI18nContext;
+  currentDate: string;
+  lang?: SupportedLanguage;
+}
+
+const { i18n, currentDate, lang = 'en' } = Astro.props;
+
+const privacyHref = lang === 'en' ? '/privacy' : `/${lang}/privacy`;
+
+const sections = [
+  {
+    title: i18n.t('terms_intro_title'),
+    paragraphs: [i18n.t('terms_intro_body1'), i18n.t('terms_intro_body2')]
+  },
+  {
+    title: i18n.t('terms_mor_title'),
+    paragraphs: [i18n.t('terms_mor_body')]
+  },
+  {
+    title: i18n.t('terms_services_title'),
+    paragraphs: [i18n.t('terms_services_body')],
+    list: [
+      i18n.t('terms_services_item1'),
+      i18n.t('terms_services_item2'),
+      i18n.t('terms_services_item3')
+    ]
+  },
+  {
+    title: i18n.t('terms_eligibility_title'),
+    paragraphs: [i18n.t('terms_eligibility_body')],
+    list: [
+      i18n.t('terms_eligibility_item1'),
+      i18n.t('terms_eligibility_item2'),
+      i18n.t('terms_eligibility_item3')
+    ]
+  },
+  {
+    title: i18n.t('terms_orders_title'),
+    paragraphs: [i18n.t('terms_orders_body')],
+    list: [
+      i18n.t('terms_orders_item1'),
+      i18n.t('terms_orders_item2'),
+      i18n.t('terms_orders_item3'),
+      i18n.t('terms_orders_item4')
+    ]
+  },
+  {
+    title: i18n.t('terms_license_usage_title'),
+    paragraphs: [i18n.t('terms_license_usage_body')],
+    list: [
+      i18n.t('terms_license_usage_item1'),
+      i18n.t('terms_license_usage_item2'),
+      i18n.t('terms_license_usage_item3')
+    ]
+  },
+  {
+    title: i18n.t('terms_refunds_title'),
+    paragraphs: [i18n.t('terms_refunds_body')],
+    list: [
+      i18n.t('terms_refunds_item1'),
+      i18n.t('terms_refunds_item2'),
+      i18n.t('terms_refunds_item3'),
+      i18n.t('terms_refunds_item4')
+    ]
+  },
+  {
+    title: i18n.t('terms_disclaimer_title'),
+    paragraphs: [i18n.t('terms_disclaimer_body1'), i18n.t('terms_disclaimer_body2')]
+  },
+  {
+    title: i18n.t('terms_liability_title'),
+    paragraphs: [i18n.t('terms_liability_body')]
+  },
+  {
+    title: i18n.t('terms_indemnity_title'),
+    paragraphs: [i18n.t('terms_indemnity_body')]
+  },
+  {
+    title: i18n.t('terms_privacy_title'),
+    paragraphs: [
+      i18n.tpl(i18n.t('terms_privacy_body'), {
+        privacyLink: `<a href="${privacyHref}">${i18n.t('terms_privacy_link_label')}</a>`
+      })
+    ],
+    html: true
+  },
+  {
+    title: i18n.t('terms_changes_title'),
+    paragraphs: [i18n.t('terms_changes_body')]
+  },
+  {
+    title: i18n.t('terms_law_title'),
+    paragraphs: [i18n.t('terms_law_body1'), i18n.t('terms_law_body2')]
+  }
+];
+
+const contactParagraph = i18n.tpl(i18n.t('terms_contact_body'), {
+  emailLink: `<a href="mailto:${i18n.t('terms_contact_email_label')}">${i18n.t('terms_contact_email_label')}</a>`,
+  address: i18n.t('terms_contact_address')
+});
+---
+
+<main class="legal-container">
+  <h1>{i18n.t('terms_title')}</h1>
+  <p class="legal-updated">{i18n.t('terms_last_updated')} {currentDate}</p>
+
+  {sections.map(section => (
+    <section>
+      <h2>{section.title}</h2>
+      {section.paragraphs.map((text, index) =>
+        section.html
+          ? <p set:html={text} data-index={index}></p>
+          : <p data-index={index}>{text}</p>
+      )}
+      {section.list && (
+        <ul>
+          {section.list.map(item => (
+            <li>{item}</li>
+          ))}
+        </ul>
+      )}
+    </section>
+  ))}
+
+  <section>
+    <h2>{i18n.t('terms_contact_title')}</h2>
+    <p set:html={contactParagraph}></p>
+  </section>
+</main>
+

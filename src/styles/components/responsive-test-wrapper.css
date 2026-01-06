@@ -1,0 +1,100 @@
+/**
+ * Responsive Test Wrapper Component Styles
+ * Used by: ResponsiveTestWrapper.astro
+ * Extracted from inline <style> block (148 lines)
+ * Date: 2025-11-24
+ * Features: Device viewport testing wrapper
+ */
+
+.responsive-test-wrapper {
+    position: relative;
+    width: 100%;
+    transition: opacity var(--aurora-timing-base) ease;
+  }
+
+.responsive-content {
+    width: 100%;
+  }
+
+.fallback-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--aurora-surface);
+    border: 1px solid var(--aurora-border-light);
+    border-radius: var(--aurora-radius-card);
+    opacity: 0.8;
+  }
+
+.fallback-message {
+    text-align: center;
+    color: var(--aurora-text-secondary);
+    padding: var(--aurora-spacing-l);
+  }
+
+.fallback-message p {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  /* Error state styling */
+.responsive-test-wrapper[data-error="true"] .responsive-content {
+    opacity: 0.3;
+  }
+
+.responsive-test-wrapper[data-error="true"] .fallback-content {
+    display: flex;
+  }
+
+  /* Loading state styling */
+.responsive-test-wrapper[data-loading="true"] {
+    opacity: 0.7;
+  }
+
+.responsive-test-wrapper[data-loading="true"]::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.1),
+      transparent
+    );
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+  }
+
+  /* Mobile-specific adjustments */
+  @media (max-width: 768px) {
+    .responsive-test-wrapper {
+      margin: var(--aurora-spacing-l) 0;
+    }
+
+    .fallback-message {
+      padding: var(--aurora-spacing-m);
+    }
+
+    .fallback-message p {
+      font-size: 0.8rem;
+    }
+  }
+
+  /* Very small screens */
+  @media (max-width: 480px) {
+    .responsive-test-wrapper {
+      margin: var(--aurora-spacing-m) 0;
+    }
+  }
