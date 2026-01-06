@@ -52,7 +52,10 @@ const siteCountryCodes = new Set(
     .filter(Boolean)
 );
 
-const currentCities = loadJson(path.join(dataDir, 'cities.json'))
+const currentCitiesPath = fs.existsSync(path.join(dataDir, 'cities-uk.json'))
+  ? path.join(dataDir, 'cities-uk.json')
+  : path.join(dataDir, 'cities.json');
+const currentCities = loadJson(currentCitiesPath)
   .filter(city => siteCountryCodes.has(city.countryCode));
 const legacyCities = loadJson(path.join(dataDir, 'cities-backup-old.json'))
   .filter(city => siteCountryCodes.has(city.countryCode));
