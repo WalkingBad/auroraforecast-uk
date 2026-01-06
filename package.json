@@ -8,7 +8,7 @@
     "predev": "npm run sync",
     "prebuild": "npm run sync",
     "dev": "astro dev",
-    "start": "astro preview --host 0.0.0.0 --port ${PORT:-4321}",
+    "start": "node server.mjs",
     "build": "astro build",
     "preview": "astro preview",
     "deploy": "echo \"Use Firebase App Hosting or Hosting pipeline to deploy.\"",
