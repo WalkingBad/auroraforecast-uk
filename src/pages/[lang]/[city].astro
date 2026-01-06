@@ -22,7 +22,7 @@ import AuroraWarnings from '../../components/AuroraWarnings.astro';
 import CityFAQ from '../../components/CityFAQ.astro';
 import ResponsiveTestWrapper from '../../components/ResponsiveTestWrapper.astro';
 
-import citiesData from '../../data/cities.json';
+import citiesData from '../../data/site-cities';
 import type { SupportedLanguage, CityData } from '@config/language-targeting';
 import {
   SUPPORTED_LANGUAGES,
@@ -433,7 +433,7 @@ const warnings = {
           '@type': 'ListItem',
           position: i + 1,
           name: b.title,
-          item: `https://auroraforecast.me${b.href}`
+          item: `https://auroraforecast.uk${b.href}`
         }))
       })}
     ></script>
@@ -455,7 +455,7 @@ const warnings = {
         '@type': 'Event',
         name: `Aurora Forecast Tonight in ${name}`,
         description: `Northern lights viewing opportunity in ${name}, ${translatedCountry}. Current probability: ${probability}%. KP index: ${kpIndex ?? 'N/A'}.`,
-        image: `https://auroraforecast.me/og/${slug}.png`,
+        image: `https://auroraforecast.uk/og/${slug}.png`,
         startDate: new Date().toISOString().split('T')[0] + 'T21:00:00',
         endDate: new Date(Date.now() + 86400000).toISOString().split('T')[0] + 'T05:00:00',
         eventStatus: 'https://schema.org/EventScheduled',
@@ -479,14 +479,14 @@ const warnings = {
         organizer: {
           '@type': 'Organization',
           name: 'AuroraMe',
-          url: 'https://auroraforecast.me'
+          url: 'https://auroraforecast.uk'
         },
         offers: {
           '@type': 'Offer',
           price: '0',
           priceCurrency: 'USD',
           availability: 'https://schema.org/InStock',
-          url: `https://auroraforecast.me/${lang}/${slug}`,
+          url: `https://auroraforecast.uk/${lang}/${slug}`,
           validFrom: new Date().toISOString().split('T')[0]
         }
       })}

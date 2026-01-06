@@ -2,7 +2,7 @@ import { defineConfig } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://auroraforecast.me',
+  site: 'https://auroraforecast.uk',
   output: 'static',
   integrations: [
     // Custom dynamic sitemap at /sitemap.xml endpoint instead of @astrojs/sitemap

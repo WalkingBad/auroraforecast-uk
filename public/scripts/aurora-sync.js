@@ -350,7 +350,7 @@
 
   const buildSeoSnapshotUrl = (lat, lon) => {
     const endpoints = [
-      'https://auroraforecast.me',
+      'https://auroraforecast.uk',
       'https://europe-west1-aurorame-621f6.cloudfunctions.net'
     ];
 

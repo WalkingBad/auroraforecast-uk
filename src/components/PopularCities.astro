@@ -9,31 +9,25 @@ export interface Props {
 }
 
 const {
-  title = "Check Aurora Forecast in Your City",
+  title = "Top Northern Lights Locations in the UK",
   limit = 12,
   i18n
 } = Astro.props;
 
-// Popular aurora viewing cities by region (slugs verified from cities.json)
-// Ordered by target audience: USA first, then Canada, then international
+// Popular UK aurora viewing locations (slugs verified from cities.json)
 const popularCities = [
-  // USA (primary audience)
-  { name: 'Fairbanks', slug: 'fairbanks', country: 'USA', flag: '🇺🇸' },
-  { name: 'Anchorage', slug: 'anchorage', country: 'USA', flag: '🇺🇸' },
-
-  // Canada
-  { name: 'Yellowknife', slug: 'yellowknife', country: 'Canada', flag: '🇨🇦' },
-  { name: 'Whitehorse', slug: 'whitehorse', country: 'Canada', flag: '🇨🇦' },
-  { name: 'Edmonton', slug: 'edmonton', country: 'Canada', flag: '🇨🇦' },
-
-  // International (Iceland & Scandinavia)
-  { name: 'Reykjavík', slug: 'reykjavk', country: 'Iceland', flag: '🇮🇸' },
-  { name: 'Tromsø', slug: 'troms', country: 'Norway', flag: '🇳🇴' },
-  { name: 'Rovaniemi', slug: 'rovaniemi', country: 'Finland', flag: '🇫🇮' },
-  { name: 'Kiruna', slug: 'kiruna', country: 'Sweden', flag: '🇸🇪' },
-  { name: 'Abisko', slug: 'abisko', country: 'Sweden', flag: '🇸🇪' },
-  { name: 'Luleå', slug: 'lule', country: 'Sweden', flag: '🇸🇪' },
-  { name: 'Bergen', slug: 'bergen', country: 'Norway', flag: '🇳🇴' },
+  { name: 'Lerwick', slug: 'lerwick', country: 'United Kingdom', flag: '🇬🇧' },
+  { name: 'Kirkwall', slug: 'kirkwall', country: 'United Kingdom', flag: '🇬🇧' },
+  { name: 'Thurso', slug: 'thurso', country: 'United Kingdom', flag: '🇬🇧' },
+  { name: 'Inverness', slug: 'inverness', country: 'United Kingdom', flag: '🇬🇧' },
+  { name: 'Fort William', slug: 'fort-william', country: 'United Kingdom', flag: '🇬🇧' },
+  { name: 'Aberdeen', slug: 'aberdeen', country: 'United Kingdom', flag: '🇬🇧' },
+  { name: 'Edinburgh', slug: 'edinburgh', country: 'United Kingdom', flag: '🇬🇧' },
+  { name: 'Glasgow', slug: 'glasgow', country: 'United Kingdom', flag: '🇬🇧' },
+  { name: 'Newcastle', slug: 'newcastle', country: 'United Kingdom', flag: '🇬🇧' },
+  { name: 'Belfast', slug: 'belfast', country: 'United Kingdom', flag: '🇬🇧' },
+  { name: 'Manchester', slug: 'manchester', country: 'United Kingdom', flag: '🇬🇧' },
+  { name: 'London', slug: 'london', country: 'United Kingdom', flag: '🇬🇧' }
 ];
 
 const displayCities = popularCities.slice(0, limit);

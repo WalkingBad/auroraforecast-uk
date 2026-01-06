@@ -19,7 +19,7 @@ const { lat, lon, timezone, initialForecast, citySlug, cityName, country, region
 // Build premium checkout URL with proper redirect params
 const siteBaseUrl = import.meta.env.DEV
   ? 'http://localhost:4321'
-  : 'https://auroraforecast.me';
+  : 'https://auroraforecast.uk';
 const baseCheckoutUrl = import.meta.env.PUBLIC_LS_CHECKOUT_URL_EXTENDED || '#';
 const finalRedirectPath = citySlug ? `/${citySlug}` : '/';
 

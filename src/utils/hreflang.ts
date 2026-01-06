@@ -21,12 +21,12 @@ export interface HreflangTag {
  * Generate hreflang tags for a city page
  *
  * @param city - City data
- * @param baseUrl - Base URL (default: https://auroraforecast.me)
+ * @param baseUrl - Base URL (default: https://auroraforecast.uk)
  * @returns Array of hreflang tag objects
  */
 export function generateCityHreflangTags(
   city: CityData,
-  baseUrl: string = 'https://auroraforecast.me'
+  baseUrl: string = 'https://auroraforecast.uk'
 ): HreflangTag[] {
   const availableLanguages = getAvailableLanguagesForCity(city);
   const tags: HreflangTag[] = [];
@@ -53,13 +53,13 @@ export function generateCityHreflangTags(
  *
  * @param pagePath - Page path without language prefix (e.g., 'aurora-tracker', 'guides/kp-index')
  * @param availableLanguages - Languages this page is available in
- * @param baseUrl - Base URL (default: https://auroraforecast.me)
+ * @param baseUrl - Base URL (default: https://auroraforecast.uk)
  * @returns Array of hreflang tag objects
  */
 export function generatePageHreflangTags(
   pagePath: string,
   availableLanguages: SupportedLanguage[],
-  baseUrl: string = 'https://auroraforecast.me'
+  baseUrl: string = 'https://auroraforecast.uk'
 ): HreflangTag[] {
   const tags: HreflangTag[] = [];
 
@@ -96,12 +96,12 @@ export function generatePageHreflangTags(
  * Generate hreflang tags for homepage
  *
  * @param availableLanguages - Languages homepage is available in
- * @param baseUrl - Base URL (default: https://auroraforecast.me)
+ * @param baseUrl - Base URL (default: https://auroraforecast.uk)
  * @returns Array of hreflang tag objects
  */
 export function generateHomepageHreflangTags(
   availableLanguages: SupportedLanguage[],
-  baseUrl: string = 'https://auroraforecast.me'
+  baseUrl: string = 'https://auroraforecast.uk'
 ): HreflangTag[] {
   const tags: HreflangTag[] = [];
 
@@ -142,13 +142,13 @@ export function hreflangTagsToHtml(tags: HreflangTag[]): string {
  *
  * @param city - City data
  * @param lang - Current language
- * @param baseUrl - Base URL (default: https://auroraforecast.me)
+ * @param baseUrl - Base URL (default: https://auroraforecast.uk)
  * @returns Canonical URL
  */
 export function getCityCanonicalUrl(
   city: CityData,
   lang: SupportedLanguage,
-  baseUrl: string = 'https://auroraforecast.me'
+  baseUrl: string = 'https://auroraforecast.uk'
 ): string {
   return buildCityAbsoluteUrl(city.slug, lang, baseUrl);
 }
@@ -158,13 +158,13 @@ export function getCityCanonicalUrl(
  *
  * @param pagePath - Page path without language prefix
  * @param lang - Current language
- * @param baseUrl - Base URL (default: https://auroraforecast.me)
+ * @param baseUrl - Base URL (default: https://auroraforecast.uk)
  * @returns Canonical URL
  */
 export function getPageCanonicalUrl(
   pagePath: string,
   lang: SupportedLanguage,
-  baseUrl: string = 'https://auroraforecast.me'
+  baseUrl: string = 'https://auroraforecast.uk'
 ): string {
   const cleanPath = pagePath.startsWith('/') ? pagePath.slice(1) : pagePath;
 

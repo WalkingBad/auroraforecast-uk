@@ -11,7 +11,7 @@ import { calculateKpThreshold } from '../utils/kp-bands';
 import { generateTrackerTitle } from '../utils/seo-titles';
 import { createPageI18n } from '../utils/i18n-page.ts';
 import LiveForecastBar from '../components/LiveForecastBar.astro';
-import citiesData from '../data/cities.json';
+import citiesData from '../data/site-cities';
 
 // Enable static generation
 export const prerender = true;
@@ -130,7 +130,7 @@ const pageDescription = i18n.t('tracker_meta_description')
   .replace('{totalCities}', totalCities.toString())
   .replace('{estimatedKP}', estimatedKP.toFixed(1))
   .replace('{kpLabel}', kpLabel.toLowerCase());
-const canonicalUrl = "https://auroraforecast.me/aurora-tracker";
+const canonicalUrl = "https://auroraforecast.uk/aurora-tracker";
 ---
 
 <BaseLayout

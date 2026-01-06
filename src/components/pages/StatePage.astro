@@ -84,7 +84,7 @@ const buildCountryHref = (countrySlug: string) => {
 const buildHomeHref = () => (lang === 'en' ? '/' : `/${lang}`);
 
 
-const BASE_URL = 'https://auroraforecast.me';
+const BASE_URL = 'https://auroraforecast.uk';
 
 const canonicalUrl = buildStateAbsoluteUrl(countryISO, iso, lang);
 const availableLanguages = getAvailableLanguagesForState(stateData);
@@ -149,7 +149,7 @@ const dataTimestamp = new Date().toISOString();
 <BaseLayout
   title={pageTitle}
   description={pageDescription}
-  canonical={canonicalPath ? `https://auroraforecast.me/${canonicalPath}` : canonicalUrl}
+  canonical={canonicalPath ? `https://auroraforecast.uk/${canonicalPath}` : canonicalUrl}
   lang={lang}
   hreflangTags={overrideHreflangTags.length ? overrideHreflangTags : defaultHreflangTags}
 >

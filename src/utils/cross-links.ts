@@ -1,4 +1,4 @@
-import citiesData from '../data/cities.json';
+import citiesData from '../data/site-cities';
 import { getCountryISO, normalizeStateSlug } from './slug-normalizer.ts';
 import type { SupportedLanguage } from '@config/language-targeting';
 import { DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES, getCitiesForLanguage } from '@config/language-targeting';

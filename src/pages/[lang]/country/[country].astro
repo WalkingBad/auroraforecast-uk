@@ -5,7 +5,7 @@ import SocialLinks from '../../../components/SocialLinks.astro';
 import RelatedLinks from '../../../components/RelatedLinks.astro';
 import CitySearch from '../../../components/CitySearch.astro';
 import '../../../styles/components/city-search.css';
-import citiesData from '../../../data/cities.json';
+import citiesData from '../../../data/site-cities';
 import { loadGlobalCityStatuses } from '../../../utils/global-status.ts';
 import { calculateKpThreshold, calculateKpBands } from '../../../utils/kp-bands.ts';
 import { sortCitiesByStatusAndMagLat, getSortingExplanation } from '../../../utils/city-sorting.ts';
@@ -88,7 +88,7 @@ const buildBestTimeHref = (citySlug: string) => {
 const globalCityStatuses = await loadGlobalCityStatuses();
 
 // SEO optimization
-const canonicalUrl = `https://auroraforecast.me/${lang}/country/${slug}`;
+const canonicalUrl = `https://auroraforecast.uk/${lang}/country/${slug}`;
 
 // Calculate country statistics
 const avgMagneticLat = cities.reduce((sum, city) => sum + (city.magneticLat || 0), 0) / cities.length;
@@ -386,7 +386,7 @@ const hreflangTags = generatePageHreflangTags(
         .map(city => ({
           "@type": "Place",
           "name": city.name,
-          "url": `https://auroraforecast.me/${city.slug}`,
+          "url": `https://auroraforecast.uk/${city.slug}`,
           "geo": {
             "@type": "GeoCoordinates",
             "latitude": city.lat,
@@ -406,7 +406,7 @@ const hreflangTags = generatePageHreflangTags(
         '@type': 'ListItem',
         position: i + 1,
         name: b.title,
-        item: b.href ? `https://auroraforecast.me${b.href}` : `https://auroraforecast.me/${lang}/country/${slug}`
+        item: b.href ? `https://auroraforecast.uk${b.href}` : `https://auroraforecast.uk/${lang}/country/${slug}`
       }))
     })}
   ></script>

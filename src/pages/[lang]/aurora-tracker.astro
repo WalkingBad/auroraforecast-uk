@@ -11,20 +11,16 @@ import { loadGlobalCityStatuses, getCityStatus } from '../../utils/global-status
 import { calculateKpThreshold } from '../../utils/kp-bands';
 import { generateTrackerTitle } from '../../utils/seo-titles';
 import { createPageI18n } from '../../utils/i18n-page.ts';
-import citiesData from '../../data/cities.json';
-import { getCitiesForLanguage } from '@config/language-targeting';
+import citiesData from '../../data/site-cities';
+import { SUPPORTED_LANGUAGES, getCitiesForLanguage } from '@config/language-targeting';
 
 // Enable static generation
 export const prerender = true;
 
 export async function getStaticPaths() {
-  return [
-    { params: { lang: 'de' } },
-    { params: { lang: 'es' } },
-    { params: { lang: 'fr' } },
-    { params: { lang: 'no' } },
-    { params: { lang: 'ru' } },
-  ];
+  return SUPPORTED_LANGUAGES
+    .filter(lang => lang !== 'en')
+    .map(lang => ({ params: { lang } }));
 }
 
 const { lang } = Astro.params;
@@ -140,7 +136,7 @@ const pageDescription = i18n.t('tracker_meta_description')
   .replace('{totalCities}', totalCities.toString())
   .replace('{estimatedKP}', estimatedKP.toFixed(1))
   .replace('{kpLabel}', kpLabel.toLowerCase());
-const canonicalUrl = `https://auroraforecast.me/${lang}/aurora-tracker`;
+const canonicalUrl = `https://auroraforecast.uk/${lang}/aurora-tracker`;
 ---
 
 <BaseLayout

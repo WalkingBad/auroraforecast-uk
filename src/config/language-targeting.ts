@@ -130,13 +130,13 @@ export function buildCityUrl(citySlug: string, lang: SupportedLanguage): string 
  *
  * @param citySlug - City slug
  * @param lang - Language code
- * @param baseUrl - Base URL (default: https://auroraforecast.me)
+ * @param baseUrl - Base URL (default: https://auroraforecast.uk)
  * @returns Absolute URL
  */
 export function buildCityAbsoluteUrl(
   citySlug: string,
   lang: SupportedLanguage,
-  baseUrl: string = 'https://auroraforecast.me'
+  baseUrl: string = 'https://auroraforecast.uk'
 ): string {
   return `${baseUrl}${buildCityUrl(citySlug, lang)}`;
 }

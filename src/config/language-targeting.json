@@ -1,17 +1,12 @@
 {
   "supportedLanguages": [
-    "en",
-    "ru",
-    "no",
-    "de",
-    "es",
-    "fr"
+    "en"
   ],
   "defaultLanguage": "en",
   "languageConfig": {
     "ru": {
-      "name": "Русский",
-      "nativeName": "Русский",
+      "name": "\u0420\u0443\u0441\u0441\u043a\u0438\u0439",
+      "nativeName": "\u0420\u0443\u0441\u0441\u043a\u0438\u0439",
       "countries": [
         "Russia",
         "Belarus",
@@ -171,7 +166,7 @@
     },
     "es": {
       "name": "Spanish",
-      "nativeName": "Español",
+      "nativeName": "Espa\u00f1ol",
       "countries": [
         "Spain"
       ],
@@ -213,7 +208,7 @@
     },
     "fr": {
       "name": "French",
-      "nativeName": "Français",
+      "nativeName": "Fran\u00e7ais",
       "countries": [
         "France",
         "Belgium",

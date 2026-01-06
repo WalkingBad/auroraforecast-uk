@@ -1,4 +1,4 @@
-# robots.txt for auroraforecast.me
+# robots.txt for auroraforecast.uk
 # SEO-optimized configuration
 
 User-agent: *
@@ -12,7 +12,7 @@ Disallow: /*.js.map$
 Allow: /
 
 # Sitemap location
-Sitemap: https://auroraforecast.me/sitemap.xml
+Sitemap: https://auroraforecast.uk/sitemap.xml
 
 # Crawl delay for polite crawling (optional)
 Crawl-delay: 1

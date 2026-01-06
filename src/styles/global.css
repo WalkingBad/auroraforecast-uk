@@ -36,9 +36,9 @@
   --aurora-border-light: rgba(255, 255, 255, 0.12);
   /* borderLight */
 
-  --aurora-primary: #6BE7A0;
+  --aurora-primary: #5BC0EB;
   /* primary */
-  --aurora-primary-strong: #34C97B;
+  --aurora-primary-strong: #3A9BD9;
   /* lowEnergyPleasantLight */
   --aurora-on-primary: #000000;
   /* onPrimary */
@@ -75,7 +75,7 @@
   --aurora-status-low-glow: rgba(255, 140, 0, 0.05);
   --aurora-status-high-glow-strong: rgba(107, 231, 160, 0.3);
 
-  --aurora-primary-hover: #7DEAAB;
+  --aurora-primary-hover: #6CC9EF;
   --aurora-status-high-strong: #44CD86;
   --aurora-status-medium-strong: #FFBE14;
   --aurora-status-low-strong: #FFA014;
@@ -131,6 +131,9 @@
   /* For state/region pages */
   --spacing: var(--aurora-spacing-l);
   /* 16px */
+
+  --aurora-font-display: "Space Grotesk", "Helvetica Neue", sans-serif;
+  --aurora-font-body: "Space Grotesk", "Helvetica Neue", sans-serif;
 }
 
 @supports (color: color-mix(in srgb, white 50%, black 50%)) {
@@ -155,7 +158,7 @@ body {
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--aurora-font-body);
   line-height: 1.6;
   color: var(--aurora-text-primary);
   background: var(--aurora-bg-primary);
@@ -179,6 +182,7 @@ h3 {
   line-height: 1.2;
   margin-bottom: var(--aurora-spacing-l);
   color: var(--aurora-text-primary);
+  font-family: var(--aurora-font-display);
 }
 
 h1 {

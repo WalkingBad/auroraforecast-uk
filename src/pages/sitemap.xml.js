@@ -1,4 +1,4 @@
-import citiesData from '../data/cities.json';
+import citiesData from '../data/site-cities';
 import { normalizeStateSlug, getCountryISO, REGIONS } from '../utils/slug-normalizer.ts';
 import { getCitiesForLanguage } from '../config/language-targeting.ts';
 import { getStateStaticEntries, stateSupportsLanguage } from '../utils/state-pages.ts';
@@ -7,7 +7,7 @@ import { getStateStaticEntries, stateSupportsLanguage } from '../utils/state-pag
 const LANGUAGES = ['en', 'ru', 'no', 'de', 'es', 'fr'];
 
 export async function GET() {
-  const baseUrl = 'https://auroraforecast.me';
+  const baseUrl = 'https://auroraforecast.uk';
   const currentDate = new Date().toISOString().split('T')[0];
 
   // All multilingual URLs (including geo-targeted city pages)

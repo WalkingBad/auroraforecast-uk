@@ -13,7 +13,7 @@ import VisibilityFactors from '../components/VisibilityFactors.astro';
 import AuroraWarnings from '../components/AuroraWarnings.astro';
 import ResponsiveTestWrapper from '../components/ResponsiveTestWrapper.astro';
 
-import citiesData from '../data/cities.json';
+import citiesData from '../data/site-cities';
 import { getFactorDefinitions } from '../data/factor-definitions.ts';
 import { getMagLat, getKp, getWeather, getMoon, getDarkness, OVERCAST_THRESHOLD } from '../utils/factor-utils.ts';
 import { loadCityData } from '../utils/api-helpers.ts';
@@ -160,7 +160,7 @@ const warnings = {
 <CityPageLayout
   title={pageTitle}
   description={optimizedDescription}
-  canonical={`https://auroraforecast.me/${cityData.slug}`}
+  canonical={`https://auroraforecast.uk/${cityData.slug}`}
   keywords={(keywords || []).join(', ')}
   cityData={cityData}
   breadcrumbs={breadcrumbs}
@@ -369,7 +369,7 @@ const warnings = {
           '@type': 'ListItem',
           position: i + 1,
           name: b.title,
-          item: `https://auroraforecast.me${b.href}`
+          item: `https://auroraforecast.uk${b.href}`
         }))
       })}
     ></script>
@@ -391,7 +391,7 @@ const warnings = {
         '@type': 'Event',
         name: `Aurora Forecast Tonight in ${name}`,
         description: `Northern lights viewing opportunity in ${name}, ${country}. Current probability: ${probability}%. KP index: ${kpIndex ?? 'N/A'}.`,
-        image: `https://auroraforecast.me/og/${cityData.slug}.png`,
+        image: `https://auroraforecast.uk/og/${cityData.slug}.png`,
         startDate: new Date().toISOString().split('T')[0] + 'T21:00:00',
         endDate: new Date(Date.now() + 86400000).toISOString().split('T')[0] + 'T05:00:00',
         eventStatus: 'https://schema.org/EventScheduled',
@@ -415,14 +415,14 @@ const warnings = {
         organizer: {
           '@type': 'Organization',
           name: 'AuroraMe',
-          url: 'https://auroraforecast.me'
+          url: 'https://auroraforecast.uk'
         },
         offers: {
           '@type': 'Offer',
           price: '0',
           priceCurrency: 'USD',
           availability: 'https://schema.org/InStock',
-          url: `https://auroraforecast.me/${cityData.slug}`,
+          url: `https://auroraforecast.uk/${cityData.slug}`,
           validFrom: new Date().toISOString().split('T')[0]
         }
       })}

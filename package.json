@@ -1,17 +1,17 @@
 {
-  "name": "aurora-seo",
+  "name": "auroraforecast-uk",
   "version": "1.0.0",
-  "description": "SEO-optimized static site for Aurora Forecast",
+  "description": "SEO-optimized static site for Aurora Forecast (UK)",
   "type": "module",
   "scripts": {
     "sync": "node scripts/build-legacy-redirects.cjs && node scripts/sync.cjs",
     "predev": "npm run sync",
     "prebuild": "npm run sync",
     "dev": "astro dev",
-    "start": "astro dev",
+    "start": "astro preview --host 0.0.0.0 --port ${PORT:-4321}",
     "build": "astro build",
     "preview": "astro preview",
-    "deploy": "../scripts/deploy-web.sh",
+    "deploy": "echo \"Use Firebase App Hosting or Hosting pipeline to deploy.\"",
     "check:web-strings": "node scripts/check-web-strings.mjs",
     "astro": "astro"
   },

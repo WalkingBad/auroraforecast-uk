@@ -1,7 +1,7 @@
 {
-  "name": "Aurora Forecast — Real-time Northern Lights",
-  "short_name": "Aurora Forecast",
-  "description": "Live aurora visibility with weather, Kp index, moon phase, and personalized alerts. Never miss the Northern Lights!",
+  "name": "Aurora Forecast UK — Northern Lights",
+  "short_name": "Aurora UK",
+  "description": "Live UK aurora visibility with weather, Kp index, moon phase, and personalized alerts. Never miss the Northern Lights!",
   "start_url": "/?utm_source=pwa",
   "scope": "/",
   "display": "standalone",
@@ -71,4 +71,3 @@
     }
   }
 }
-

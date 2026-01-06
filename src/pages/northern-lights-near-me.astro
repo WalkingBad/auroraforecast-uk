@@ -6,14 +6,14 @@ import '../styles/bundles/city-page.css';
 import '../styles/pages/city-page-inline.css';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import StoreBadges from '../components/StoreBadges.astro';
-import citiesData from '../data/cities.json';
+import citiesData from '../data/site-cities';
 
 // Enable static generation
 export const prerender = true;
 
 const title = "Northern Lights Near Me - Find Aurora Borealis Nearby";
 const description = "Find the best northern lights viewing spots near your location. Instant aurora forecast for your area. Check visibility, KP index, and cloud cover.";
-const canonical = "https://auroraforecast.me/northern-lights-near-me";
+const canonical = "https://auroraforecast.uk/northern-lights-near-me";
 
 // Pass city metadata to client-side for distance calculation
 const cityMetadata = citiesData.map(city => ({

@@ -1,4 +1,4 @@
-import currentCities from '../data/cities.json';
+import currentCities from '../data/site-cities';
 import legacyCities from '../data/cities-backup-old.json';
 
 type CityRecord = (typeof currentCities)[number];

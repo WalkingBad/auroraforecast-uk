@@ -1,7 +1,7 @@
 ---
 import '../styles/components/regions-nav.css';
 import { REGIONS } from '../utils/slug-normalizer.ts';
-import citiesData from '../data/cities.json';
+import citiesData from '../data/site-cities';
 import type { I18nPageHelper } from '../utils/i18n-page';
 import { getTranslatedRegion, getTranslatedCountry } from '../utils/country-region-names';
 import { getLocalizedCitySlugs } from '../utils/state-pages';
@@ -55,6 +55,8 @@ const regionsWithCounts = Object.entries(REGIONS).map(([slug, region]) => {
 }).filter(r => r.cityCount > 0 && r.hasLocalizedCities)  // Filter out regions without localized cities
   .sort((a, b) => b.cityCount - a.cityCount); // Sort by city count
 
+const hasRegions = regionsWithCounts.length > 0;
+
 // Build language-aware href for state pages
 const buildStateHref = (country: string, stateSlug: string) => {
   if (lang === 'en') {
@@ -64,28 +66,29 @@ const buildStateHref = (country: string, stateSlug: string) => {
 };
 ---
 
-<section class="regions-nav" id="regions">
-  <div class="regions-nav__container">
-    <h2>{title}</h2>
-    <p class="nav-intro">{intro}</p>
+{hasRegions && (
+  <section class="regions-nav" id="regions">
+    <div class="regions-nav__container">
+      <h2>{title}</h2>
+      <p class="nav-intro">{intro}</p>
 
-    <div class="regions-grid">
-      {regionsWithCounts.map(region => (
-        <a href={buildStateHref(region.country, region.slug)} class="region-card">
-          <div class="region-flag">{region.flag}</div>
-          <div class="region-info">
-            <h3>{region.translatedName}</h3>
-            <span class="region-country">{region.countryName}</span>
-            <span class="city-count">{region.cityCount} {region.cityCount === 1 ? locationSingular : locationPlural}</span>
-          </div>
-          <div class="region-icon">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path fill="currentColor" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-            </svg>
-          </div>
-        </a>
-      ))}
+      <div class="regions-grid">
+        {regionsWithCounts.map(region => (
+          <a href={buildStateHref(region.country, region.slug)} class="region-card">
+            <div class="region-flag">{region.flag}</div>
+            <div class="region-info">
+              <h3>{region.translatedName}</h3>
+              <span class="region-country">{region.countryName}</span>
+              <span class="city-count">{region.cityCount} {region.cityCount === 1 ? locationSingular : locationPlural}</span>
+            </div>
+            <div class="region-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+              </svg>
+            </div>
+          </a>
+        ))}
+      </div>
     </div>
-  </div>
-</section>
-
+  </section>
+)}

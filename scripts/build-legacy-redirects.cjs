@@ -45,8 +45,17 @@ const formatLine = (from, to, comment) => {
 
 const now = new Date().toISOString();
 
-const currentCities = loadJson(path.join(dataDir, 'cities.json'));
-const legacyCities = loadJson(path.join(dataDir, 'cities-backup-old.json'));
+const siteCountryCodes = new Set(
+  (process.env.SITE_COUNTRY_CODES || 'GB')
+    .split(',')
+    .map(code => code.trim().toUpperCase())
+    .filter(Boolean)
+);
+
+const currentCities = loadJson(path.join(dataDir, 'cities.json'))
+  .filter(city => siteCountryCodes.has(city.countryCode));
+const legacyCities = loadJson(path.join(dataDir, 'cities-backup-old.json'))
+  .filter(city => siteCountryCodes.has(city.countryCode));
 const existingRedirectsContent = fs.readFileSync(redirectsPath, 'utf8');
 
 const firstStartIndex = existingRedirectsContent.indexOf(START_MARKER);

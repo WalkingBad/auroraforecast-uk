@@ -6,7 +6,8 @@ import '../../styles/bundles/city-page.css';
 import '../../styles/pages/city-page-inline.css';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import StoreBadges from '../../components/StoreBadges.astro';
-import citiesData from '../../data/cities.json';
+import citiesData from '../../data/site-cities';
+import { SUPPORTED_LANGUAGES } from '@config/language-targeting';
 // Force rebuild
 import { createPageI18n } from '../../utils/i18n-page.ts';
 
@@ -14,13 +15,9 @@ import { createPageI18n } from '../../utils/i18n-page.ts';
 export const prerender = true;
 
 export async function getStaticPaths() {
-  return [
-    { params: { lang: 'de' } },
-    { params: { lang: 'es' } },
-    { params: { lang: 'fr' } },
-    { params: { lang: 'no' } },
-    { params: { lang: 'ru' } },
-  ];
+  return SUPPORTED_LANGUAGES
+    .filter(lang => lang !== 'en')
+    .map(lang => ({ params: { lang } }));
 }
 
 const { lang } = Astro.params;
@@ -30,7 +27,7 @@ const i18n = await createPageI18n(lang);
 
 const title = "Northern Lights Near Me - Find Aurora Borealis Nearby";
 const description = "Find the best northern lights viewing spots near your location. Instant aurora forecast for your area. Check visibility, KP index, and cloud cover.";
-const canonical = `https://auroraforecast.me/${lang}/northern-lights-near-me`;
+const canonical = `https://auroraforecast.uk/${lang}/northern-lights-near-me`;
 
 // Pass city metadata to client-side for distance calculation
 const cityMetadata = citiesData.map(city => ({

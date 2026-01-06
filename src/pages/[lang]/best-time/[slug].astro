@@ -8,7 +8,7 @@ import StoreBadges from '../../../components/StoreBadges.astro';
 import Breadcrumbs from '../../../components/Breadcrumbs.astro';
 import RelatedLinks from '../../../components/RelatedLinks.astro';
 import DataFreshness from '../../../components/DataFreshness.astro';
-import citiesData from '../../../data/cities.json';
+import citiesData from '../../../data/site-cities';
 import { calculateKpBands, formatKpBands } from '../../../utils/kp-bands.ts';
 import {
   buildBestTimeRelatedLinks,
@@ -194,7 +194,7 @@ const h1Title = `Best time to see the northern lights in ${locationQualifier}`;
 const topMonthNames = topMonths.slice(0, 3).map((m) => m.month).join(', ');
 const kpRange = formatKpBands(kpBands, 'range');
 const pageDescription = `Plan your ${locationName} aurora trip: top months (${topMonthNames}), peak window ${hourlyPatterns.peak}, up to ${topMonths[0].darkness}h darkness, requires ${kpRange}.`;
-const canonicalUrl = `https://auroraforecast.me/${lang}/best-time/${cityData.slug}`;
+const canonicalUrl = `https://auroraforecast.uk/${lang}/best-time/${cityData.slug}`;
 
 const buildCountryHref = (slug: string) => `/${lang}/country/${slug}`;
 

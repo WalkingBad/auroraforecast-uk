@@ -1,0 +1,44 @@
+# Firebase App Hosting configuration
+# https://firebase.google.com/docs/app-hosting/configure
+
+env:
+  - variable: PUBLIC_API_BASE_URL
+    value: https://europe-west1-aurorame-621f6.cloudfunctions.net
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: PUBLIC_GA_TRACKING_ID
+    value: G-LM06B26QBZ
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: PUBLIC_IOS_APP_ID
+    value: "6749782053"
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: PUBLIC_ANDROID_PACKAGE
+    value: com.walkingbad.aurorame
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: PUBLIC_LS_CHECKOUT_URL
+    value: https://aurorame.lemonsqueezy.com/buy/e10602ea-b83a-4eed-9eb6-e998e17a12bd
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: PUBLIC_LS_CHECKOUT_URL_EXTENDED
+    value: https://aurorame.lemonsqueezy.com/buy/2c40cbe8-5057-4429-adce-82f246ceb06c
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: SITE_COUNTRY_CODES
+    value: GB
+    availability:
+      - BUILD

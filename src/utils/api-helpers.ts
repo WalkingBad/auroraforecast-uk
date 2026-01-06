@@ -30,7 +30,7 @@ export function buildSeoSnapshotEndpoints(lat: number, lon: number): string[] {
     bases.push(stripTrailingSlashes(configuredBase.trim()));
   }
 
-  const defaultWebsite = stripTrailingSlashes('https://auroraforecast.me');
+  const defaultWebsite = stripTrailingSlashes('https://auroraforecast.uk');
   const defaultFunctions = stripTrailingSlashes('https://europe-west1-aurorame-621f6.cloudfunctions.net');
 
   if (!bases.includes(defaultWebsite)) {

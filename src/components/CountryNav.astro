@@ -1,6 +1,6 @@
 ---
 import '../styles/components/country-nav.css';
-import citiesData from '../data/cities.json';
+import citiesData from '../data/site-cities';
 import type { I18nPageHelper } from '../utils/i18n-page';
 import { getTranslatedCountry } from '../utils/country-region-names';
 import CitySearch from './CitySearch.astro';
@@ -50,7 +50,7 @@ const countries = Array.from(countriesMap.entries())
   .sort((a, b) => b.cityCount - a.cityCount); // Sort by city count descending
 ---
 
-<section class="country-nav">
+<section class="country-nav" id="locations">
   <div class="country-nav__container">
     <h2>{title}</h2>
     <p class="nav-intro">{intro}</p>
@@ -94,4 +94,3 @@ const countries = Array.from(countriesMap.entries())
     observer.observe(countryNav);
   }
 </script>
-

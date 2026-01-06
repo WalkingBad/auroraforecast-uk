@@ -1,4 +1,4 @@
-import citiesData from '../data/cities.json';
+import citiesData from '../data/site-cities';
 import {
   normalizeStateSlug,
   getCountryISO,
@@ -125,7 +125,7 @@ export function buildStateAbsoluteUrl(
   countryISO: string,
   stateISO: string,
   lang: SupportedLanguage,
-  baseUrl: string = 'https://auroraforecast.me'
+  baseUrl: string = 'https://auroraforecast.uk'
 ): string {
   return `${baseUrl}${buildStatePath(countryISO, stateISO, lang)}`;
 }

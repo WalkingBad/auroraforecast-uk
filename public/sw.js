@@ -15,7 +15,9 @@ const STATIC_FILES = [
 
 // API endpoints to cache
 const API_ENDPOINTS = [
-  'https://auroraforecast.me/api/seoSnapshot'
+  'https://europe-west1-aurorame-621f6.cloudfunctions.net/seoSnapshot',
+  'https://auroraforecast.uk/api/seoSnapshot',
+  'https://auroraforecast.uk/seoSnapshot'
 ];
 
 // Install event - cache static assets

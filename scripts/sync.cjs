@@ -6,8 +6,18 @@ const path = require('path');
 console.log('🔄 Syncing Flutter content to web...');
 
 try {
+  const appRoot = process.env.APP_ROOT
+    ? path.resolve(process.env.APP_ROOT)
+    : path.resolve(__dirname, '../../app');
+
+  if (!fs.existsSync(appRoot)) {
+    console.log('ℹ️  Flutter app source not found. Skipping sync.');
+    console.log('   Set APP_ROOT to the app repo root if you want to sync shared content.');
+    process.exit(0);
+  }
+
   // 1. Read Flutter ARB file
-  const arbPath = path.resolve(__dirname, '../../app/lib/l10n/app_en.arb');
+  const arbPath = path.join(appRoot, 'lib', 'l10n', 'app_en.arb');
   if (!fs.existsSync(arbPath)) {
     throw new Error(`Flutter ARB file not found: ${arbPath}`);
   }
@@ -182,7 +192,7 @@ try {
   }
 
   for (const lang of languages) {
-    const langArbPath = path.resolve(__dirname, `../../app/lib/l10n/app_${lang}.arb`);
+    const langArbPath = path.join(appRoot, 'lib', 'l10n', `app_${lang}.arb`);
     if (!fs.existsSync(langArbPath)) {
       console.warn(`⚠️  ARB file not found for ${lang}: ${langArbPath}`);
       continue;
@@ -287,7 +297,7 @@ export const factorDefinitions = en.factorDefinitions;
   console.log('✅ Generated factor-definitions.ts (barrel export)');
 
   // 4. Read Flutter design system
-  const dartPath = path.resolve(__dirname, '../../app/lib/constants/design_system.dart');
+  const dartPath = path.join(appRoot, 'lib', 'constants', 'design_system.dart');
   if (!fs.existsSync(dartPath)) {
     console.warn('⚠️  Flutter design system not found, skipping design tokens sync');
   } else {
@@ -346,7 +356,7 @@ export const AuroraSpacing = ${JSON.stringify(spacing, null, 2)};`;
 
   // 9. Extract thresholds from Flutter visibility mapper (single source of truth)
   try {
-    const mapperPath = path.resolve(__dirname, '../../app/lib/services/visibility_status_mapper.dart');
+    const mapperPath = path.join(appRoot, 'lib', 'services', 'visibility_status_mapper.dart');
     if (!fs.existsSync(mapperPath)) {
       console.warn('⚠️  visibility_status_mapper.dart not found, skipping thresholds sync');
     } else {
@@ -399,7 +409,7 @@ export const StatusThresholds = {
 
   // 10. Extract weather thresholds (cloud cover) from app factors grid
   try {
-    const factorsGridPath = path.resolve(__dirname, '../../app/lib/screens/components/aurora_factors_grid.dart');
+    const factorsGridPath = path.join(appRoot, 'lib', 'screens', 'components', 'aurora_factors_grid.dart');
     if (!fs.existsSync(factorsGridPath)) {
       console.warn('⚠️  aurora_factors_grid.dart not found, skipping weather thresholds sync');
     } else {
@@ -445,7 +455,7 @@ export const StatusThresholds = {
   if (missingKeys.length > 0) {
     console.error('\n❌ CRITICAL ERROR: Missing required ARB keys from Flutter app:\n');
     console.error(missingKeys.map(k => `  - ${k}`).join('\n'));
-    console.error('\n💡 Fix /app/lib/l10n/app_en.arb before building web.\n');
+    console.error('\n💡 Fix APP_ROOT/lib/l10n/app_en.arb before building web.\n');
     process.exit(1);
   }
 
