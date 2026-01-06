@@ -1,17 +1,50 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import "../styles/components/store-badges.css";
+import "../styles/pages/homepage-uk.css";
 import StoreBadges from "../components/StoreBadges.astro";
 import SocialLinks from "../components/SocialLinks.astro";
 import Hero from "../components/Hero.astro";
 import LiveForecastBar from "../components/LiveForecastBar.astro";
 import AppHero from "../components/AppHero.astro";
-import FeaturesSection from "../components/FeaturesSection.astro";
-import SocialProofSection from "../components/SocialProofSection.astro";
-import ComparisonTable from "../components/ComparisonTable.astro";
 import FAQ from "../components/FAQ.astro";
-import CountryNav from "../components/CountryNav.astro";
-import RegionsNav from "../components/RegionsNav.astro";
+import CitySearch from "../components/CitySearch.astro";
+import citiesData from "../data/site-cities";
+import { UK_REGIONS } from "../data/uk-regions";
+import { calculateKpThreshold, formatKpThreshold } from "../utils/kp-bands";
+
+const cityBySlug = new Map(citiesData.map((city) => [city.slug, city]));
+const quickCitySlugs = ['lerwick', 'inverness', 'edinburgh', 'glasgow', 'belfast', 'london'];
+const quickCities = quickCitySlugs
+  .map((slug) => cityBySlug.get(slug))
+  .filter(Boolean);
+
+const regionCards = UK_REGIONS.map((region) => {
+  const cities = region.cities
+    .map((slug) => cityBySlug.get(slug))
+    .filter(Boolean);
+
+  const thresholds = cities
+    .map((city) => calculateKpThreshold(city.magneticLat))
+    .filter((value) => typeof value === 'number' && !Number.isNaN(value));
+
+  let thresholdLabel = 'Kp varies';
+  if (thresholds.length > 0) {
+    const min = Math.min(...thresholds);
+    const max = Math.max(...thresholds);
+    const minLabel = formatKpThreshold(min);
+    const maxLabel = formatKpThreshold(max);
+    thresholdLabel = min === max ? minLabel : `${minLabel} to ${maxLabel}`;
+  }
+
+  return {
+    ...region,
+    cities,
+    thresholdLabel
+  };
+});
+
+const allCities = [...citiesData].sort((a, b) => a.name.localeCompare(b.name, 'en'));
 ---
 
 <BaseLayout
@@ -25,31 +58,141 @@ import RegionsNav from "../components/RegionsNav.astro";
   <!-- Live Forecast Bar: UK Kp, Search, Top 5 Cities -->
   <LiveForecastBar />
 
-  <main>
-    <!-- App showcase with phone screens -->
-    <AppHero pageType="homepage" placement="hero" />
+  <main class="home-uk">
+    <section class="home-uk__intro">
+      <div class="container">
+        <div class="home-uk__section-heading">
+          <h2>Plan your UK aurora night</h2>
+          <p>Check your local Kp threshold, cloud cover, and darkness window before heading out.</p>
+        </div>
 
-    <!-- Why AuroraMe is Different (4 feature cards) -->
-    <FeaturesSection />
+        <div class="home-uk__planner-grid">
+          <article class="planner-card">
+            <h3>Find your forecast</h3>
+            <p>Search a UK city or use location to jump to the nearest forecast page.</p>
+            <CitySearch id="home-city-search" compact={true} />
+            <div class="home-uk__quick-links">
+              {quickCities.map((city) => (
+                <a class="city-chip" href={`/${city.slug}`}>
+                  {city.name}
+                </a>
+              ))}
+            </div>
+            <div class="home-uk__jump-links">
+              <a href="#uk-regions">Browse by region</a>
+              <a href="#all-uk-cities">See A-Z list</a>
+            </div>
+            <p class="home-uk__small">All 23 UK locations are listed below.</p>
+          </article>
 
-    <!-- Social Proof: Stats + Testimonials -->
-    <SocialProofSection />
+          <article class="planner-card">
+            <h3>Tonight checklist</h3>
+            <ol class="home-uk__steps">
+              <li>Check your local Kp threshold in the region list below.</li>
+              <li>Cloud cover under 30 percent improves odds.</li>
+              <li>Look after astronomical twilight for the darkest window.</li>
+              <li>Face north with an open horizon and minimal light pollution.</li>
+            </ol>
+            <div class="home-uk__meta">
+              <span class="meta-chip">UK time zone: GMT or BST</span>
+              <span class="meta-chip">Live updates every few minutes</span>
+            </div>
+          </article>
 
-    <!-- Comparison Table: AuroraMe vs Competitors -->
-    <ComparisonTable />
+          <article class="planner-card">
+            <h3>UK specific tips</h3>
+            <ul class="home-uk__tips-list">
+              <li>Best odds are in the islands and far north of Scotland.</li>
+              <li>North England and Northern Ireland need higher Kp but can deliver in storms.</li>
+              <li>Midlands and South need strong storms, dark skies, and patience.</li>
+            </ul>
+            <a class="home-uk__cta" href="/aurora-tracker">Open the live UK tracker</a>
+          </article>
+        </div>
+      </div>
+    </section>
 
-    <!-- Navigation by country with search -->
-    <CountryNav showSearch={true} />
+    <section class="home-uk__timing">
+      <div class="container">
+        <div class="home-uk__section-heading">
+          <h2>Best times for the UK</h2>
+          <p>Season, hours, and sky conditions make the difference.</p>
+        </div>
+        <div class="home-uk__timing-grid">
+          <article class="timing-card">
+            <h3>Season</h3>
+            <p>September to March gives the longest dark nights and best odds.</p>
+          </article>
+          <article class="timing-card">
+            <h3>Hours</h3>
+            <p>Typical window is 10pm to 2am local time. Use each city page for the best hour tonight.</p>
+          </article>
+          <article class="timing-card">
+            <h3>Moon and clouds</h3>
+            <p>Low clouds and a dim moon often matter more than a small Kp increase.</p>
+          </article>
+        </div>
+      </div>
+    </section>
 
-    <!-- Navigation by regions -->
-    <RegionsNav />
+    <section class="home-uk__regions" id="uk-regions">
+      <div class="container">
+        <div class="home-uk__section-heading">
+          <h2>UK regions and cities</h2>
+          <p>Each region shows the typical Kp needed. Tap a city for the local forecast.</p>
+        </div>
+        <div class="region-grid">
+          {regionCards.map((region) => (
+            <article class={`region-card region-card--${region.tier}`}>
+              <div class="region-card__header">
+                <span class="region-card__tier">{region.tierLabel}</span>
+                <span class="region-card__kp">{region.thresholdLabel}</span>
+              </div>
+              <h3>{region.name}</h3>
+              <p class="region-card__summary">{region.summary}</p>
+              <div class="region-card__cities">
+                {region.cities.map((city) => (
+                  <a class="city-chip" href={`/${city.slug}`}>
+                    {city.name}
+                  </a>
+                ))}
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
 
-    <!-- FAQ section -->
-    <div class="container">
-      <FAQ />
-    </div>
+    <section class="home-uk__az" id="all-uk-cities">
+      <div class="container">
+        <div class="home-uk__section-heading">
+          <h2>All UK aurora locations (A-Z)</h2>
+          <p>Quick access with local Kp thresholds.</p>
+        </div>
+        <div class="az-grid">
+          {allCities.map((city) => {
+            const threshold = formatKpThreshold(calculateKpThreshold(city.magneticLat));
+            return (
+              <a class="az-link" href={`/${city.slug}`}>
+                <span class="az-link__name">{city.name}</span>
+                <span class="az-link__meta">{threshold}</span>
+              </a>
+            );
+          })}
+        </div>
+      </div>
+    </section>
 
-    <!-- Social links -->
+    <section class="home-uk__app">
+      <AppHero pageType="homepage" placement="midpage" />
+    </section>
+
+    <section class="home-uk__faq">
+      <div class="container">
+        <FAQ />
+      </div>
+    </section>
+
     <div class="social-footer">
       <SocialLinks position="footer" />
     </div>
@@ -156,15 +299,3 @@ import RegionsNav from "../components/RegionsNav.astro";
     })}
   ></script>
 </BaseLayout>
-
-<style is:global>
-  /* Hide sticky footer initially on homepage */
-  .store-badges.sticky {
-    display: none;
-  }
-
-  .social-footer {
-    padding: 2rem 0;
-    text-align: center;
-  }
-</style>
