@@ -2,6 +2,8 @@
 import ForecastPreview from './ForecastPreview.astro';
 import MonthlyForecast from './MonthlyForecast.astro';
 import YearlyForecast from './YearlyForecast.astro';
+import { buildStoreUrl, buildUtmParams } from '../utils/utm-builder.ts';
+import { IOS_STORE_URL, ANDROID_STORE_URL, IOS_SEARCH_URL } from '../config/store-urls.ts';
 
 interface Props {
   lat: number;
@@ -31,6 +33,15 @@ const historyMini = Astro.props.historyMini || {};
 const hasH12Data = h12.length > 0;
 const hasD27Data = d27Full.length > 0;
 const hasYearlyData = historyMini.bestMonths?.length > 0 || historyMini.localThreshold;
+
+const baseAppStoreUrl = IOS_STORE_URL || IOS_SEARCH_URL;
+const basePlayStoreUrl = ANDROID_STORE_URL;
+const fallbackUtmParams = buildUtmParams('city_page', {
+  citySlug,
+  placement: '27d_fallback'
+});
+const fallbackAppStoreUrl = buildStoreUrl(baseAppStoreUrl, fallbackUtmParams);
+const fallbackPlayStoreUrl = buildStoreUrl(basePlayStoreUrl, fallbackUtmParams);
 ---
 
 <div class="forecast-section" id="forecast-section">
@@ -78,10 +89,32 @@ const hasYearlyData = historyMini.bestMonths?.length > 0 || historyMini.localThr
         <h3>27-Day Forecast</h3>
         <p>Download our app for the full 27-day calendar with daily aurora predictions.</p>
         <div class="app-store-links">
-          <a href="https://apps.apple.com/app/aurorame/id6738949498" target="_blank" class="store-btn">
+          <a
+            href={fallbackAppStoreUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="store-btn"
+            data-platform="ios"
+            data-page-type="city_page"
+            data-utm-source={fallbackUtmParams.source}
+            data-utm-medium={fallbackUtmParams.medium}
+            data-utm-campaign={fallbackUtmParams.campaign}
+            data-utm-content={fallbackUtmParams.content}
+          >
             <span>App Store</span>
           </a>
-          <a href="https://play.google.com/store/apps/details?id=me.auroraforecast.aurora" target="_blank" class="store-btn">
+          <a
+            href={fallbackPlayStoreUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="store-btn"
+            data-platform="android"
+            data-page-type="city_page"
+            data-utm-source={fallbackUtmParams.source}
+            data-utm-medium={fallbackUtmParams.medium}
+            data-utm-campaign={fallbackUtmParams.campaign}
+            data-utm-content={fallbackUtmParams.content}
+          >
             <span>Google Play</span>
           </a>
         </div>
