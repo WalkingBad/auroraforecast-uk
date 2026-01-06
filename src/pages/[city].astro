@@ -1,5 +1,6 @@
 ---
 import CityPageLayout from '../layouts/CityPageLayout.astro';
+import '../styles/pages/city-uk.css';
 import StoreBadges from '../components/StoreBadges.astro';
 import EnhancedMobileAppCTA from '../components/EnhancedMobileAppCTA.astro';
 import AppFeaturesList from '../components/AppFeaturesList.astro';
@@ -20,10 +21,11 @@ import { loadCityData } from '../utils/api-helpers.ts';
 import { toTitleCase } from '../utils/formatters.ts';
 import { getGeoSpecificName, appendBrand } from '../utils/geo-utils.ts';
 import { generateSEOTitle, generateSEOH1, generateSEODescription, generateDynamicDescription, generateFAQSchema } from '../utils/seo-titles.ts';
-import { getSafeThreeHourForecast, getSafeCountryCities, validateCityData } from '../utils/error-handling.ts';
-import { calculateKpBands } from '../utils/kp-bands.ts';
+import { formatTimeSafely, getSafeThreeHourForecast, validateCityData } from '../utils/error-handling.ts';
+import { calculateKpBands, calculateKpThreshold, formatKpThreshold } from '../utils/kp-bands.ts';
 import { texts } from '../data/texts.ts';
 import { loadGlobalCityStatuses } from '../utils/global-status.ts';
+import { UK_REGIONS } from '../data/uk-regions.ts';
 import {
   buildCityRelatedLinks,
   getPremiumDestinations,
@@ -56,6 +58,7 @@ if (!validateCityData(cityData)) {
 }
 
 const { name, country, lat, lon, description, seoTitle, seoDescription, keywords, countryCode } = cityData;
+const cityBySlug = new Map(citiesData.map((city) => [city.slug, city]));
 const cityRecord: CityRecord = {
   slug: cityData.slug,
   name,
@@ -65,6 +68,16 @@ const cityRecord: CityRecord = {
   state: cityData.state,
   description
 };
+
+const regionInfo = UK_REGIONS.find((region) => region.cities.includes(cityData.slug));
+const regionTier = regionInfo?.tier ?? 'occasional';
+const regionTierLabel = regionInfo?.tierLabel ?? 'UK location';
+const regionName = regionInfo?.name ?? 'United Kingdom';
+const guideSummary = description || regionInfo?.summary || `Local aurora viewing guide for ${name}.`;
+const regionCityRecords = (regionInfo?.cities ?? [])
+  .filter((slug) => slug !== cityData.slug)
+  .map((slug) => cityBySlug.get(slug))
+  .filter(Boolean);
 
 const originSlug = cityData.slug;
 const cityRelatedLinks = buildCityRelatedLinks(cityRecord);
@@ -123,6 +136,49 @@ const optimizedDescription = generateDynamicDescription(
 // 3-hour forecast data with comprehensive error handling
 const hourlyForecast = getSafeThreeHourForecast(apiData);
 
+const localMagLat = typeof magneticLatitude === 'number' ? magneticLatitude : cityData.magneticLat;
+const localKpThresholdValue = typeof kpThreshold === 'number'
+  ? kpThreshold
+  : calculateKpThreshold(localMagLat);
+const localKpThresholdLabel = Number.isFinite(localKpThresholdValue)
+  ? formatKpThreshold(localKpThresholdValue)
+  : 'Kp varies';
+
+const shortForecast = hourlyForecast.slice(0, 6);
+let bestHour = null;
+let bestScore = -Infinity;
+shortForecast.forEach((hour) => {
+  if (!hour || typeof hour.kp !== 'number') return;
+  let score = hour.kp;
+  if (hour.status === 'high') score += 3;
+  else if (hour.status === 'good') score += 2;
+  else if (hour.status === 'medium') score += 1;
+  if (score > bestScore) {
+    bestScore = score;
+    bestHour = hour;
+  }
+});
+
+const bestHourTime = bestHour ? formatTimeSafely(bestHour.time, cityData.timezone) : null;
+const bestHourStatus = bestHour
+  ? (ui.statusTexts?.[bestHour.status] || toTitleCase(bestHour.status))
+  : null;
+
+const higherLatCities = citiesData
+  .filter((city) => city.slug !== cityData.slug)
+  .filter((city) => typeof city.magneticLat === 'number' && typeof localMagLat === 'number'
+    && city.magneticLat > localMagLat + 0.2)
+  .sort((a, b) => (b.magneticLat ?? 0) - (a.magneticLat ?? 0))
+  .slice(0, 3);
+
+const planBCities = higherLatCities.length > 0
+  ? higherLatCities
+  : getSimilarCities(cityRecord, 3);
+
+const relatedCities = regionCityRecords.length > 0
+  ? regionCityRecords
+  : getSimilarCities(cityRecord, 6);
+
 // 27-day forecast data (full array from seoSnapshot)
 const d27Full = apiData.d27Full || [];
 const monthly = apiData.monthly || {};
@@ -143,6 +199,18 @@ const h1 = generateSEOH1(cityData);
 const faqSchema = generateFAQSchema(cityData);
 const t = texts.en;
 const h2 = t.visibilityTitle;
+
+const skyLabel = darkness?.label || toTitleCase(skyDarkness || 'unknown');
+const cloudLabel = typeof cloudCover === 'number' ? `${Math.round(cloudCover)}%` : 'Unknown';
+const moonLabel = typeof moonIllumination === 'number' ? `${Math.round(moonIllumination)}%` : 'Unknown';
+const localMagLatLabel = typeof localMagLat === 'number' ? `${localMagLat.toFixed(1)}°` : 'N/A';
+const tierAdviceMap = {
+  best: 'Low Kp can be enough here. Clear skies matter most.',
+  good: 'Strong activity helps. Coastlines and higher ground work well.',
+  occasional: 'Needs stronger storms. A darker spot outside town improves odds.',
+  rare: 'Only during strong storms. Consider a short trip north.'
+};
+const tierAdvice = tierAdviceMap[regionTier] || tierAdviceMap.occasional;
 
 const breadcrumbs = [
   { title: 'Home', href: '/' },
@@ -165,7 +233,7 @@ const warnings = {
   cityData={cityData}
   breadcrumbs={breadcrumbs}
   h1={h1}
-  subtitle="Live Aurora Status & Forecast"
+  subtitle={`UK Aurora Status for ${name}`}
 >
   <!-- 1) Aurora Status Now -->
   <section class="aurora-now" slot="aurora-now">
@@ -186,6 +254,63 @@ const warnings = {
       cityName={geoName}
       warnings={warnings}
     />
+  </section>
+
+  <section class="uk-city-guide" slot="intro">
+    <div class="uk-city-guide__header">
+      <div>
+        <h2>Local aurora guide for {name}</h2>
+        <p class="uk-city-guide__summary">{guideSummary}</p>
+      </div>
+      <div class="uk-city-guide__badges">
+        <span class={`uk-city-chip uk-city-chip--${regionTier}`}>{regionTierLabel}</span>
+        <span class="uk-city-chip">{regionName}</span>
+        <span class="uk-city-chip">Local time {localTime}</span>
+      </div>
+    </div>
+
+    <div class="uk-city-guide__grid">
+      <article class="uk-guide-card">
+        <h3>Threshold and odds</h3>
+        <p class="uk-guide-highlight">{localKpThresholdLabel} minimum</p>
+        <p class="uk-guide-muted">Magnetic latitude: {localMagLatLabel}</p>
+        <p class="uk-guide-muted">{tierAdvice}</p>
+      </article>
+
+      <article class="uk-guide-card">
+        <h3>Tonight snapshot</h3>
+        <ul class="uk-guide-list">
+          <li>Cloud cover: {cloudLabel}</li>
+          <li>Sky darkness: {skyLabel}</li>
+          <li>Moon illumination: {moonLabel}</li>
+          <li>
+            Best window:
+            {bestHourTime ? ` ${bestHourTime} (${bestHourStatus})` : ' no strong window yet'}
+          </li>
+        </ul>
+      </article>
+
+      <article class="uk-guide-card">
+        <h3>Where to look from {name}</h3>
+        <ul class="uk-guide-list">
+          <li>Face north or north-east with an open horizon.</li>
+          <li>Get 20-40 minutes away from city lights if possible.</li>
+          <li>Coasts, lochs, and higher ground improve visibility.</li>
+        </ul>
+      </article>
+
+      <article class="uk-guide-card">
+        <h3>Plan B in the UK</h3>
+        <p class="uk-guide-muted">Higher odds to the north of {name}.</p>
+        <div class="uk-guide-inline">
+          {planBCities.map((city) => (
+            <a class="uk-guide-pill" href={`/${city.slug}`}>
+              {city.name}
+            </a>
+          ))}
+        </div>
+      </article>
+    </div>
   </section>
 
   <!-- 2) How we calculate → факторы прогноза -->
@@ -257,22 +382,22 @@ const warnings = {
   <ResponsiveTestWrapper
     slot="related"
     testId="country-cities"
-    fallbackMessage={`No other cities available in ${country} at the moment.`}
+    fallbackMessage="No other UK locations available at the moment."
     minHeight="150px"
   >
     {(() => {
-      const countryCities = getSafeCountryCities(citiesData, country, cityData.slug, 6);
-
-      return countryCities.length > 0 ? (
+      return relatedCities.length > 0 ? (
         <section class="country-cities-gallery-full-width">
           <div class="container">
-            <h2 class="section-title">Other cities in {country}</h2>
+            <h2 class="section-title">
+              {regionCityRecords.length > 0 ? `More in ${regionName}` : 'More UK locations to compare'}
+            </h2>
             <div class="city-search-wrapper">
               <CitySearch id="country-city-search" compact />
             </div>
           </div>
           <div class="cities-grid-full-width">
-            {countryCities.map(city => {
+            {relatedCities.map(city => {
               const cityStatus = globalCityStatuses[city.slug] || {
                 status: 'unknown',
                 statusText: 'Check forecast',

@@ -1,0 +1,138 @@
+.uk-city-guide {
+  margin-bottom: var(--aurora-spacing-xxl);
+}
+
+.uk-city-guide__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--aurora-spacing-l);
+  margin-bottom: var(--aurora-spacing-xl);
+}
+
+.uk-city-guide__header h2 {
+  margin: 0 0 var(--aurora-spacing-s);
+}
+
+.uk-city-guide__summary {
+  margin: 0;
+  color: var(--aurora-text-secondary);
+  max-width: 720px;
+}
+
+.uk-city-guide__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--aurora-spacing-s);
+}
+
+.uk-city-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: var(--aurora-radius-s);
+  border: 1px solid var(--aurora-border-light);
+  background: var(--aurora-chip);
+  color: var(--aurora-text-secondary);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.uk-city-chip--best {
+  color: var(--aurora-success);
+  border-color: rgba(52, 201, 123, 0.4);
+  background: rgba(52, 201, 123, 0.12);
+}
+
+.uk-city-chip--good {
+  color: var(--aurora-primary);
+  border-color: rgba(91, 192, 235, 0.4);
+  background: rgba(91, 192, 235, 0.12);
+}
+
+.uk-city-chip--occasional {
+  color: var(--aurora-warning);
+  border-color: rgba(255, 215, 0, 0.35);
+  background: rgba(255, 215, 0, 0.12);
+}
+
+.uk-city-chip--rare {
+  color: var(--aurora-danger);
+  border-color: rgba(255, 71, 71, 0.35);
+  background: rgba(255, 71, 71, 0.12);
+}
+
+.uk-city-guide__grid {
+  display: grid;
+  gap: var(--aurora-spacing-xl);
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.uk-guide-card {
+  background: var(--aurora-surface);
+  border: 1px solid var(--aurora-border-light);
+  border-radius: var(--aurora-radius-card);
+  padding: var(--aurora-spacing-xl);
+  box-shadow: var(--aurora-elevation-e1);
+  display: flex;
+  flex-direction: column;
+  gap: var(--aurora-spacing-m);
+}
+
+.uk-guide-card h3 {
+  margin: 0;
+}
+
+.uk-guide-muted {
+  color: var(--aurora-text-tertiary);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.uk-guide-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: var(--aurora-spacing-s);
+  color: var(--aurora-text-secondary);
+}
+
+.uk-guide-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--aurora-spacing-s);
+}
+
+.uk-guide-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: var(--aurora-radius-chip);
+  border: 1px solid var(--aurora-border-light);
+  background: var(--aurora-bg-primary);
+  color: var(--aurora-text-primary);
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+.uk-guide-pill:hover {
+  border-color: var(--aurora-primary);
+  color: var(--aurora-primary);
+}
+
+.uk-guide-highlight {
+  font-weight: 600;
+  color: var(--aurora-text-primary);
+}
+
+@media (max-width: 720px) {
+  .uk-city-guide__header {
+    align-items: flex-start;
+  }
+
+  .uk-guide-card {
+    padding: var(--aurora-spacing-l);
+  }
+}
