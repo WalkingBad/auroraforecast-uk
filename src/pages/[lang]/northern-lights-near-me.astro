@@ -25,8 +25,8 @@ const { lang } = Astro.params;
 // Initialize i18n
 const i18n = await createPageI18n(lang);
 
-const title = "Northern Lights Near Me - Find Aurora Borealis Nearby";
-const description = "Find the best northern lights viewing spots near your location. Instant aurora forecast for your area. Check visibility, KP index, and cloud cover.";
+const title = "Northern Lights Near Me in the UK - Find Aurora Nearby";
+const description = "Find the best northern lights viewing spots near your location in the UK. Instant aurora forecast for nearby UK cities with KP index and cloud cover.";
 const canonical = `https://auroraforecast.uk/${lang}/northern-lights-near-me`;
 
 // Pass city metadata to client-side for distance calculation
@@ -126,14 +126,16 @@ const i18nStrings = {
       <section class="regions-section">
         <h2>{i18n.t('near_me_regions_title')}</h2>
         <div class="regions-grid">
-          <a href={`/${lang}/country/united-states`} class="region-card">{i18n.t('country_name_united_states')}</a>
-          <a href={`/${lang}/country/canada`} class="region-card">{i18n.t('country_name_canada')}</a>
-          <a href={`/${lang}/country/united-kingdom`} class="region-card">{i18n.t('country_name_united_kingdom')}</a>
-          <a href={`/${lang}/country/iceland`} class="region-card">{i18n.t('country_name_iceland')}</a>
-          <a href={`/${lang}/country/norway`} class="region-card">{i18n.t('country_name_norway')}</a>
-          <a href={`/${lang}/country/finland`} class="region-card">{i18n.t('country_name_finland')}</a>
-          <a href={`/${lang}/country/sweden`} class="region-card">{i18n.t('country_name_sweden')}</a>
-          <a href={`/${lang}/country/new-zealand`} class="region-card">{i18n.t('country_name_new_zealand')}</a>
+          <a href={`/${lang}/lerwick`} class="region-card">Lerwick (Shetland)</a>
+          <a href={`/${lang}/kirkwall`} class="region-card">Kirkwall (Orkney)</a>
+          <a href={`/${lang}/inverness`} class="region-card">Inverness</a>
+          <a href={`/${lang}/fort-william`} class="region-card">Fort William</a>
+          <a href={`/${lang}/aberdeen`} class="region-card">Aberdeen</a>
+          <a href={`/${lang}/edinburgh`} class="region-card">Edinburgh</a>
+          <a href={`/${lang}/glasgow`} class="region-card">Glasgow</a>
+          <a href={`/${lang}/belfast`} class="region-card">Belfast</a>
+          <a href={`/${lang}/newcastle`} class="region-card">Newcastle</a>
+          <a href={`/${lang}/manchester`} class="region-card">Manchester</a>
         </div>
       </section>
     </div>

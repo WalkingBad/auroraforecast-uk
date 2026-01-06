@@ -10,9 +10,9 @@ export interface Props {
 const { i18n } = Astro.props;
 
 // Translations with fallback
-const globalStatus = i18n ? i18n.t('live_bar_global_status') : 'Global Aurora Status:';
-const searchPlaceholder = i18n ? i18n.t('live_bar_search_placeholder') : 'Search cities...';
-const topViewing = i18n ? i18n.t('live_bar_top_viewing') : 'Top Viewing Now:';
+const globalStatus = i18n ? i18n.t('live_bar_global_status') : 'UK Aurora Status:';
+const searchPlaceholder = i18n ? i18n.t('live_bar_search_placeholder') : 'Search UK locations...';
+const topViewing = i18n ? i18n.t('live_bar_top_viewing') : 'Top UK Viewing Now:';
 
 // Pass city metadata to client-side for rendering
 const cityMetadata = citiesData.map(city => ({

@@ -17,7 +17,7 @@ export interface Props {
 const { i18n, placeholder, id = 'city-search', compact = false } = Astro.props;
 
 const searchPlaceholder = placeholder
-  || (i18n ? i18n.t('live_bar_search_placeholder') : 'Search cities...');
+  || (i18n ? i18n.t('live_bar_search_placeholder') : 'Search UK locations...');
 
 // Pass city metadata to client-side for rendering (include lat/lon for geolocation)
 const cityMetadata = citiesData.map(city => ({

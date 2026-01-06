@@ -101,11 +101,6 @@ export function generateSEOH1(city: CityData): string {
  * Get geo-specific name for better local SEO
  */
 function getGeoName(city: CityData): string {
-  // For US/Canada, prioritize state for local search
-  if ((city.countryCode === 'US' || city.countryCode === 'CA') && city.state) {
-    return `${city.name}, ${city.state}`;
-  }
-  // For other countries, use country name
   return `${city.name}, ${city.country}`;
 }
 
@@ -114,12 +109,13 @@ function getGeoName(city: CityData): string {
  */
 function isMajorCity(cityName: string): boolean {
   const majorCities = [
-    'New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 'Philadelphia',
-    'San Antonio', 'San Diego', 'Dallas', 'San Jose', 'Austin', 'Jacksonville',
-    'Seattle', 'Denver', 'Boston', 'Portland', 'Las Vegas', 'Detroit', 'Minneapolis',
-    'Toronto', 'Montreal', 'Vancouver', 'Calgary', 'Edmonton', 'Ottawa', 'Winnipeg',
-    'London', 'Manchester', 'Birmingham', 'Glasgow', 'Edinburgh', 'Liverpool',
-    'Stockholm', 'Oslo', 'Copenhagen', 'Helsinki', 'Reykjavik', 'Bergen', 'Gothenburg'
+    'London',
+    'Manchester',
+    'Birmingham',
+    'Glasgow',
+    'Edinburgh',
+    'Belfast',
+    'Newcastle'
   ];
 
   return majorCities.includes(cityName);
@@ -130,14 +126,7 @@ function isMajorCity(cityName: string): boolean {
  */
 export function generateCountryTitle(country: string, cityCount: number): string {
   const countryTitles: Record<string, string> = {
-    'United States': `Northern Lights USA Tonight - ${cityCount} Cities Aurora Forecast`,
-    'Canada': `Northern Lights Canada Tonight - ${cityCount} Cities Aurora Tracker`,
     'United Kingdom': `Northern Lights UK Tonight - Aurora Forecast ${cityCount} Cities`,
-    'Sweden': `Northern Lights Sweden Tonight - ${cityCount} Cities Aurora Forecast`,
-    'Norway': `Northern Lights Norway Tonight - ${cityCount} Locations Aurora Tracker`,
-    'Denmark': `Northern Lights Denmark Tonight - Aurora Forecast ${cityCount} Cities`,
-    'Finland': `Northern Lights Finland Tonight - ${cityCount} Cities Aurora Tracker`,
-    'Iceland': `Northern Lights Iceland Tonight - ${cityCount} Locations Aurora Forecast`,
   };
 
   return countryTitles[country] || `Aurora Forecast ${country} - ${cityCount} Cities Northern Lights Tracker`;
@@ -147,14 +136,7 @@ export function generateCountryTitle(country: string, cityCount: number): string
  * Generate title for state/province pages
  */
 export function generateStateTitle(state: string, stateCode: string, cityCount: number): string {
-  // High aurora states get priority keywords
-  const highAuroraStates = ['AK', 'ME', 'MN', 'ND', 'MT', 'WA', 'MI', 'WI', 'ID', 'SD'];
-
-  if (highAuroraStates.includes(stateCode)) {
-    return `Northern Lights ${state} Tonight - ${cityCount} Cities Live Aurora Forecast`;
-  } else {
-    return `${state} Aurora Forecast - ${cityCount} Cities Northern Lights Tracker`;
-  }
+  return `${state} Aurora Forecast - ${cityCount} Cities Northern Lights Tracker`;
 }
 
 /**
@@ -165,23 +147,10 @@ export function generateBreadcrumbs(city: CityData): Array<{ name: string, url: 
     { name: 'Aurora Forecast', url: '/' }
   ];
 
-  if (city.countryCode === 'US' || city.countryCode === 'CA') {
-    crumbs.push({
-      name: `Northern Lights ${city.country}`,
-      url: `/country/${city.country.toLowerCase().replace(' ', '-')}`
-    });
-    if (city.state) {
-      crumbs.push({
-        name: `${city.state} Aurora`,
-        url: `/${city.countryCode.toLowerCase()}/${city.state.toLowerCase()}`
-      });
-    }
-  } else {
-    crumbs.push({
-      name: `${city.country} Aurora`,
-      url: `/country/${city.country.toLowerCase().replace(' ', '-')}`
-    });
-  }
+  crumbs.push({
+    name: `${city.country} Aurora`,
+    url: `/country/${city.country.toLowerCase().replace(' ', '-')}`
+  });
 
   crumbs.push({
     name: city.name,
@@ -215,4 +184,3 @@ export function generateFAQSchema(city: CityData): Array<{ question: string, ans
     }
   ];
 }
-
