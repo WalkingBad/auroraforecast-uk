@@ -8,6 +8,14 @@ export const UK_REGIONS = [
     cities: ['lerwick', 'scalloway']
   },
   {
+    id: 'outer-hebrides',
+    name: 'Outer Hebrides',
+    tier: 'best',
+    tierLabel: 'Best odds',
+    summary: 'Remote Atlantic skies with very dark horizons.',
+    cities: ['stornoway']
+  },
+  {
     id: 'orkney',
     name: 'Orkney Islands',
     tier: 'best',
@@ -32,12 +40,28 @@ export const UK_REGIONS = [
     cities: ['ullapool', 'portree', 'inverness', 'fort-william']
   },
   {
-    id: 'north-east-scotland',
-    name: 'North East Scotland',
+    id: 'west-coast-isles',
+    name: 'West Coast and Isles',
+    tier: 'good',
+    tierLabel: 'Good odds',
+    summary: 'Sea horizons and island viewpoints boost visibility.',
+    cities: ['oban']
+  },
+  {
+    id: 'cairngorms',
+    name: 'Cairngorms and Perthshire',
+    tier: 'good',
+    tierLabel: 'Good odds',
+    summary: 'Mountain skies with darker inland conditions.',
+    cities: ['aviemore', 'pitlochry']
+  },
+  {
+    id: 'east-scotland',
+    name: 'East Scotland',
     tier: 'good',
     tierLabel: 'Good odds',
     summary: 'Coastal skies improve visibility during active nights.',
-    cities: ['aberdeen']
+    cities: ['aberdeen', 'dundee']
   },
   {
     id: 'central-scotland',
@@ -45,7 +69,7 @@ export const UK_REGIONS = [
     tier: 'occasional',
     tierLabel: 'Occasional',
     summary: 'Works best during stronger activity and clear skies.',
-    cities: ['edinburgh', 'glasgow']
+    cities: ['edinburgh', 'glasgow', 'stirling', 'perth']
   },
   {
     id: 'northern-ireland',
@@ -53,15 +77,23 @@ export const UK_REGIONS = [
     tier: 'occasional',
     tierLabel: 'Occasional',
     summary: 'Best chances along dark coastlines and rural areas.',
-    cities: ['belfast', 'londonderry', 'coleraine']
+    cities: ['belfast', 'londonderry', 'coleraine', 'portrush', 'enniskillen']
   },
   {
-    id: 'north-england',
+    id: 'northumberland-borders',
     name: 'Northumberland and Borders',
     tier: 'occasional',
     tierLabel: 'Occasional',
     summary: 'Dark skies help when Kp rises above local thresholds.',
-    cities: ['berwick-upon-tweed', 'newcastle', 'hexham', 'carlisle']
+    cities: ['berwick-upon-tweed', 'newcastle', 'hexham', 'carlisle', 'durham']
+  },
+  {
+    id: 'yorkshire-humber',
+    name: 'Yorkshire and Humber',
+    tier: 'occasional',
+    tierLabel: 'Occasional',
+    summary: 'Moorland escapes improve visibility during storms.',
+    cities: ['york', 'leeds', 'sheffield', 'hull']
   },
   {
     id: 'north-west',
@@ -69,14 +101,38 @@ export const UK_REGIONS = [
     tier: 'occasional',
     tierLabel: 'Occasional',
     summary: 'Look north during stronger storms and clear skies.',
-    cities: ['manchester']
+    cities: ['manchester', 'liverpool']
   },
   {
-    id: 'midlands-south',
-    name: 'Midlands and South England',
+    id: 'midlands',
+    name: 'Midlands',
     tier: 'rare',
     tierLabel: 'Rare',
     summary: 'Requires stronger geomagnetic storms and very dark skies.',
-    cities: ['birmingham', 'london']
+    cities: ['birmingham', 'nottingham', 'leicester']
+  },
+  {
+    id: 'wales',
+    name: 'Wales',
+    tier: 'rare',
+    tierLabel: 'Rare',
+    summary: 'Best from the west coast and mountain viewpoints.',
+    cities: ['cardiff', 'swansea', 'aberystwyth', 'llandudno', 'caernarfon']
+  },
+  {
+    id: 'south-west-england',
+    name: 'South West England',
+    tier: 'rare',
+    tierLabel: 'Rare',
+    summary: 'Coastal horizons help during strong storms.',
+    cities: ['bristol', 'exeter', 'plymouth']
+  },
+  {
+    id: 'south-east-east',
+    name: 'South East and East England',
+    tier: 'rare',
+    tierLabel: 'Rare',
+    summary: 'Needs the strongest storms and the darkest skies you can reach.',
+    cities: ['london', 'norwich', 'cambridge', 'oxford', 'brighton', 'southampton', 'portsmouth']
   }
 ] as const;

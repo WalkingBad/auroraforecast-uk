@@ -74,11 +74,6 @@ const regionTier = regionInfo?.tier ?? 'occasional';
 const regionTierLabel = regionInfo?.tierLabel ?? 'UK location';
 const regionName = regionInfo?.name ?? 'United Kingdom';
 const guideSummary = description || regionInfo?.summary || `Local aurora viewing guide for ${name}.`;
-const regionCityRecords = (regionInfo?.cities ?? [])
-  .filter((slug) => slug !== cityData.slug)
-  .map((slug) => cityBySlug.get(slug))
-  .filter(Boolean);
-
 const originSlug = cityData.slug;
 const cityRelatedLinks = buildCityRelatedLinks(cityRecord);
 const premiumDestinations = getPremiumDestinations(cityRecord, 2);
@@ -175,9 +170,13 @@ const planBCities = higherLatCities.length > 0
   ? higherLatCities
   : getSimilarCities(cityRecord, 3);
 
-const relatedCities = regionCityRecords.length > 0
-  ? regionCityRecords
-  : getSimilarCities(cityRecord, 6);
+const allOtherCities = citiesData
+  .filter((city) => city.slug !== cityData.slug)
+  .sort((a, b) => {
+    const magDiff = (b.magneticLat ?? 0) - (a.magneticLat ?? 0);
+    if (magDiff !== 0) return magDiff;
+    return a.name.localeCompare(b.name, 'en');
+  });
 
 // 27-day forecast data (full array from seoSnapshot)
 const d27Full = apiData.d27Full || [];
@@ -386,18 +385,17 @@ const warnings = {
     minHeight="150px"
   >
     {(() => {
-      return relatedCities.length > 0 ? (
+      return allOtherCities.length > 0 ? (
         <section class="country-cities-gallery-full-width">
           <div class="container">
-            <h2 class="section-title">
-              {regionCityRecords.length > 0 ? `More in ${regionName}` : 'More UK locations to compare'}
-            </h2>
+            <h2 class="section-title">All UK locations ({allOtherCities.length})</h2>
+            <p class="uk-guide-muted">Sorted north to south by magnetic latitude.</p>
             <div class="city-search-wrapper">
               <CitySearch id="country-city-search" compact />
             </div>
           </div>
           <div class="cities-grid-full-width">
-            {relatedCities.map(city => {
+            {allOtherCities.map(city => {
               const cityStatus = globalCityStatuses[city.slug] || {
                 status: 'unknown',
                 statusText: 'Check forecast',

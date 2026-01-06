@@ -18,6 +18,8 @@ const quickCitySlugs = ['lerwick', 'inverness', 'edinburgh', 'glasgow', 'belfast
 const quickCities = quickCitySlugs
   .map((slug) => cityBySlug.get(slug))
   .filter(Boolean);
+const locationCount = citiesData.length;
+const locationCountLabel = locationCount >= 50 ? '50+' : `${locationCount}`;
 
 const regionCards = UK_REGIONS.map((region) => {
   const cities = region.cities
@@ -49,7 +51,7 @@ const allCities = [...citiesData].sort((a, b) => a.name.localeCompare(b.name, 'e
 
 <BaseLayout
   title="Northern Lights UK Tonight | Live Aurora Forecast & Tracker"
-  description="Live UK aurora forecast for tonight. Track northern lights across Scotland, Northern Ireland, and the UK. Free alerts and 23 UK locations."
+  description={`Live UK aurora forecast for tonight. Track northern lights across Scotland, Northern Ireland, and the UK. Free alerts and ${locationCountLabel} UK locations.`}
   canonical="https://auroraforecast.uk"
 >
   <!-- Hero with parallax background and store badges -->
@@ -82,7 +84,7 @@ const allCities = [...citiesData].sort((a, b) => a.name.localeCompare(b.name, 'e
               <a href="#uk-regions">Browse by region</a>
               <a href="#all-uk-cities">See A-Z list</a>
             </div>
-            <p class="home-uk__small">All 23 UK locations are listed below.</p>
+            <p class="home-uk__small">All {locationCount} UK locations are listed below.</p>
           </article>
 
           <article class="planner-card">

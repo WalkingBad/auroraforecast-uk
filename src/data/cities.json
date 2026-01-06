@@ -534,7 +534,7 @@
     "countryCode": "GB",
     "lat": 52.4862,
     "lon": -1.8904,
-    "magneticLat": 41.5,
+    "magneticLat": 54.5,
     "timezone": "Europe/London",
     "seoTitle": "Aurora Forecast Birmingham — Northern Lights Tonight | Real-time Aurora",
     "seoDescription": "Live aurora forecast for Birmingham. Check northern lights visibility, weather conditions and Kp index tonight. Real-time aurora alerts and 3-hour forecast.",
@@ -549,5 +549,625 @@
     "description_de": "Großstadt mit 1M+ Einwohnern",
     "description_es": "Gran ciudad con 1M+ habitantes",
     "description_fr": "Grande ville avec 1M+ habitants"
+  },
+  {
+    "slug": "stornoway",
+    "name": "Stornoway",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 58.2092,
+    "lon": -6.3865,
+    "magneticLat": 60.2,
+    "timezone": "Europe/London",
+    "seoTitle": "Aurora Forecast Stornoway — Northern Lights Tonight | Real-time Aurora",
+    "seoDescription": "Live aurora forecast for Stornoway, Scotland. Check northern lights visibility, weather conditions and Kp index tonight. Real-time aurora alerts and 3-hour forecast.",
+    "keywords": [
+      "aurora stornoway",
+      "northern lights stornoway",
+      "stornoway aurora forecast",
+      "stornoway aurora tonight",
+      "scotland aurora"
+    ],
+    "description": "Outer Hebrides hub with dark Atlantic horizons."
+  },
+  {
+    "slug": "oban",
+    "name": "Oban",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 56.4153,
+    "lon": -5.4718,
+    "magneticLat": 58.4,
+    "timezone": "Europe/London",
+    "seoTitle": "Aurora Forecast Oban — Northern Lights Tonight | Real-time Aurora",
+    "seoDescription": "Live aurora forecast for Oban, Scotland. Check northern lights visibility, weather conditions and Kp index tonight. Real-time aurora alerts and 3-hour forecast.",
+    "keywords": [
+      "aurora oban",
+      "northern lights oban",
+      "oban aurora forecast",
+      "oban aurora tonight",
+      "scotland aurora"
+    ],
+    "description": "West coast harbor with island viewpoints and dark bays."
+  },
+  {
+    "slug": "aviemore",
+    "name": "Aviemore",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 57.1955,
+    "lon": -3.8259,
+    "magneticLat": 59.2,
+    "timezone": "Europe/London",
+    "seoTitle": "Aurora Forecast Aviemore — Northern Lights Tonight | Real-time Aurora",
+    "seoDescription": "Live aurora forecast for Aviemore, Scotland. Check northern lights visibility, weather conditions and Kp index tonight. Real-time aurora alerts and 3-hour forecast.",
+    "keywords": [
+      "aurora aviemore",
+      "northern lights aviemore",
+      "aviemore aurora forecast",
+      "aviemore aurora tonight",
+      "scotland aurora"
+    ],
+    "description": "Cairngorms base town with dark mountain skies."
+  },
+  {
+    "slug": "pitlochry",
+    "name": "Pitlochry",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 56.7051,
+    "lon": -3.7343,
+    "magneticLat": 58.7,
+    "timezone": "Europe/London",
+    "seoTitle": "Aurora Forecast Pitlochry — Northern Lights Tonight | Real-time Aurora",
+    "seoDescription": "Live aurora forecast for Pitlochry, Scotland. Check northern lights visibility, weather conditions and Kp index tonight. Real-time aurora alerts and 3-hour forecast.",
+    "keywords": [
+      "aurora pitlochry",
+      "northern lights pitlochry",
+      "pitlochry aurora forecast",
+      "pitlochry aurora tonight",
+      "scotland aurora"
+    ],
+    "description": "Perthshire town with forested dark-sky spots."
+  },
+  {
+    "slug": "dundee",
+    "name": "Dundee",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 56.4691,
+    "lon": -2.9749,
+    "magneticLat": 58.5,
+    "timezone": "Europe/London",
+    "seoTitle": "Aurora Forecast Dundee — Northern Lights Tonight | Real-time Aurora",
+    "seoDescription": "Live aurora forecast for Dundee, Scotland. Check northern lights visibility, weather conditions and Kp index tonight. Real-time aurora alerts and 3-hour forecast.",
+    "keywords": [
+      "aurora dundee",
+      "northern lights dundee",
+      "dundee aurora forecast",
+      "dundee aurora tonight",
+      "scotland aurora"
+    ],
+    "description": "East coast city with views over the Tay estuary."
+  },
+  {
+    "slug": "perth",
+    "name": "Perth",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 56.3952,
+    "lon": -3.4314,
+    "magneticLat": 58.4,
+    "timezone": "Europe/London",
+    "seoTitle": "Aurora Forecast Perth — Northern Lights Tonight | Real-time Aurora",
+    "seoDescription": "Live aurora forecast for Perth, Scotland. Check northern lights visibility, weather conditions and Kp index tonight. Real-time aurora alerts and 3-hour forecast.",
+    "keywords": [
+      "aurora perth",
+      "northern lights perth",
+      "perth aurora forecast",
+      "perth aurora tonight",
+      "scotland aurora"
+    ],
+    "description": "Perthshire city with nearby rural dark skies."
+  },
+  {
+    "slug": "stirling",
+    "name": "Stirling",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 56.119,
+    "lon": -3.9368,
+    "magneticLat": 58.1,
+    "timezone": "Europe/London",
+    "seoTitle": "Aurora Forecast Stirling — Northern Lights Tonight | Real-time Aurora",
+    "seoDescription": "Live aurora forecast for Stirling, Scotland. Check northern lights visibility, weather conditions and Kp index tonight. Real-time aurora alerts and 3-hour forecast.",
+    "keywords": [
+      "aurora stirling",
+      "northern lights stirling",
+      "stirling aurora forecast",
+      "stirling aurora tonight",
+      "scotland aurora"
+    ],
+    "description": "Central Scotland city with hilltop viewpoints."
+  },
+  {
+    "slug": "portrush",
+    "name": "Portrush",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 55.1959,
+    "lon": -6.6493,
+    "magneticLat": 57.2,
+    "timezone": "Europe/London",
+    "seoTitle": "Aurora Forecast Portrush — Northern Lights Tonight | Real-time Aurora",
+    "seoDescription": "Live aurora forecast for Portrush, Northern Ireland. Check northern lights visibility, weather conditions and Kp index tonight. Real-time aurora alerts and 3-hour forecast.",
+    "keywords": [
+      "aurora portrush",
+      "northern lights portrush",
+      "portrush aurora forecast",
+      "portrush aurora tonight",
+      "northern ireland aurora"
+    ],
+    "description": "Causeway Coast resort with open northern horizon."
+  },
+  {
+    "slug": "enniskillen",
+    "name": "Enniskillen",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 54.3462,
+    "lon": -7.6413,
+    "magneticLat": 56.3,
+    "timezone": "Europe/London",
+    "seoTitle": "Aurora Forecast Enniskillen — Northern Lights Tonight | Real-time Aurora",
+    "seoDescription": "Live aurora forecast for Enniskillen, Northern Ireland. Check northern lights visibility, weather conditions and Kp index tonight. Real-time aurora alerts and 3-hour forecast.",
+    "keywords": [
+      "aurora enniskillen",
+      "northern lights enniskillen",
+      "enniskillen aurora forecast",
+      "enniskillen aurora tonight",
+      "northern ireland aurora"
+    ],
+    "description": "Lakeland town with dark skies on Lough Erne."
+  },
+  {
+    "slug": "cardiff",
+    "name": "Cardiff",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 51.48,
+    "lon": -3.18,
+    "magneticLat": 53.5,
+    "timezone": "Europe/London",
+    "seoTitle": "Aurora Forecast Cardiff — Northern Lights Tonight | Real-time Aurora",
+    "seoDescription": "Live aurora forecast for Cardiff, Wales. Check northern lights visibility, weather conditions and Kp index tonight. Real-time aurora alerts and 3-hour forecast.",
+    "keywords": [
+      "aurora cardiff",
+      "northern lights cardiff",
+      "cardiff aurora forecast",
+      "cardiff aurora tonight",
+      "wales aurora"
+    ],
+    "description": "Capital city with dark-sky escapes nearby."
+  },
+  {
+    "slug": "swansea",
+    "name": "Swansea",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 51.6208,
+    "lon": -3.9432,
+    "magneticLat": 53.6,
+    "timezone": "Europe/London",
+    "seoTitle": "Aurora Forecast Swansea — Northern Lights Tonight | Real-time Aurora",
+    "seoDescription": "Live aurora forecast for Swansea, Wales. Check northern lights visibility, weather conditions and Kp index tonight. Real-time aurora alerts and 3-hour forecast.",
+    "keywords": [
+      "aurora swansea",
+      "northern lights swansea",
+      "swansea aurora forecast",
+      "swansea aurora tonight",
+      "wales aurora"
+    ],
+    "description": "South Wales coast city with nearby dark bays."
+  },
+  {
+    "slug": "aberystwyth",
+    "name": "Aberystwyth",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 52.4155,
+    "lon": -4.0829,
+    "magneticLat": 54.4,
+    "timezone": "Europe/London",
+    "seoTitle": "Aurora Forecast Aberystwyth — Northern Lights Tonight | Real-time Aurora",
+    "seoDescription": "Live aurora forecast for Aberystwyth, Wales. Check northern lights visibility, weather conditions and Kp index tonight. Real-time aurora alerts and 3-hour forecast.",
+    "keywords": [
+      "aurora aberystwyth",
+      "northern lights aberystwyth",
+      "aberystwyth aurora forecast",
+      "aberystwyth aurora tonight",
+      "wales aurora"
+    ],
+    "description": "West Wales coastal town with open horizons."
+  },
+  {
+    "slug": "llandudno",
+    "name": "Llandudno",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 53.325,
+    "lon": -3.8315,
+    "magneticLat": 55.3,
+    "timezone": "Europe/London",
+    "seoTitle": "Aurora Forecast Llandudno — Northern Lights Tonight | Real-time Aurora",
+    "seoDescription": "Live aurora forecast for Llandudno, Wales. Check northern lights visibility, weather conditions and Kp index tonight. Real-time aurora alerts and 3-hour forecast.",
+    "keywords": [
+      "aurora llandudno",
+      "northern lights llandudno",
+      "llandudno aurora forecast",
+      "llandudno aurora tonight",
+      "wales aurora"
+    ],
+    "description": "North Wales seaside town with open sea horizons."
+  },
+  {
+    "slug": "caernarfon",
+    "name": "Caernarfon",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 53.1413,
+    "lon": -4.2702,
+    "magneticLat": 55.1,
+    "timezone": "Europe/London",
+    "seoTitle": "Aurora Forecast Caernarfon — Northern Lights Tonight | Real-time Aurora",
+    "seoDescription": "Live aurora forecast for Caernarfon, Wales. Check northern lights visibility, weather conditions and Kp index tonight. Real-time aurora alerts and 3-hour forecast.",
+    "keywords": [
+      "aurora caernarfon",
+      "northern lights caernarfon",
+      "caernarfon aurora forecast",
+      "caernarfon aurora tonight",
+      "wales aurora"
+    ],
+    "description": "Historic town near Snowdonia dark skies."
+  },
+  {
+    "slug": "liverpool",
+    "name": "Liverpool",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 53.4106,
+    "lon": -2.9779,
+    "magneticLat": 55.4,
+    "timezone": "Europe/London",
+    "seoTitle": "Aurora Forecast Liverpool — Northern Lights Tonight | Real-time Aurora",
+    "seoDescription": "Live aurora forecast for Liverpool, England. Check northern lights visibility, weather conditions and Kp index tonight. Real-time aurora alerts and 3-hour forecast.",
+    "keywords": [
+      "aurora liverpool",
+      "northern lights liverpool",
+      "liverpool aurora forecast",
+      "liverpool aurora tonight",
+      "england aurora"
+    ],
+    "description": "Mersey city with coastal viewing to the north."
+  },
+  {
+    "slug": "leeds",
+    "name": "Leeds",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 53.7965,
+    "lon": -1.5478,
+    "magneticLat": 55.8,
+    "timezone": "Europe/London",
+    "seoTitle": "Aurora Forecast Leeds — Northern Lights Tonight | Real-time Aurora",
+    "seoDescription": "Live aurora forecast for Leeds, England. Check northern lights visibility, weather conditions and Kp index tonight. Real-time aurora alerts and 3-hour forecast.",
+    "keywords": [
+      "aurora leeds",
+      "northern lights leeds",
+      "leeds aurora forecast",
+      "leeds aurora tonight",
+      "england aurora"
+    ],
+    "description": "Yorkshire city with moorland dark-sky escapes."
+  },
+  {
+    "slug": "sheffield",
+    "name": "Sheffield",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 53.383,
+    "lon": -1.4659,
+    "magneticLat": 55.4,
+    "timezone": "Europe/London",
+    "seoTitle": "Aurora Forecast Sheffield — Northern Lights Tonight | Real-time Aurora",
+    "seoDescription": "Live aurora forecast for Sheffield, England. Check northern lights visibility, weather conditions and Kp index tonight. Real-time aurora alerts and 3-hour forecast.",
+    "keywords": [
+      "aurora sheffield",
+      "northern lights sheffield",
+      "sheffield aurora forecast",
+      "sheffield aurora tonight",
+      "england aurora"
+    ],
+    "description": "Peak District gateway with dark sky access."
+  },
+  {
+    "slug": "york",
+    "name": "York",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 53.9576,
+    "lon": -1.0827,
+    "magneticLat": 56,
+    "timezone": "Europe/London",
+    "seoTitle": "Aurora Forecast York — Northern Lights Tonight | Real-time Aurora",
+    "seoDescription": "Live aurora forecast for York, England. Check northern lights visibility, weather conditions and Kp index tonight. Real-time aurora alerts and 3-hour forecast.",
+    "keywords": [
+      "aurora york",
+      "northern lights york",
+      "york aurora forecast",
+      "york aurora tonight",
+      "england aurora"
+    ],
+    "description": "Historic city near North York Moors dark skies."
+  },
+  {
+    "slug": "hull",
+    "name": "Hull",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 53.7446,
+    "lon": -0.3352,
+    "magneticLat": 55.7,
+    "timezone": "Europe/London",
+    "seoTitle": "Aurora Forecast Hull — Northern Lights Tonight | Real-time Aurora",
+    "seoDescription": "Live aurora forecast for Hull, England. Check northern lights visibility, weather conditions and Kp index tonight. Real-time aurora alerts and 3-hour forecast.",
+    "keywords": [
+      "aurora hull",
+      "northern lights hull",
+      "hull aurora forecast",
+      "hull aurora tonight",
+      "england aurora"
+    ],
+    "description": "Humber estuary city with open eastern horizon."
+  },
+  {
+    "slug": "durham",
+    "name": "Durham",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 54.7768,
+    "lon": -1.5757,
+    "magneticLat": 56.8,
+    "timezone": "Europe/London",
+    "seoTitle": "Aurora Forecast Durham — Northern Lights Tonight | Real-time Aurora",
+    "seoDescription": "Live aurora forecast for Durham, England. Check northern lights visibility, weather conditions and Kp index tonight. Real-time aurora alerts and 3-hour forecast.",
+    "keywords": [
+      "aurora durham",
+      "northern lights durham",
+      "durham aurora forecast",
+      "durham aurora tonight",
+      "england aurora"
+    ],
+    "description": "Cathedral city with nearby dark countryside."
+  },
+  {
+    "slug": "nottingham",
+    "name": "Nottingham",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 52.9536,
+    "lon": -1.1505,
+    "magneticLat": 55,
+    "timezone": "Europe/London",
+    "seoTitle": "Aurora Forecast Nottingham — Northern Lights Tonight | Real-time Aurora",
+    "seoDescription": "Live aurora forecast for Nottingham, England. Check northern lights visibility, weather conditions and Kp index tonight. Real-time aurora alerts and 3-hour forecast.",
+    "keywords": [
+      "aurora nottingham",
+      "northern lights nottingham",
+      "nottingham aurora forecast",
+      "nottingham aurora tonight",
+      "england aurora"
+    ],
+    "description": "Midlands city with rural dark-sky spots nearby."
+  },
+  {
+    "slug": "leicester",
+    "name": "Leicester",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 52.6386,
+    "lon": -1.1317,
+    "magneticLat": 54.6,
+    "timezone": "Europe/London",
+    "seoTitle": "Aurora Forecast Leicester — Northern Lights Tonight | Real-time Aurora",
+    "seoDescription": "Live aurora forecast for Leicester, England. Check northern lights visibility, weather conditions and Kp index tonight. Real-time aurora alerts and 3-hour forecast.",
+    "keywords": [
+      "aurora leicester",
+      "northern lights leicester",
+      "leicester aurora forecast",
+      "leicester aurora tonight",
+      "england aurora"
+    ],
+    "description": "Midlands city with accessible dark countryside."
+  },
+  {
+    "slug": "bristol",
+    "name": "Bristol",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 51.4552,
+    "lon": -2.5966,
+    "magneticLat": 53.5,
+    "timezone": "Europe/London",
+    "seoTitle": "Aurora Forecast Bristol — Northern Lights Tonight | Real-time Aurora",
+    "seoDescription": "Live aurora forecast for Bristol, England. Check northern lights visibility, weather conditions and Kp index tonight. Real-time aurora alerts and 3-hour forecast.",
+    "keywords": [
+      "aurora bristol",
+      "northern lights bristol",
+      "bristol aurora forecast",
+      "bristol aurora tonight",
+      "england aurora"
+    ],
+    "description": "West country city with dark-sky escapes nearby."
+  },
+  {
+    "slug": "exeter",
+    "name": "Exeter",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 50.7236,
+    "lon": -3.5275,
+    "magneticLat": 52.7,
+    "timezone": "Europe/London",
+    "seoTitle": "Aurora Forecast Exeter — Northern Lights Tonight | Real-time Aurora",
+    "seoDescription": "Live aurora forecast for Exeter, England. Check northern lights visibility, weather conditions and Kp index tonight. Real-time aurora alerts and 3-hour forecast.",
+    "keywords": [
+      "aurora exeter",
+      "northern lights exeter",
+      "exeter aurora forecast",
+      "exeter aurora tonight",
+      "england aurora"
+    ],
+    "description": "Devon city with moorland skies nearby."
+  },
+  {
+    "slug": "plymouth",
+    "name": "Plymouth",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 50.3715,
+    "lon": -4.143,
+    "magneticLat": 52.4,
+    "timezone": "Europe/London",
+    "seoTitle": "Aurora Forecast Plymouth — Northern Lights Tonight | Real-time Aurora",
+    "seoDescription": "Live aurora forecast for Plymouth, England. Check northern lights visibility, weather conditions and Kp index tonight. Real-time aurora alerts and 3-hour forecast.",
+    "keywords": [
+      "aurora plymouth",
+      "northern lights plymouth",
+      "plymouth aurora forecast",
+      "plymouth aurora tonight",
+      "england aurora"
+    ],
+    "description": "South coast port with dark coastal viewpoints."
+  },
+  {
+    "slug": "norwich",
+    "name": "Norwich",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 52.6278,
+    "lon": 1.2983,
+    "magneticLat": 54.6,
+    "timezone": "Europe/London",
+    "seoTitle": "Aurora Forecast Norwich — Northern Lights Tonight | Real-time Aurora",
+    "seoDescription": "Live aurora forecast for Norwich, England. Check northern lights visibility, weather conditions and Kp index tonight. Real-time aurora alerts and 3-hour forecast.",
+    "keywords": [
+      "aurora norwich",
+      "northern lights norwich",
+      "norwich aurora forecast",
+      "norwich aurora tonight",
+      "england aurora"
+    ],
+    "description": "East Anglia city with wide open horizons."
+  },
+  {
+    "slug": "cambridge",
+    "name": "Cambridge",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 52.2,
+    "lon": 0.1167,
+    "magneticLat": 54.2,
+    "timezone": "Europe/London",
+    "seoTitle": "Aurora Forecast Cambridge — Northern Lights Tonight | Real-time Aurora",
+    "seoDescription": "Live aurora forecast for Cambridge, England. Check northern lights visibility, weather conditions and Kp index tonight. Real-time aurora alerts and 3-hour forecast.",
+    "keywords": [
+      "aurora cambridge",
+      "northern lights cambridge",
+      "cambridge aurora forecast",
+      "cambridge aurora tonight",
+      "england aurora"
+    ],
+    "description": "University city with rural skies to the north."
+  },
+  {
+    "slug": "oxford",
+    "name": "Oxford",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 51.7522,
+    "lon": -1.256,
+    "magneticLat": 53.8,
+    "timezone": "Europe/London",
+    "seoTitle": "Aurora Forecast Oxford — Northern Lights Tonight | Real-time Aurora",
+    "seoDescription": "Live aurora forecast for Oxford, England. Check northern lights visibility, weather conditions and Kp index tonight. Real-time aurora alerts and 3-hour forecast.",
+    "keywords": [
+      "aurora oxford",
+      "northern lights oxford",
+      "oxford aurora forecast",
+      "oxford aurora tonight",
+      "england aurora"
+    ],
+    "description": "Historic city with nearby dark countryside."
+  },
+  {
+    "slug": "brighton",
+    "name": "Brighton",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 50.8284,
+    "lon": -0.1395,
+    "magneticLat": 52.8,
+    "timezone": "Europe/London",
+    "seoTitle": "Aurora Forecast Brighton — Northern Lights Tonight | Real-time Aurora",
+    "seoDescription": "Live aurora forecast for Brighton, England. Check northern lights visibility, weather conditions and Kp index tonight. Real-time aurora alerts and 3-hour forecast.",
+    "keywords": [
+      "aurora brighton",
+      "northern lights brighton",
+      "brighton aurora forecast",
+      "brighton aurora tonight",
+      "england aurora"
+    ],
+    "description": "South coast city with sea horizon views."
+  },
+  {
+    "slug": "southampton",
+    "name": "Southampton",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 50.904,
+    "lon": -1.4043,
+    "magneticLat": 52.9,
+    "timezone": "Europe/London",
+    "seoTitle": "Aurora Forecast Southampton — Northern Lights Tonight | Real-time Aurora",
+    "seoDescription": "Live aurora forecast for Southampton, England. Check northern lights visibility, weather conditions and Kp index tonight. Real-time aurora alerts and 3-hour forecast.",
+    "keywords": [
+      "aurora southampton",
+      "northern lights southampton",
+      "southampton aurora forecast",
+      "southampton aurora tonight",
+      "england aurora"
+    ],
+    "description": "Solent city with coastal viewpoints."
+  },
+  {
+    "slug": "portsmouth",
+    "name": "Portsmouth",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 50.799,
+    "lon": -1.0913,
+    "magneticLat": 52.8,
+    "timezone": "Europe/London",
+    "seoTitle": "Aurora Forecast Portsmouth — Northern Lights Tonight | Real-time Aurora",
+    "seoDescription": "Live aurora forecast for Portsmouth, England. Check northern lights visibility, weather conditions and Kp index tonight. Real-time aurora alerts and 3-hour forecast.",
+    "keywords": [
+      "aurora portsmouth",
+      "northern lights portsmouth",
+      "portsmouth aurora forecast",
+      "portsmouth aurora tonight",
+      "england aurora"
+    ],
+    "description": "Harbor city with open sea horizon."
   }
 ]
