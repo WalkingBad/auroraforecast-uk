@@ -1,13 +1,12 @@
 // Aurora Forecast Service Worker
 // Provides offline caching and performance optimization
 
-const CACHE_NAME = 'aurora-forecast-v2';
-const STATIC_CACHE_NAME = 'aurora-static-v2';
-const DATA_CACHE_NAME = 'aurora-data-v3';
+const CACHE_NAME = 'aurora-forecast-v3';
+const STATIC_CACHE_NAME = 'aurora-static-v3';
+const DATA_CACHE_NAME = 'aurora-data-v4';
 
 // Files to cache immediately
 const STATIC_FILES = [
-  '/',
   '/scripts/location-selector.js',
   '/manifest.json',
   // Add other critical assets
@@ -117,6 +116,22 @@ async function handleAPIRequest(request) {
 
 // Handle static requests with cache-first strategy
 async function handleStaticRequest(request) {
+  if (request.destination === 'document') {
+    try {
+      const networkResponse = await fetch(request);
+      if (networkResponse.ok) {
+        const cache = await caches.open(STATIC_CACHE_NAME);
+        cache.put(request, networkResponse.clone());
+      }
+      return networkResponse;
+    } catch (error) {
+      const cachedResponse = await caches.match(request);
+      if (cachedResponse) {
+        return cachedResponse;
+      }
+    }
+  }
+
   // Check cache first
   const cachedResponse = await caches.match(request);
   if (cachedResponse) {

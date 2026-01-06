@@ -208,12 +208,7 @@ const hasGa = typeof gaId === 'string' && gaId.length > 0;
     )}
   ></script>
   
-  <!-- Preconnect to external domains -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-  <!-- Google Fonts (no manual preload - URLs change frequently) -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Google Fonts are loaded once above to avoid duplicate requests. -->
   
   <!-- No script preloads for SEO pages: keep TTI low (SSR only) -->
   

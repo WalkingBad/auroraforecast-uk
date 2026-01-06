@@ -14,9 +14,6 @@ Allow: /
 # Sitemap location
 Sitemap: https://auroraforecast.uk/sitemap.xml
 
-# Crawl delay for polite crawling (optional)
-Crawl-delay: 1
-
 # Specific rules for major search engines
 User-agent: Googlebot
 Disallow: /api/
@@ -27,7 +24,6 @@ Disallow: /*.ts$
 Disallow: /*.tsx$
 Disallow: /*.js.map$
 Allow: /
-Crawl-delay: 0
 
 User-agent: Bingbot
 Disallow: /api/
