@@ -28,6 +28,10 @@ APP_ROOT=/Volumes/SSD/Repos/aurorame/app npm run sync
 Города для сайта берутся из `src/data/cities.json` (только UK).
 Переменная `SITE_COUNTRY_CODES` используется для генерации legacy-редиректов (по умолчанию `GB`).
 
+## Деплой
+
+Короткая инструкция есть в `docs/hosting-setup.md`.
+
 ## Верификации и индексирование
 
 - IndexNow ключ лежит в `public/88875cefd3af4ae41223ca0369010430.txt`
