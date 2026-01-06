@@ -1,0 +1,57 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="64" y1="32" x2="448" y2="480" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0B1C2E"/>
+      <stop offset="0.55" stop-color="#07121E"/>
+      <stop offset="1" stop-color="#05080D"/>
+    </linearGradient>
+    <linearGradient id="aurora" x1="64" y1="304" x2="448" y2="256" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#5DF2C4"/>
+      <stop offset="0.45" stop-color="#4BD9F4"/>
+      <stop offset="1" stop-color="#6AF28B"/>
+    </linearGradient>
+    <filter id="aurora-glow" x="-20%" y="-40%" width="140%" height="180%">
+      <feGaussianBlur stdDeviation="18" result="blur"/>
+    </filter>
+    <clipPath id="flag-clip" clipPathUnits="userSpaceOnUse">
+      <rect x="0" y="0" width="160" height="120" rx="16" />
+    </clipPath>
+  </defs>
+
+  <rect width="512" height="512" rx="96" fill="url(#bg)"/>
+
+  <path
+    d="M56 320 C128 252 210 244 280 296 C332 336 388 352 456 304"
+    stroke="url(#aurora)"
+    stroke-width="80"
+    stroke-linecap="round"
+    opacity="0.45"
+    filter="url(#aurora-glow)"
+  />
+  <path
+    d="M64 322 C136 260 214 254 284 304 C334 340 392 356 448 312"
+    stroke="url(#aurora)"
+    stroke-width="44"
+    stroke-linecap="round"
+    opacity="0.95"
+  />
+
+  <circle cx="108" cy="124" r="3" fill="#DDE8FF" opacity="0.7"/>
+  <circle cx="172" cy="88" r="2.6" fill="#DDE8FF" opacity="0.6"/>
+  <circle cx="248" cy="112" r="2.2" fill="#DDE8FF" opacity="0.55"/>
+  <circle cx="324" cy="86" r="2.8" fill="#DDE8FF" opacity="0.65"/>
+  <circle cx="410" cy="132" r="2.4" fill="#DDE8FF" opacity="0.6"/>
+
+  <g transform="translate(308 320)">
+    <g clip-path="url(#flag-clip)">
+      <rect width="160" height="120" fill="#1B2D6B"/>
+      <path d="M-8 0 L168 128 M168 -8 L-8 120" stroke="#F5F6FA" stroke-width="26" stroke-linecap="square"/>
+      <path d="M-4 0 L164 124 M164 -4 L-4 120" stroke="#D73C3C" stroke-width="14" stroke-linecap="square"/>
+      <rect x="0" y="44" width="160" height="32" fill="#F5F6FA"/>
+      <rect x="0" y="50" width="160" height="20" fill="#D73C3C"/>
+      <rect x="64" y="0" width="32" height="120" fill="#F5F6FA"/>
+      <rect x="70" y="0" width="20" height="120" fill="#D73C3C"/>
+    </g>
+    <rect width="160" height="120" rx="16" fill="none" stroke="#0B111A" stroke-width="6"/>
+  </g>
+</svg>
