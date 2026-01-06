@@ -52,13 +52,14 @@ const siteCountryCodes = new Set(
     .filter(Boolean)
 );
 
-const currentCitiesPath = fs.existsSync(path.join(dataDir, 'cities-uk.json'))
-  ? path.join(dataDir, 'cities-uk.json')
-  : path.join(dataDir, 'cities.json');
+const currentCitiesPath = path.join(dataDir, 'cities.json');
 const currentCities = loadJson(currentCitiesPath)
   .filter(city => siteCountryCodes.has(city.countryCode));
-const legacyCities = loadJson(path.join(dataDir, 'cities-backup-old.json'))
-  .filter(city => siteCountryCodes.has(city.countryCode));
+
+const legacyCitiesPath = path.join(dataDir, 'cities-backup-old.json');
+const legacyCities = fs.existsSync(legacyCitiesPath)
+  ? loadJson(legacyCitiesPath).filter(city => siteCountryCodes.has(city.countryCode))
+  : [];
 const existingRedirectsContent = fs.readFileSync(redirectsPath, 'utf8');
 
 const firstStartIndex = existingRedirectsContent.indexOf(START_MARKER);

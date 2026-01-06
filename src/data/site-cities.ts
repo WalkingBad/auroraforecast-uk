@@ -1,3 +1,3 @@
-import cities from './cities-uk.json';
+import cities from './cities.json';
 
 export default cities;
