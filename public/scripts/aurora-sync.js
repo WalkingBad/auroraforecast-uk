@@ -533,6 +533,12 @@
     const grid = container.querySelector('.hours-grid');
     if (!grid) return;
 
+    // Show content, hide error (for SSR fallback case)
+    const previewError = container.querySelector('#preview-error');
+    const previewContent = container.querySelector('#preview-content');
+    if (previewError) previewError.classList.add('hidden');
+    if (previewContent) previewContent.classList.remove('hidden');
+
     // Keep only the column headers
     const headers = grid.querySelector('.column-headers');
     grid.innerHTML = '';

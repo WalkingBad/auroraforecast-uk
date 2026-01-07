@@ -166,65 +166,65 @@ let lastDayLabel = null;
 ---
 
 <div class="forecast-preview-container" data-lat={lat} data-lon={lon} data-timezone={timezone || 'UTC'} data-city={citySlug || ''}>
-  {!hasData ? (
-    <div id="preview-error" class="error">
-      <p>Forecast data unavailable at the moment.</p>
-    </div>
-  ) : (
-    <div id="preview-content">
-      <div class="hours-grid">
-        <div class="column-headers">
-          <div class="col-time">{i18n ? i18n.t('forecast_time', 'Time') : 'Time'}</div>
-          <div class="col-kp">Kp</div>
-          <div class="col-status">{i18n ? i18n.t('forecast_visibility', 'Visibility') : 'Visibility'}</div>
-        </div>
+  <!-- Error shown when no SSR data; JS will hide this and populate hours-grid -->
+  <div id="preview-error" class={`error ${hasData ? 'hidden' : ''}`}>
+    <p>Forecast data unavailable at the moment.</p>
+  </div>
 
-        {previewHours.map((hour, idx) => {
-          const currentDayLabel = getDayLabel(hour.time);
-          const showDayHeader = currentDayLabel !== lastDayLabel;
-          lastDayLabel = currentDayLabel;
-          const isBestHour = idx === bestHourIdx;
-          const statusClass = getStatusClass(hour.status);
-          const isPremiumOnly = idx >= 6; // First 6 hourly cards are free, rest premium
+  <!-- Always render hours-grid so aurora-sync.js can populate it at runtime -->
+  <div id="preview-content" class={!hasData ? 'hidden' : ''}>
+    <div class="hours-grid">
+      <div class="column-headers">
+        <div class="col-time">{i18n ? i18n.t('forecast_time', 'Time') : 'Time'}</div>
+        <div class="col-kp">Kp</div>
+        <div class="col-status">{i18n ? i18n.t('forecast_visibility', 'Visibility') : 'Visibility'}</div>
+      </div>
 
-          return (
-            <>
-              {showDayHeader && (
-                <div class={`day-header ${isPremiumOnly ? 'premium-only' : ''}`}>
-                  <span class="calendar-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                      <line x1="16" y1="2" x2="16" y2="6"></line>
-                      <line x1="8" y1="2" x2="8" y2="6"></line>
-                      <line x1="3" y1="10" x2="21" y2="10"></line>
-                    </svg>
-                  </span>
-                  <span>{currentDayLabel}</span>
+      {previewHours.map((hour, idx) => {
+        const currentDayLabel = getDayLabel(hour.time);
+        const showDayHeader = currentDayLabel !== lastDayLabel;
+        lastDayLabel = currentDayLabel;
+        const isBestHour = idx === bestHourIdx;
+        const statusClass = getStatusClass(hour.status);
+        const isPremiumOnly = idx >= 6; // First 6 hourly cards are free, rest premium
+
+        return (
+          <>
+            {showDayHeader && (
+              <div class={`day-header ${isPremiumOnly ? 'premium-only' : ''}`}>
+                <span class="calendar-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                </span>
+                <span>{currentDayLabel}</span>
+              </div>
+            )}
+            <div
+              class={`hour-card visible ${isPremiumOnly ? 'premium-only' : ''}`}
+              data-status={hour.status}
+              data-best-hour={isBestHour}
+            >
+              {isBestHour && (
+                <div class="best-time-badge">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  </svg>
+                  {i18n ? i18n.t('forecast_best_time', 'Best time') : 'Best time'}
                 </div>
               )}
-              <div
-                class={`hour-card visible ${isPremiumOnly ? 'premium-only' : ''}`}
-                data-status={hour.status}
-                data-best-hour={isBestHour}
-              >
-                {isBestHour && (
-                  <div class="best-time-badge">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                    </svg>
-                    {i18n ? i18n.t('forecast_best_time', 'Best time') : 'Best time'}
-                  </div>
-                )}
-                <div class="hour-card-time">{formatTime(hour.time, timezone)}</div>
-                <div class="hour-card-kp-large">{hour.kp.toFixed(1)}</div>
-                <div class={`hour-card-status ${statusClass}`}>{getStatusText(hour.status)}</div>
-              </div>
-            </>
-          );
-        })}
-      </div>
+              <div class="hour-card-time">{formatTime(hour.time, timezone)}</div>
+              <div class="hour-card-kp-large">{hour.kp.toFixed(1)}</div>
+              <div class={`hour-card-status ${statusClass}`}>{getStatusText(hour.status)}</div>
+            </div>
+          </>
+        );
+      })}
     </div>
-  )}
+  </div>
 
   <!-- A/B Test: App Download CTA (replacing Lemon Squeezy checkout) -->
   <AppDownloadCTA block="72h" citySlug={citySlug} i18n={i18n} />
@@ -245,6 +245,10 @@ let lastDayLabel = null;
 </div>
 
 <style>
+  .hidden {
+    display: none !important;
+  }
+
   .column-headers {
     /* Add specific margins as requested */
     margin-bottom: 12px;
