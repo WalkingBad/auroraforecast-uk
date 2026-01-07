@@ -24,7 +24,9 @@ const buildHref = (slug: string) => {
   return `/${slug}`;
 };
 
-const guidesHref = buildHref('guides');
+// Guides only exist for non-English languages
+const hasGuides = i18n && i18n.lang !== 'en';
+const guidesHref = hasGuides ? buildHref('guides') : null;
 const privacyHref = buildHref('privacy');
 const termsHref = buildHref('terms');
 const cookieHref = buildHref('cookie-policy');
@@ -33,8 +35,12 @@ const cookieHref = buildHref('cookie-policy');
 <footer class="footer-links">
   <div class="footer-links__container">
     <div class="footer-legal">
-      <a href={guidesHref} class="footer-link">{auroraGuides}</a>
-      <span class="footer-divider">·</span>
+      {hasGuides && (
+        <>
+          <a href={guidesHref} class="footer-link">{auroraGuides}</a>
+          <span class="footer-divider">·</span>
+        </>
+      )}
       <a href={privacyHref} class="footer-link">{privacyPolicy}</a>
       <span class="footer-divider">·</span>
       <a href={termsHref} class="footer-link">{termsOfService}</a>

@@ -30,7 +30,9 @@ const buildHref = (slug: string) => {
 
 const homeHref = i18n && i18n.lang !== 'en' ? `/${i18n.lang}` : '/';
 const regionsHref = `${homeHref}#locations`;
-const guidesHref = buildHref('guides');
+// Guides only exist for non-English languages
+const hasGuides = i18n && i18n.lang !== 'en';
+const guidesHref = hasGuides ? buildHref('guides') : null;
 ---
 
 <header class="site-header">
@@ -57,15 +59,17 @@ const guidesHref = buildHref('guides');
             {navRegions}
           </a>
         </li>
-        <li>
-          <a
-            href={guidesHref}
-            class={`nav-link ${isGuidesPage ? 'nav-link--active' : ''}`}
-            aria-current={isGuidesPage ? 'page' : undefined}
-          >
-            {navGuides}
-          </a>
-        </li>
+        {hasGuides && (
+          <li>
+            <a
+              href={guidesHref}
+              class={`nav-link ${isGuidesPage ? 'nav-link--active' : ''}`}
+              aria-current={isGuidesPage ? 'page' : undefined}
+            >
+              {navGuides}
+            </a>
+          </li>
+        )}
         <li class="nav-item--cta">
           <div class="app-download-menu">
             <span class="download-label">{downloadApp}</span>
