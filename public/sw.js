@@ -1,22 +1,23 @@
 // Aurora Forecast Service Worker
 // Provides offline caching and performance optimization
 
-const CACHE_NAME = 'aurora-forecast-v3';
-const STATIC_CACHE_NAME = 'aurora-static-v3';
-const DATA_CACHE_NAME = 'aurora-data-v4';
+const CACHE_NAME = 'aurora-forecast-v4';
+const STATIC_CACHE_NAME = 'aurora-static-v4';
+const DATA_CACHE_NAME = 'aurora-data-v5';
 
 // Files to cache immediately
 const STATIC_FILES = [
   '/scripts/location-selector.js',
-  '/manifest.json',
-  // Add other critical assets
+  '/scripts/cross-link-tracker.js',
+  '/scripts/aurora-sync.js',
+  '/utils/analytics-helper.js',
+  '/manifest.json'
 ];
 
-// API endpoints to cache
+// API endpoints to cache (only Cloud Functions - local proxies don't exist)
 const API_ENDPOINTS = [
   'https://europe-west1-aurorame-621f6.cloudfunctions.net/seoSnapshot',
-  'https://auroraforecast.uk/api/seoSnapshot',
-  'https://auroraforecast.uk/seoSnapshot'
+  'https://europe-west1-aurorame-621f6.cloudfunctions.net/allCitiesStatus'
 ];
 
 // Install event - cache static assets
