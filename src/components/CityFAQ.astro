@@ -116,6 +116,9 @@ const solarMaxText = new Date().getFullYear() >= 2024 && new Date().getFullYear(
   ? t('solar_max_active', 'We are currently near solar maximum (2024-2025), so expect higher-than-average activity.')
   : t('solar_max_normal', 'Actual frequency varies with the 11-year solar cycle.');
 
+// Regional data source reference
+const dataSourceText = t('data_source_uk', 'Data sourced from Met Office and UK Space Weather services.');
+
 const highLatText = Math.abs(magneticLatitude) > 60
   ? tpl(t('view_high_lat', "At {name}'s high latitude, aurora can fill the entire sky during strong activity."), { name })
   : tpl(t('view_low_lat', "From {name}, aurora typically remains closer to the horizon, so elevated viewing locations help."), { name });
@@ -187,6 +190,7 @@ const highLatText = Math.abs(magneticLatitude) > 60
         {t('aurora_probability', "aurora probability")} <strong>{probability}%</strong>.
         {t('check_forecast_above', "Check the live forecast above for the latest updates.")}
       </p>
+      <p class="data-source-note">{dataSourceText}</p>
     </div>
   </div>
 </section>
