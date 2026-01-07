@@ -121,7 +121,7 @@ const dateFormatter = new Intl.DateTimeFormat(dateLocale, {
 
       <section class="guides-index__grid">
         {guides.map((guide) => (
-          <a href={`/guides/${guide.slug}`} class="guide-card">
+          <a href={`${guidesHref}/${guide.slug}`} class="guide-card">
             <div class="guide-card__content">
               <span class="guide-card__category">{guide.category}</span>
               <h2 class="guide-card__title">

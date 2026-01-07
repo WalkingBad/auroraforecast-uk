@@ -15,7 +15,7 @@ interface CountryRedirectEntry {
   target: string;
 }
 
-const LEGACY_FALLBACK_PATH = '/guides/best-time-northern-lights';
+const LEGACY_FALLBACK_PATH = '/';
 
 const legacyCityRedirects: LegacyRedirectEntry[] = [];
 const legacyCountryRedirects: CountryRedirectEntry[] = [];

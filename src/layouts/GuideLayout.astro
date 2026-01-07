@@ -35,9 +35,14 @@ const {
   i18n
 } = Astro.props;
 
+// Extract language from URL path (e.g., /es/guides/... -> es)
+const pathParts = Astro.url.pathname.split('/').filter(Boolean);
+const lang = pathParts[0] || 'en';
+const guidesUrl = lang === 'en' ? '/guides' : `/${lang}/guides`;
+
 const breadcrumbs = [
   { name: i18n?.t('breadcrumb_home') || 'Home', url: '/' },
-  { name: i18n?.t('breadcrumb_guides') || 'Guides', url: '/guides' },
+  { name: i18n?.t('breadcrumb_guides') || 'Guides', url: guidesUrl },
   { name: title, url: Astro.url.pathname }
 ];
 ---
@@ -114,7 +119,7 @@ const breadcrumbs = [
 
       <!-- Related Guides -->
       {relatedGuides.length > 0 && (
-        <RelatedGuides guides={relatedGuides} />
+        <RelatedGuides guides={relatedGuides} basePath={guidesUrl} />
       )}
     </div>
   </article>

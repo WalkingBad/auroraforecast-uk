@@ -108,22 +108,22 @@ const relatedGuides = [
   <section class="guide__section">
     <h2 set:html={i18n.t('article_tonight_kp_h2')}></h2>
     <p set:html={i18n.tpl(i18n.t('article_tonight_kp_intro'), {
-      kpGuideLink: `<a href="/guides/kp-index-explained">${i18n.t('article_tonight_kp_intro_link_text')}</a>`
+      kpGuideLink: `<a href="/${lang}/guides/kp-index-explained">${i18n.t('article_tonight_kp_intro_link_text')}</a>`
     })}></p>
     <ul>
       <li set:html={i18n.tpl(i18n.t('article_tonight_kp_range1'), {
-        fairbanksLink: '<a href="/lerwick">Lerwick</a>',
-        reykjavikLink: '<a href="/kirkwall">Kirkwall</a>',
-        tromsoLink: '<a href="/inverness">Inverness</a>'
+        fairbanksLink: `<a href="/${lang}/lerwick">Lerwick</a>`,
+        reykjavikLink: `<a href="/${lang}/kirkwall">Kirkwall</a>`,
+        tromsoLink: `<a href="/${lang}/inverness">Inverness</a>`
       })}></li>
       <li set:html={i18n.tpl(i18n.t('article_tonight_kp_range2'), {
-        anchorageLink: '<a href="/inverness">Inverness</a>',
-        yellowknifeLink: '<a href="/belfast">Belfast</a>',
-        aberdeenLink: '<a href="/aberdeen">Aberdeen</a>'
+        anchorageLink: `<a href="/${lang}/inverness">Inverness</a>`,
+        yellowknifeLink: `<a href="/${lang}/belfast">Belfast</a>`,
+        aberdeenLink: `<a href="/${lang}/aberdeen">Aberdeen</a>`
       })}></li>
       <li set:html={i18n.tpl(i18n.t('article_tonight_kp_range3'), {
-        londonLink: '<a href="/london">London</a>',
-        newYorkLink: '<a href="/birmingham">Birmingham</a>'
+        londonLink: `<a href="/${lang}/london">London</a>`,
+        newYorkLink: `<a href="/${lang}/birmingham">Birmingham</a>`
       })}></li>
     </ul>
 
@@ -276,9 +276,9 @@ const relatedGuides = [
         androidLink: `<a href="${androidStoreUrl}">Android</a>`
       })}></li>
       <li set:html={i18n.tpl(i18n.t('article_tonight_check_method1_step2'), {
-        fairbanksLink: '<a href="/lerwick">Lerwick</a>',
-        tromsoLink: '<a href="/inverness">Inverness</a>',
-        reykjavikLink: '<a href="/kirkwall">Kirkwall</a>'
+        fairbanksLink: `<a href="/${lang}/lerwick">Lerwick</a>`,
+        tromsoLink: `<a href="/${lang}/inverness">Inverness</a>`,
+        reykjavikLink: `<a href="/${lang}/kirkwall">Kirkwall</a>`
       })}></li>
       <li set:html={i18n.t('article_tonight_check_method1_step3')}>
         <ul>
@@ -289,7 +289,7 @@ const relatedGuides = [
         </ul>
       </li>
       <li set:html={i18n.tpl(i18n.t('article_tonight_check_method1_step4'), {
-        alertsGuideLink: `<a href="/guides/aurora-alerts-setup">${i18n.t('article_tonight_check_method1_step4_link')}</a>`
+        alertsGuideLink: `<a href="/${lang}/guides/aurora-alerts-setup">${i18n.t('article_tonight_check_method1_step4_link')}</a>`
       })}></li>
     </ol>
 
@@ -303,7 +303,7 @@ const relatedGuides = [
       <li set:html={i18n.t('article_tonight_check_method2_step3')}></li>
       <li set:html={i18n.t('article_tonight_check_method2_step4')}></li>
       <li set:html={i18n.tpl(i18n.t('article_tonight_check_method2_step5'), {
-        trackerGuideLink: `<a href="/guides/aurora-forecast-tracker">${i18n.t('article_tonight_check_method2_step5_link')}</a>`
+        trackerGuideLink: `<a href="/${lang}/guides/aurora-forecast-tracker">${i18n.t('article_tonight_check_method2_step5_link')}</a>`
       })}></li>
     </ol>
 

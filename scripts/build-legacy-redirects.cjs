@@ -10,7 +10,7 @@ const firebaseConfigPath = path.resolve(__dirname, '../../firebase.json');
 
 const START_MARKER = '# >>> Legacy Slugs (auto-generated) >>>';
 const END_MARKER = '# <<< Legacy Slugs (auto-generated) <<<';
-const FALLBACK_PATH = '/guides/best-time-northern-lights';
+const FALLBACK_PATH = '/';
 
 const loadJson = (filePath) => {
   if (!fs.existsSync(filePath)) {

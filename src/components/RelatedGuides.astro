@@ -10,16 +10,17 @@ export interface RelatedGuide {
 
 export interface Props {
   guides: RelatedGuide[];
+  basePath?: string;
 }
 
-const { guides } = Astro.props;
+const { guides, basePath = '/guides' } = Astro.props;
 ---
 
 <aside class="related-guides">
   <h2 class="related-guides__title">Related Guides</h2>
   <div class="related-guides__grid">
     {guides.map((guide) => (
-      <a href={`/guides/${guide.slug}`} class="related-guide">
+      <a href={`${basePath}/${guide.slug}`} class="related-guide">
         <span class="related-guide__category">{guide.category}</span>
         <h3 class="related-guide__title">{guide.title}</h3>
         <span class="related-guide__reading-time">{guide.readingTime}</span>
