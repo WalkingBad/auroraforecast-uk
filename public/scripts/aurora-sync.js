@@ -349,15 +349,9 @@
   // ============================================================================
 
   const buildSeoSnapshotUrl = (lat, lon) => {
-    const endpoints = [
-      'https://auroraforecast.uk',
-      'https://europe-west1-aurorame-621f6.cloudfunctions.net'
-    ];
-
     const timestamp = Date.now();
-    return endpoints.map(base =>
-      `${base}/seoSnapshot?lat=${lat}&lon=${lon}&_t=${timestamp}`
-    );
+    // Use Cloud Functions directly (regional sites don't have /seoSnapshot endpoint)
+    return [`https://europe-west1-aurorame-621f6.cloudfunctions.net/seoSnapshot?lat=${lat}&lon=${lon}&_t=${timestamp}`];
   };
 
   const fetchCityDetails = async (lat, lon) => {
