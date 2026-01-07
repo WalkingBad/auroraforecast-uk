@@ -19,36 +19,29 @@ export interface CityData {
  * Targets 500K/month keywords: "northern lights tonight", "aurora forecast", "aurora tracker"
  */
 export function generateTrackerTitle(): string {
-  return "Live Aurora Map & Forecast Tracker - Northern Lights Tonight";
+  return "Live Aurora Map & Forecast Tracker - Northern Lights Tonight UK";
 }
 
 export function generateSEOTitle(city: CityData): string {
   const magneticLat = city.magneticLat || 50;
 
-  // High-latitude cities (MLAT > 55) - Most likely to see aurora
-  // Target: "northern lights tonight" (500K/month)
+  // High-latitude cities (MLAT > 55) - Most likely to see aurora (Scotland)
+  // Target: "northern lights tonight UK" searches
   if (magneticLat > 55) {
-    // For major cities, use more specific format
     if (isMajorCity(city.name)) {
-      return `Northern Lights Tonight in ${city.name} - Live Aurora Forecast`;
+      return `Northern Lights Tonight ${city.name} | Aurora Forecast UK`;
     }
-    // For smaller cities, include state/country for geo-targeting
-    const geoName = getGeoName(city);
-    return `Northern Lights Tonight ${geoName} - Aurora Forecast`;
+    return `Northern Lights ${city.name} Tonight | UK Aurora Forecast`;
   }
 
-  // Mid-latitude cities (MLAT 45-55) - Occasional aurora
-  // Target: "aurora tracker" and "aurora forecast" (500K/month each)
+  // Mid-latitude cities (MLAT 45-55) - England, Wales, N. Ireland
   else if (magneticLat > 45) {
-    const geoName = getGeoName(city);
-    return `Aurora Forecast ${geoName} - Northern Lights Tracker`;
+    return `${city.name} Aurora Forecast | Northern Lights UK`;
   }
 
-  // Low-latitude cities (MLAT < 45) - Rare aurora events
-  // Target: "aurora alerts" (50K/month) and long-tail "rare aurora" searches
+  // Low-latitude cities (MLAT < 45) - Southern England
   else {
-    // Emphasize rarity and alerts for these locations
-    return `${city.name} Aurora Forecast - Rare Northern Lights Alerts`;
+    return `${city.name} Northern Lights Alerts | Aurora UK`;
   }
 }
 
@@ -57,14 +50,13 @@ export function generateSEOTitle(city: CityData): string {
  */
 export function generateSEODescription(city: CityData): string {
   const magneticLat = city.magneticLat || 50;
-  const geoName = getGeoName(city);
 
   if (magneticLat > 55) {
-    return `Northern lights tonight forecast for ${geoName}. Real-time aurora tracker with KP index, cloud cover, and viewing conditions. Get aurora alerts when visibility is high. Free app with 72-hour predictions.`;
+    return `See northern lights tonight in ${city.name}? Live aurora tracker for Scotland and the UK with real-time Kp index, Met Office data, and local conditions. Get instant alerts. Best dark sky spots near ${city.name}.`;
   } else if (magneticLat > 45) {
-    return `Live aurora forecast and northern lights tracker for ${geoName}. Check tonight's aurora visibility, KP threshold, weather conditions. Free aurora alerts when northern lights are visible in your area.`;
+    return `Aurora forecast for ${city.name} - track northern lights across the United Kingdom. Live Kp index, cloud cover, moonrise times. Free alerts when aurora is visible. Download our UK aurora app.`;
   } else {
-    return `Rare northern lights alerts for ${geoName}. Track aurora borealis during geomagnetic storms. Real-time KP index, cloud forecast, and visibility predictions. Get notified when aurora reaches your latitude.`;
+    return `Northern lights alerts for ${city.name}. Rare aurora events tracked with Met Office data and Kp monitoring. Get notified during geomagnetic storms visible in southern England.`;
   }
 }
 
