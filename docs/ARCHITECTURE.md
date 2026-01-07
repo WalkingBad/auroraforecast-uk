@@ -8,8 +8,15 @@ Static SEO-optimized website for `auroraforecast.uk` built with Astro. The site 
 
 - **Framework**: Astro 4.x (static site generation with islands architecture)
 - **Hosting**: Firebase App Hosting (europe-west1)
-- **Analytics**: Google Analytics 4 + Yandex.Metrika
+- **Analytics**: Google Analytics 4 + Yandex.Metrika (ID: 106166738)
 - **API**: Cloud Functions (europe-west1-aurorame-621f6.cloudfunctions.net)
+
+## API Security
+
+Cloud Functions (`seoSnapshot`, `allCitiesStatus`) are protected:
+- **CORS**: Requests from whitelisted origins allowed automatically
+- **API Key**: Non-browser clients require `x-api-key` header
+- Secret stored in Firebase Secret Manager (`SEO_API_KEY`)
 
 ## Directory Structure
 

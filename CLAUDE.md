@@ -29,8 +29,17 @@
 
 - **Framework**: Astro 4.x (static site generation)
 - **Hosting**: Firebase App Hosting (europe-west1)
-- **Analytics**: Google Analytics 4 + Yandex.Metrika
+- **Analytics**: Google Analytics 4 + Yandex.Metrika (ID: 106166738)
 - **API**: Cloud Functions from aurorame (europe-west1)
+
+## API Security
+
+Cloud Functions are protected by origin-based authentication:
+- Browser requests from allowed domains (CORS) are automatically allowed
+- Direct API access requires `x-api-key` header with valid key
+- API key stored in Firebase Secret Manager (`SEO_API_KEY`)
+
+No changes needed in website code — browsers send `Origin` header automatically.
 
 ## Regional Differentiation
 
