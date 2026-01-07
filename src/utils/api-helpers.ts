@@ -20,46 +20,33 @@ export function isServerlessFunctionsHost(base: string): boolean {
 }
 
 /**
- * Builds SEO snapshot endpoints with fallbacks
+ * Builds SEO snapshot endpoints - Cloud Functions only (no local proxy)
  */
 export function buildSeoSnapshotEndpoints(lat: number, lon: number): string[] {
-  const configuredBase = import.meta.env.PUBLIC_API_BASE_URL;
-  const bases: Array<string> = [];
-
-  if (configuredBase && configuredBase.trim().length > 0) {
-    bases.push(stripTrailingSlashes(configuredBase.trim()));
-  }
-
-  const defaultWebsite = stripTrailingSlashes('https://auroraforecast.uk');
-  const defaultFunctions = stripTrailingSlashes('https://europe-west1-aurorame-621f6.cloudfunctions.net');
-
-  if (!bases.includes(defaultWebsite)) {
-    bases.push(defaultWebsite);
-  }
-  if (!bases.includes(defaultFunctions)) {
-    bases.push(defaultFunctions);
-  }
-
-  const endpoints = new Set<string>();
   const timestamp = Date.now();
 
-  for (const base of bases) {
-    if (!base) continue;
+  // Primary: Cloud Functions endpoint
+  const cloudFunctionsUrl = 'https://europe-west1-aurorame-621f6.cloudfunctions.net/seoSnapshot';
 
-    if (base.endsWith('/seoSnapshot')) {
-      endpoints.add(`${base}?lat=${lat}&lon=${lon}&_t=${timestamp}`);
-      continue;
-    }
+  // Optional: custom API base from env (for dev/staging)
+  const configuredBase = import.meta.env.PUBLIC_API_BASE_URL;
 
-    endpoints.add(`${base}/seoSnapshot?lat=${lat}&lon=${lon}&_t=${timestamp}`);
+  const endpoints: string[] = [];
 
-    const shouldAddApiPrefix = !base.endsWith('/api') && !isServerlessFunctionsHost(base);
-    if (shouldAddApiPrefix) {
-      endpoints.add(`${base}/api/seoSnapshot?lat=${lat}&lon=${lon}&_t=${timestamp}`);
+  // Add configured base first if it's a serverless host
+  if (configuredBase && configuredBase.trim().length > 0) {
+    const base = stripTrailingSlashes(configuredBase.trim());
+    if (isServerlessFunctionsHost(base)) {
+      endpoints.push(`${base}/seoSnapshot?lat=${lat}&lon=${lon}&_t=${timestamp}`);
     }
   }
 
-  return Array.from(endpoints);
+  // Always add Cloud Functions as primary/fallback
+  if (!endpoints.some(e => e.includes('cloudfunctions.net'))) {
+    endpoints.push(`${cloudFunctionsUrl}?lat=${lat}&lon=${lon}&_t=${timestamp}`);
+  }
+
+  return endpoints;
 }
 
 /**

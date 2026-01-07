@@ -85,37 +85,23 @@ function isServerlessFunctionsHost(base: string): boolean {
 }
 
 function buildStatusEndpointCandidates(): string[] {
+  const endpoints: string[] = [];
+
+  // Optional: custom API base from env (for dev/staging)
   const configuredBase = import.meta.env.PUBLIC_API_BASE_URL;
-  const bases: Array<string> = [];
-
   if (configuredBase && configuredBase.trim().length > 0) {
-    bases.push(stripTrailingSlashes(configuredBase.trim()));
-  }
-
-  const normalizedDefault = stripTrailingSlashes(DEFAULT_FUNCTIONS_BASE);
-  if (!bases.includes(normalizedDefault)) {
-    bases.push(normalizedDefault);
-  }
-
-  const candidates = new Set<string>();
-
-  for (const base of bases) {
-    if (!base) continue;
-
-    if (base.endsWith(`/${STATUS_ENDPOINT}`)) {
-      candidates.add(base);
-      continue;
-    }
-
-    candidates.add(`${base}/${STATUS_ENDPOINT}`);
-
-    const shouldAddApiPrefix = !base.endsWith('/api') && !isServerlessFunctionsHost(base);
-    if (shouldAddApiPrefix) {
-      candidates.add(`${base}/api/${STATUS_ENDPOINT}`);
+    const base = stripTrailingSlashes(configuredBase.trim());
+    if (isServerlessFunctionsHost(base)) {
+      endpoints.push(`${base}/${STATUS_ENDPOINT}`);
     }
   }
 
-  return Array.from(candidates);
+  // Always add Cloud Functions as primary/fallback
+  if (!endpoints.some(e => e.includes('cloudfunctions.net'))) {
+    endpoints.push(`${DEFAULT_FUNCTIONS_BASE}/${STATUS_ENDPOINT}`);
+  }
+
+  return endpoints;
 }
 
 async function loadStatusesFromAPI(): Promise<GlobalCityStatuses> {
