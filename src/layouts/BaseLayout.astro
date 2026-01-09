@@ -55,24 +55,42 @@ const hasGa = typeof gaId === 'string' && gaId.length > 0;
         window.gtag = window.gtag || gtag;
         window.gtag('js', new Date());
 
-        // Configure with platform identifier
+        // Determine site_id from hostname
+        var siteIdMap = {
+          'auroraforecast.me': 'main',
+          'www.auroraforecast.me': 'main',
+          'aurora-forecast-usa.com': 'usa',
+          'www.aurora-forecast-usa.com': 'usa',
+          'auroraforecast.uk': 'uk',
+          'www.auroraforecast.uk': 'uk'
+        };
+        var currentHost = window.location.hostname.toLowerCase();
+        var siteId = siteIdMap[currentHost] || 'other';
+
+        // Configure with platform identifier and site_id
         window.gtag('config', gaId, {
           custom_map: {
             'dimension1': 'platform_type',
             'dimension2': 'platform_source',
-            'dimension3': 'environment'
+            'dimension3': 'environment',
+            'dimension4': 'site_id'
           },
           platform_type: 'web',
           platform_source: 'website',
-          environment: 'production'
+          environment: 'production',
+          site_id: siteId
         });
 
         // Set default event parameters for all events
         window.gtag('set', {
           platform_type: 'web',
           platform_source: 'website',
-          environment: 'production'
+          environment: 'production',
+          site_id: siteId
         });
+
+        // Expose site_id globally for store-tracking.js
+        window.AURORA_SITE_ID = siteId;
       </script>
     </>
   )}
