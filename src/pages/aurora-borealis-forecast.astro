@@ -1,0 +1,287 @@
+---
+/**
+ * Aurora Borealis Forecast UK
+ * SEO landing page targeting "aurora borealis forecast" (500K/month)
+ * Also targets: "aurora borealis prediction", "aurora borealis weather forecast"
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import "../styles/pages/homepage-uk.css";
+import LiveForecastBar from "../components/LiveForecastBar.astro";
+import CitySearch from "../components/CitySearch.astro";
+import FAQ from "../components/FAQ.astro";
+import StoreBadges from "../components/StoreBadges.astro";
+import citiesData from "../data/site-cities";
+import { calculateKpThreshold, formatKpThreshold } from "../utils/kp-bands";
+
+const cityBySlug = new Map(citiesData.map((city) => [city.slug, city]));
+const topCitySlugs = ['lerwick', 'kirkwall', 'stornoway', 'inverness', 'aberdeen', 'edinburgh', 'glasgow', 'belfast'];
+const topCities = topCitySlugs
+  .map((slug) => cityBySlug.get(slug))
+  .filter(Boolean);
+
+const locationCount = citiesData.length;
+
+// Representative cities for Kp threshold table (static reference data, not forecast)
+const thresholdCities = [
+  { slug: 'lerwick', region: 'Shetland Islands', frequency: '20-30 nights/year' },
+  { slug: 'kirkwall', region: 'Orkney Islands', frequency: '15-25 nights/year' },
+  { slug: 'inverness', region: 'Scottish Highlands', frequency: '10-20 nights/year' },
+  { slug: 'edinburgh', region: 'Central Scotland', frequency: '5-15 nights/year' },
+  { slug: 'belfast', region: 'Northern Ireland', frequency: '5-10 nights/year' },
+  { slug: 'newcastle', region: 'Northern England', frequency: '3-8 nights/year' },
+  { slug: 'manchester', region: 'Central England', frequency: '1-3 nights/year' },
+  { slug: 'london', region: 'Southern England', frequency: 'Rare events only' },
+].map(item => {
+  const city = cityBySlug.get(item.slug);
+  const kp = city ? calculateKpThreshold(city.magneticLat) : 5;
+  return { ...item, kp: formatKpThreshold(kp), city };
+}).filter(item => item.city);
+
+// FAQ schema for "aurora borealis forecast" queries
+const faqItems = [
+  {
+    question: "What is the aurora borealis forecast for tonight in UK?",
+    answer: "Check our live aurora borealis forecast above showing current Kp index, cloud cover, and visibility predictions for all UK cities. The forecast updates every few minutes with NOAA space weather data."
+  },
+  {
+    question: "How accurate is the aurora borealis forecast?",
+    answer: "Our aurora borealis forecast combines NOAA solar wind data, Met Office cloud predictions, moon phase, and magnetic latitude calculations. Short-term predictions (0-3 hours) are 80-90% accurate; 27-day forecasts show solar rotation patterns with moderate reliability."
+  },
+  {
+    question: "What Kp index is needed to see aurora borealis in UK?",
+    answer: "Scotland (Shetland, Orkney, Highlands) needs Kp 3-4. Northern England and Northern Ireland need Kp 5-6. Southern England requires Kp 7+ for aurora borealis visibility. Higher Kp means brighter, more widespread displays."
+  },
+  {
+    question: "When is the best time to see aurora borealis in UK?",
+    answer: "The best aurora borealis viewing in UK is between 10 PM and 2 AM during winter months (September-March) when nights are longest. Check our forecast for tonight's optimal viewing window based on darkness and geomagnetic activity."
+  },
+  {
+    question: "How do I get aurora borealis alerts?",
+    answer: "Download our free Aurora Forecast app for instant push notifications when aurora borealis is likely visible at your location. Set your Kp threshold and receive alerts for clear sky opportunities."
+  }
+];
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqItems.map(item => ({
+    "@type": "Question",
+    "name": item.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": item.answer
+    }
+  }))
+};
+---
+
+<BaseLayout
+  title="Aurora Borealis Forecast UK Tonight | Live Prediction & Visibility Map"
+  description="Live aurora borealis forecast for UK tonight. Real-time visibility prediction with Kp index, cloud cover, and best viewing times. Free aurora borealis alerts for Scotland, England, Wales."
+  canonical="https://auroraforecast.uk/aurora-borealis-forecast"
+>
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+  <LiveForecastBar />
+
+  <main class="home-uk">
+    <!-- Hero Section -->
+    <section class="home-uk__intro">
+      <div class="container">
+        <h1 class="home-uk__title">Aurora Borealis Forecast UK Tonight</h1>
+        <p class="home-uk__subtitle">
+          Live aurora borealis visibility prediction for {locationCount} UK locations.
+          Real-time Kp index, cloud cover, and optimal viewing times updated every few minutes.
+        </p>
+      </div>
+    </section>
+
+    <!-- Search & Quick Access -->
+    <section class="home-uk__search-section">
+      <div class="container">
+        <div class="home-uk__section-heading">
+          <h2>Check Aurora Borealis Visibility Near You</h2>
+          <p>Enter your city or use location to see tonight's aurora borealis forecast.</p>
+        </div>
+
+        <div class="home-uk__planner-grid">
+          <article class="planner-card">
+            <h3>Find Your Local Forecast</h3>
+            <p>Search a UK city for detailed aurora borealis visibility prediction.</p>
+            <CitySearch id="aurora-city-search" compact={true} />
+            <div class="home-uk__quick-links">
+              {topCities.map((city) => (
+                <a class="city-chip" href={`/${city.slug}`}>
+                  {city.name}
+                </a>
+              ))}
+            </div>
+          </article>
+
+          <article class="planner-card">
+            <h3>Aurora Borealis Viewing Checklist</h3>
+            <ol class="home-uk__steps">
+              <li>Check Kp index reaches your location's threshold (see table below).</li>
+              <li>Cloud cover below 30% significantly improves visibility.</li>
+              <li>Wait for astronomical darkness (usually after 10 PM).</li>
+              <li>Find a dark location with clear northern horizon.</li>
+            </ol>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Kp Threshold Guide -->
+    <section class="home-uk__guide">
+      <div class="container">
+        <div class="home-uk__section-heading">
+          <h2>Aurora Borealis Visibility by UK Region</h2>
+          <p>Kp index threshold needed to see aurora borealis at each location.</p>
+        </div>
+
+        <div class="home-uk__threshold-table">
+          <table class="kp-table">
+            <thead>
+              <tr>
+                <th>Region</th>
+                <th>Kp Needed</th>
+                <th>Frequency</th>
+              </tr>
+            </thead>
+            <tbody>
+              {thresholdCities.map(item => (
+                <tr>
+                  <td><a href={`/${item.slug}`}>{item.region}</a></td>
+                  <td>Kp {item.kp}+</td>
+                  <td>{item.frequency}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- How Aurora Borealis Forecast Works -->
+    <section class="home-uk__methodology">
+      <div class="container">
+        <div class="home-uk__section-heading">
+          <h2>How Our Aurora Borealis Forecast Works</h2>
+          <p>We combine multiple data sources for accurate visibility prediction.</p>
+        </div>
+
+        <div class="home-uk__factors-grid">
+          <article class="factor-card">
+            <h3>Kp Index</h3>
+            <p>Real-time geomagnetic activity from NOAA. Higher Kp means stronger aurora borealis visible further south.</p>
+          </article>
+          <article class="factor-card">
+            <h3>Cloud Cover</h3>
+            <p>Met Office weather data showing cloud percentage. Clear skies essential for aurora borealis viewing.</p>
+          </article>
+          <article class="factor-card">
+            <h3>Moon Phase</h3>
+            <p>Moonlight affects visibility. New moon periods offer darkest skies for aurora borealis photography.</p>
+          </article>
+          <article class="factor-card">
+            <h3>Darkness Window</h3>
+            <p>Astronomical twilight times for your location. Aurora borealis visible only in full darkness.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="home-uk__faq">
+      <div class="container">
+        <div class="home-uk__section-heading">
+          <h2>Aurora Borealis Forecast FAQ</h2>
+        </div>
+        <FAQ items={faqItems} />
+      </div>
+    </section>
+
+    <!-- App CTA -->
+    <section class="home-uk__app-cta">
+      <div class="container">
+        <div class="home-uk__section-heading">
+          <h2>Get Aurora Borealis Alerts</h2>
+          <p>Free push notifications when aurora borealis is visible at your location.</p>
+        </div>
+        <StoreBadges />
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .home-uk__title {
+    font-size: clamp(1.75rem, 5vw, 2.5rem);
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .home-uk__subtitle {
+    text-align: center;
+    color: var(--text-secondary, #666);
+    max-width: 600px;
+    margin: 0 auto 2rem;
+  }
+
+  .home-uk__threshold-table {
+    overflow-x: auto;
+    margin: 1.5rem 0;
+  }
+
+  .kp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+
+  .kp-table th,
+  .kp-table td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color, #e5e5e5);
+  }
+
+  .kp-table th {
+    background: var(--bg-secondary, #f5f5f5);
+    font-weight: 600;
+  }
+
+  .kp-table a {
+    color: var(--link-color, #0066cc);
+    text-decoration: none;
+  }
+
+  .kp-table a:hover {
+    text-decoration: underline;
+  }
+
+  .home-uk__factors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .factor-card {
+    background: var(--bg-secondary, #f8f9fa);
+    padding: 1.25rem;
+    border-radius: 8px;
+  }
+
+  .factor-card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .factor-card p {
+    font-size: 0.9rem;
+    color: var(--text-secondary, #666);
+    margin: 0;
+  }
+</style>

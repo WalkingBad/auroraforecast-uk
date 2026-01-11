@@ -80,6 +80,12 @@ export async function GET() {
   // English-only pages (no [lang]/ versions)
   const englishOnlyPages = [];
 
+  // SEO landing pages (targeting high-volume keywords)
+  englishOnlyPages.push(
+    { url: 'aurora-borealis-forecast', priority: '0.9', changefreq: 'hourly' },
+    { url: 'aurora-visibility', priority: '0.9', changefreq: 'hourly' }
+  );
+
   // Country pages
   const countriesMap = new Map();
   citiesData.forEach(city => {

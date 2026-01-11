@@ -2,6 +2,21 @@
 # https://developers.cloudflare.com/pages/configuration/redirects/
 
 # ==========================================
+# SEO Keyword Redirects (500K/month keywords)
+# ==========================================
+
+# "aurora borealis map" (50K/month) -> tracker page
+/aurora-borealis-map            /aurora-tracker           301
+/aurora-map                     /aurora-tracker           301
+
+# "aurora borealis tonight" variants
+/aurora-borealis-tonight        /                         301
+/aurora-tonight                 /                         301
+
+# "northern lights forecast" -> aurora borealis forecast
+/northern-lights-forecast       /aurora-borealis-forecast 301
+
+# ==========================================
 # Legacy City Slugs (removed Sept 2025)
 # ==========================================
 
@@ -224,7 +239,7 @@
 
 # >>> Legacy Slugs (auto-generated) >>>
 # Source: scripts/build-legacy-redirects.cjs
-# Generated: 2026-01-07T19:55:08.205Z
+# Generated: 2026-01-11T18:26:09.140Z
 # Do not edit this block manually. Run `npm run sync` to regenerate.
 
 # <<< Legacy Slugs (auto-generated) <<<
