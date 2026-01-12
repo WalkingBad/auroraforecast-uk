@@ -29,7 +29,7 @@ const locationCount = citiesData.length;
 // Get current month for "tonight" context
 const currentMonth = new Date().toLocaleString('en-GB', { month: 'long' });
 
-// FAQ schema targeting visibility queries
+// FAQ schema targeting visibility queries - 12 questions for comprehensive coverage
 const faqItems = [
   {
     question: "Can I see aurora borealis tonight in UK?",
@@ -50,6 +50,34 @@ const faqItems = [
   {
     question: "What affects aurora borealis visibility?",
     answer: "Four factors determine visibility: (1) Kp index must reach your location's threshold, (2) Cloud cover below 30%, (3) No moonlight interference, (4) Full astronomical darkness. All factors shown in our forecast."
+  },
+  {
+    question: "How far south can aurora borealis be visible in UK?",
+    answer: "During extreme geomagnetic storms (Kp 8-9), aurora borealis can be visible as far south as Cornwall and Kent. The May 2024 storm was visible across all of UK. Such events occur 2-4 times per solar cycle maximum."
+  },
+  {
+    question: "Do I need special equipment to see aurora borealis?",
+    answer: "No special equipment needed - aurora borealis is visible to the naked eye. However, binoculars can enhance detail, and cameras capture colours better than human eyes. A red torch preserves night vision while checking your phone."
+  },
+  {
+    question: "Why can't I see aurora borealis when the forecast says it's active?",
+    answer: "Common reasons include: local cloud cover blocking the view, light pollution from nearby towns, looking in the wrong direction (aurora appears north), or the activity subsiding before reaching your location. Our app shows real-time updates."
+  },
+  {
+    question: "Can aurora borealis be visible during twilight?",
+    answer: "Aurora borealis requires full darkness for visibility. Astronomical twilight (sun 18° below horizon) offers the best conditions. Summer months in UK have limited darkness, making September-March the prime aurora season."
+  },
+  {
+    question: "What does aurora borealis look like to the naked eye?",
+    answer: "To the naked eye, aurora borealis often appears as a pale green or white glow on the northern horizon. Brighter displays show distinct curtains, arcs, and pillars. Cameras capture more vivid colours due to longer exposure times."
+  },
+  {
+    question: "How quickly does aurora borealis visibility change?",
+    answer: "Aurora visibility can change within minutes. A quiet sky can suddenly burst with activity, or a bright display can fade rapidly. Our app provides real-time alerts so you don't miss sudden visibility windows."
+  },
+  {
+    question: "Is aurora borealis visible through clouds?",
+    answer: "No, aurora borealis requires clear skies. Even thin high clouds significantly reduce visibility. Our forecast includes Met Office cloud cover predictions to help you find clear sky windows for aurora viewing."
   }
 ];
 

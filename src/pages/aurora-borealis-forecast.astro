@@ -37,7 +37,7 @@ const thresholdCities = [
   return { ...item, kp: formatKpThreshold(kp), city };
 }).filter(item => item.city);
 
-// FAQ schema for "aurora borealis forecast" queries
+// FAQ schema for "aurora borealis forecast" queries - 12 questions for comprehensive coverage
 const faqItems = [
   {
     question: "What is the aurora borealis forecast for tonight in UK?",
@@ -58,6 +58,34 @@ const faqItems = [
   {
     question: "How do I get aurora borealis alerts?",
     answer: "Download our free Aurora Forecast app for instant push notifications when aurora borealis is likely visible at your location. Set your Kp threshold and receive alerts for clear sky opportunities."
+  },
+  {
+    question: "What causes aurora borealis?",
+    answer: "Aurora borealis occurs when charged particles from the Sun collide with gases in Earth's atmosphere. These collisions release energy as colourful light displays. Solar flares and coronal mass ejections (CMEs) trigger stronger aurora activity."
+  },
+  {
+    question: "Can I photograph aurora borealis with my phone?",
+    answer: "Yes, modern smartphones can capture aurora borealis. Use Night Mode or Pro mode with 10-30 second exposure, ISO 800-3200, and a tripod. iPhones and Samsung Galaxy phones have dedicated night photography features that work well for aurora."
+  },
+  {
+    question: "How long does aurora borealis last?",
+    answer: "Aurora borealis displays can last from a few minutes to several hours. Individual curtains and arcs may pulse for 10-30 minutes. Major geomagnetic storms can produce aurora visible for the entire night from dusk to dawn."
+  },
+  {
+    question: "What colours can aurora borealis be?",
+    answer: "Aurora borealis most commonly appears green (oxygen at 100-300km altitude). Red aurora occurs at higher altitudes (300km+), while blue and purple come from nitrogen. Camera sensors often capture more colour than the naked eye."
+  },
+  {
+    question: "Is aurora borealis visible every night in UK?",
+    answer: "No, aurora borealis is not visible every night. Scotland sees aurora 15-30 nights per year during solar maximum. Northern England sees 5-10 displays annually. Solar Cycle 25 (2024-2026 peak) increases frequency significantly."
+  },
+  {
+    question: "What is the difference between Kp and G scale for aurora?",
+    answer: "Kp index (0-9) measures geomagnetic activity globally. G scale (G1-G5) indicates geomagnetic storm intensity. Kp 5 equals G1 (minor storm), Kp 7 equals G3 (strong storm). Both predict aurora visibility but Kp is more precise for forecasting."
+  },
+  {
+    question: "Does the Moon affect aurora borealis visibility?",
+    answer: "Yes, moonlight reduces aurora visibility by brightening the sky. New moon periods offer the darkest skies and best viewing conditions. A full moon can wash out fainter aurora displays, though bright Kp 6+ aurora remains visible."
   }
 ];
 
