@@ -502,7 +502,13 @@ const warnings = {
         '@context': 'https://schema.org',
         '@type': 'Place',
         name: `${name || 'Unknown'}, ${country || 'Unknown'}`,
-        geo: { '@type': 'GeoCoordinates', latitude: lat || 0, longitude: lon || 0 }
+        description: `Aurora borealis viewing location in ${name}, ${country}. ${description || ''}`,
+        url: `https://auroraforecast.uk/${cityData.slug}`,
+        geo: { '@type': 'GeoCoordinates', latitude: lat || 0, longitude: lon || 0 },
+        containedInPlace: {
+          '@type': 'Country',
+          name: country || 'United Kingdom'
+        }
       })}
     ></script>
 

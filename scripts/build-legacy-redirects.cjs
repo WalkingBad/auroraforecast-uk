@@ -60,7 +60,9 @@ const legacyCitiesPath = path.join(dataDir, 'cities-backup-old.json');
 const legacyCities = fs.existsSync(legacyCitiesPath)
   ? loadJson(legacyCitiesPath).filter(city => siteCountryCodes.has(city.countryCode))
   : [];
-const existingRedirectsContent = fs.readFileSync(redirectsPath, 'utf8');
+const existingRedirectsContent = fs.existsSync(redirectsPath)
+  ? fs.readFileSync(redirectsPath, 'utf8')
+  : '';
 
 const firstStartIndex = existingRedirectsContent.indexOf(START_MARKER);
 const lastEndIndex = existingRedirectsContent.lastIndexOf(END_MARKER);

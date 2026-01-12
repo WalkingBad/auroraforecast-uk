@@ -36,23 +36,21 @@ export function generateSEOTitle(city: CityData): string {
 
   // High-latitude cities (MLAT > 55) - Most likely to see aurora (Scotland)
   // Target: "aurora borealis tonight", "northern lights tonight" (50K each)
+  // Note: appendBrand() adds "| AuroraMe" suffix, so keep base title under 48 chars
   if (magneticLat > 55) {
-    if (isMajorCity(city.name)) {
-      return `Aurora Borealis Tonight ${city.name} | Northern Lights UK`;
-    }
-    return `Northern Lights ${city.name} Tonight | Aurora Borealis UK`;
+    return `Aurora Borealis Tonight in ${city.name}`;
   }
 
   // Mid-latitude cities (MLAT 45-55) - England, Wales, N. Ireland
   // Target: "aurora borealis forecast" (500K/month)
   else if (magneticLat > 45) {
-    return `${city.name} Aurora Borealis Forecast | Northern Lights UK`;
+    return `${city.name} Aurora Borealis Forecast`;
   }
 
   // Low-latitude cities (MLAT < 45) - Southern England
   // Target: "aurora borealis visibility" (5K, +9900% growth)
   else {
-    return `${city.name} Aurora Borealis Visibility | Northern Lights UK`;
+    return `Aurora Borealis Visibility ${city.name}`;
   }
 }
 

@@ -201,6 +201,29 @@ const faqSchema = {
       </div>
     </section>
 
+    <!-- Related Pages -->
+    <section class="home-uk__related">
+      <div class="container">
+        <div class="home-uk__section-heading">
+          <h2>Explore More Aurora Resources</h2>
+        </div>
+        <div class="related-grid">
+          <a href="/aurora-visibility" class="related-card">
+            <h3>Aurora Visibility Tonight</h3>
+            <p>Check if aurora borealis is visible at your location right now.</p>
+          </a>
+          <a href="/aurora-tracker" class="related-card">
+            <h3>Live Aurora Map</h3>
+            <p>Real-time aurora borealis tracker with Kp index and cloud cover.</p>
+          </a>
+          <a href="/" class="related-card">
+            <h3>UK Aurora Forecast</h3>
+            <p>Complete aurora borealis forecast for all UK locations.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
     <!-- App CTA -->
     <section class="home-uk__app-cta">
       <div class="container">
@@ -280,6 +303,40 @@ const faqSchema = {
   }
 
   .factor-card p {
+    font-size: 0.9rem;
+    color: var(--text-secondary, #666);
+    margin: 0;
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .related-card {
+    display: block;
+    padding: 1.25rem;
+    background: var(--bg-secondary, #f8f9fa);
+    border-radius: 8px;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .related-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  .related-card h3 {
+    font-size: 1.1rem;
+    margin: 0 0 0.5rem 0;
+    color: var(--link-color, #0066cc);
+  }
+
+  .related-card p {
     font-size: 0.9rem;
     color: var(--text-secondary, #666);
     margin: 0;
