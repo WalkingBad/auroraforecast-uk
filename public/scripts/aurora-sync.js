@@ -530,8 +530,24 @@
     const container = document.querySelector('.forecast-preview-container');
     if (!container || !data.h12 || !Array.isArray(data.h12)) return;
 
-    const grid = container.querySelector('.hours-grid');
-    if (!grid) return;
+    let grid = container.querySelector('.hours-grid');
+
+    // If grid doesn't exist (error state), create the structure
+    if (!grid) {
+      const errorEl = container.querySelector('#preview-error');
+      if (errorEl) errorEl.remove();
+
+      let content = container.querySelector('#preview-content');
+      if (!content) {
+        content = document.createElement('div');
+        content.id = 'preview-content';
+        container.appendChild(content);
+      }
+
+      grid = document.createElement('div');
+      grid.className = 'hours-grid';
+      content.appendChild(grid);
+    }
 
     // Show content, hide error (for SSR fallback case)
     const previewError = container.querySelector('#preview-error');
