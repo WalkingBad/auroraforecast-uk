@@ -85,10 +85,10 @@
 }
 
 .form-group input:focus {
-  outline: none;
   border-color: #34C97B;
   background: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 0 0 3px rgba(52, 201, 123, 0.2);
+  outline: 2px solid transparent;
+  box-shadow: 0 0 0 3px rgba(52, 201, 123, 0.3);
 }
 
 /* Submit Button */

@@ -36,9 +36,9 @@
   --aurora-border-light: rgba(255, 255, 255, 0.12);
   /* borderLight */
 
-  --aurora-primary: #5BC0EB;
+  --aurora-primary: #6BE7A0;
   /* primary */
-  --aurora-primary-strong: #3A9BD9;
+  --aurora-primary-strong: #34C97B;
   /* lowEnergyPleasantLight */
   --aurora-on-primary: #000000;
   /* onPrimary */
@@ -75,7 +75,7 @@
   --aurora-status-low-glow: rgba(255, 140, 0, 0.05);
   --aurora-status-high-glow-strong: rgba(107, 231, 160, 0.3);
 
-  --aurora-primary-hover: #6CC9EF;
+  --aurora-primary-hover: #7DEAAB;
   --aurora-status-high-strong: #44CD86;
   --aurora-status-medium-strong: #FFBE14;
   --aurora-status-low-strong: #FFA014;
@@ -131,9 +131,6 @@
   /* For state/region pages */
   --spacing: var(--aurora-spacing-l);
   /* 16px */
-
-  --aurora-font-display: "Space Grotesk", "Helvetica Neue", sans-serif;
-  --aurora-font-body: "Space Grotesk", "Helvetica Neue", sans-serif;
 }
 
 @supports (color: color-mix(in srgb, white 50%, black 50%)) {
@@ -151,6 +148,26 @@
   box-sizing: border-box;
 }
 
+/* Accessibility: visually hidden but screen reader accessible */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Accessibility: Focus visible for keyboard navigation */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--aurora-primary, #6BE7A0);
+  outline-offset: 2px;
+}
+
 html,
 body {
   overflow-x: hidden;
@@ -158,7 +175,7 @@ body {
 }
 
 body {
-  font-family: var(--aurora-font-body);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   line-height: 1.6;
   color: var(--aurora-text-primary);
   background: var(--aurora-bg-primary);
@@ -182,7 +199,6 @@ h3 {
   line-height: 1.2;
   margin-bottom: var(--aurora-spacing-l);
   color: var(--aurora-text-primary);
-  font-family: var(--aurora-font-display);
 }
 
 h1 {
@@ -289,7 +305,7 @@ footer {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
 .factors-grid-app .factor-app .factor-info-hint .factor-info-hint__btn:hover,
@@ -603,5 +619,21 @@ footer {
 
   .city-card {
     aspect-ratio: 1.2;
+  }
+}
+
+/* ==========================================================================
+   Reduced Motion
+   Honor user preference for reduced motion
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

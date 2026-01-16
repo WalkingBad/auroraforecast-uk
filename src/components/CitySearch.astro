@@ -3,7 +3,7 @@
  * City Search Component
  * Reusable search box for finding aurora viewing cities
  */
-import citiesData from '../data/site-cities';
+import citiesData from '../data/cities.json';
 import '../styles/components/city-search.css';
 import type { I18nPageHelper } from '../utils/i18n-page';
 
@@ -17,7 +17,7 @@ export interface Props {
 const { i18n, placeholder, id = 'city-search', compact = false } = Astro.props;
 
 const searchPlaceholder = placeholder
-  || (i18n ? i18n.t('live_bar_search_placeholder') : 'Search UK locations...');
+  || (i18n ? i18n.t('live_bar_search_placeholder') : 'Search cities...');
 
 // Pass city metadata to client-side for rendering (include lat/lon for geolocation)
 const cityMetadata = citiesData.map(city => ({
@@ -50,6 +50,7 @@ const resultsId = `${id}-results`;
     </svg>
   </button>
   <div class="search-wrapper">
+    <label for={inputId} class="visually-hidden">{searchPlaceholder}</label>
     <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
       <path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
     </svg>
@@ -59,8 +60,9 @@ const resultsId = `${id}-results`;
       id={inputId}
       class="search-input"
       autocomplete="off"
+      aria-label={searchPlaceholder}
     />
-    <div id={resultsId} class="search-results hidden"></div>
+    <div id={resultsId} class="search-results hidden" role="listbox" aria-label="Search results"></div>
   </div>
 </div>
 

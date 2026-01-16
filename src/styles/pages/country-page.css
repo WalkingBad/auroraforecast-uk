@@ -426,10 +426,10 @@
 }
 
 .state-search-input:focus {
-  outline: none;
   background: rgba(255, 255, 255, 0.1);
   border-color: #6BE7A0;
-  box-shadow: 0 0 0 2px rgba(107, 231, 160, 0.2);
+  outline: 2px solid transparent;
+  box-shadow: 0 0 0 2px rgba(107, 231, 160, 0.3);
 }
 
 .state-search-input::placeholder {

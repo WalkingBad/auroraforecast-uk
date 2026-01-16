@@ -25,19 +25,19 @@ export interface Props {
 
 const { selectedLocation } = Astro.props;
 
-// Popular UK aurora viewing locations
+// Popular aurora viewing locations
 const popularLocations = [
-  { name: 'Lerwick', country: 'Shetland', lat: 60.1550, lon: -1.1450 },
-  { name: 'Kirkwall', country: 'Orkney', lat: 58.9847, lon: -2.9587 },
-  { name: 'Inverness', country: 'Scotland', lat: 57.4778, lon: -4.2247 },
-  { name: 'Fort William', country: 'Scotland', lat: 56.8198, lon: -5.1052 },
-  { name: 'Aberdeen', country: 'Scotland', lat: 57.1497, lon: -2.0943 },
-  { name: 'Edinburgh', country: 'Scotland', lat: 55.9533, lon: -3.1883 },
-  { name: 'Belfast', country: 'Northern Ireland', lat: 54.5973, lon: -5.9301 },
-  { name: 'Newcastle', country: 'England', lat: 54.9783, lon: -1.6178 }
+  { name: 'Reykjavik', country: 'Iceland', lat: 64.1466, lon: -21.9426 },
+  { name: 'Tromsø', country: 'Norway', lat: 69.6492, lon: 18.9553 },
+  { name: 'Fairbanks', country: 'Alaska, USA', lat: 64.8378, lon: -147.7164 },
+  { name: 'Yellowknife', country: 'Canada', lat: 62.4540, lon: -114.3718 },
+  { name: 'Rovaniemi', country: 'Finland', lat: 66.5039, lon: 25.7294 },
+  { name: 'Abisko', country: 'Sweden', lat: 68.3553, lon: 18.8267 },
+  { name: 'Alta', country: 'Norway', lat: 69.9689, lon: 23.2717 },
+  { name: 'Murmansk', country: 'Russia', lat: 68.9792, lon: 33.0925 }
 ];
 
-const currentLocation = selectedLocation || popularLocations[0]; // Default to Lerwick
+const currentLocation = selectedLocation || popularLocations[0]; // Default to Reykjavik
 ---
 
 <div class="location-selector">
@@ -59,16 +59,18 @@ const currentLocation = selectedLocation || popularLocations[0]; // Default to L
   
   <div class="location-dropdown" id="locationDropdown" aria-hidden="true">
     <div class="dropdown-header">
-      <h4>Popular UK Aurora Locations</h4>
+      <h4>Popular Aurora Locations</h4>
       <button class="close-btn" id="closeDropdown" aria-label="Close">✕</button>
     </div>
     
     <div class="location-search">
-      <input 
-        type="text" 
-        placeholder="Search UK locations..." 
+      <label for="locationSearch" class="visually-hidden">Search locations</label>
+      <input
+        type="text"
+        placeholder="Search locations..."
         class="search-input"
         id="locationSearch"
+        aria-label="Search locations"
       />
     </div>
     

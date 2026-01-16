@@ -110,8 +110,7 @@
   color: #FFFFFF;
   font-size: 1.1rem;
   font-family: inherit;
-  transition: all 0.3s ease;
-  outline: none;
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
   backdrop-filter: blur(10px);
 }
 
@@ -122,7 +121,8 @@
 .search-input:focus {
   background: rgba(255, 255, 255, 0.1);
   border-color: #6BE7A0;
-  box-shadow: 0 0 0 1px #6BE7A0, 0 0 20px rgba(107, 231, 160, 0.2);
+  outline: 2px solid transparent;
+  box-shadow: 0 0 0 2px rgba(107, 231, 160, 0.4), 0 0 20px rgba(107, 231, 160, 0.2);
 }
 
 /* Search Results Dropdown */
@@ -241,7 +241,7 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   text-decoration: none;
-  transition: all 0.2s ease;
+  transition: background 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
   min-width: 140px;
   position: relative;
   overflow: hidden;
