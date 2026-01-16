@@ -1,10 +1,10 @@
 import citiesData from '../data/site-cities';
 import { normalizeStateSlug, getCountryISO, REGIONS } from '../utils/slug-normalizer.ts';
-import { getCitiesForLanguage } from '../config/language-targeting.ts';
+import { getCitiesForLanguage, SUPPORTED_LANGUAGES } from '../config/language-targeting.ts';
 import { getStateStaticEntries, stateSupportsLanguage } from '../utils/state-pages.ts';
 
-// Supported languages - must match language-targeting.json
-const LANGUAGES = ['en', 'ru', 'no', 'de', 'es', 'fr'];
+// Use languages from config (only generates URLs for actually supported languages)
+const LANGUAGES = SUPPORTED_LANGUAGES;
 
 export async function GET() {
   const baseUrl = 'https://auroraforecast.uk';
