@@ -81,9 +81,19 @@ export async function GET() {
   const englishOnlyPages = [];
 
   // SEO landing pages (targeting high-volume keywords)
+  // Note: aurora-visibility redirects to aurora-borealis-forecast (keyword cannibalization fix)
   englishOnlyPages.push(
     { url: 'aurora-borealis-forecast', priority: '0.9', changefreq: 'hourly' },
-    { url: 'aurora-visibility', priority: '0.9', changefreq: 'hourly' }
+    { url: 'northern-lights-near-me', priority: '0.8', changefreq: 'daily' },
+    { url: 'contact', priority: '0.4', changefreq: 'monthly' }
+  );
+
+  // Regional hub pages (for better internal linking and crawlability)
+  englishOnlyPages.push(
+    { url: 'region/scotland', priority: '0.8', changefreq: 'daily' },
+    { url: 'region/england', priority: '0.8', changefreq: 'daily' },
+    { url: 'region/wales', priority: '0.8', changefreq: 'daily' },
+    { url: 'region/northern-ireland', priority: '0.8', changefreq: 'daily' }
   );
 
   // Country pages

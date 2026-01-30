@@ -67,6 +67,11 @@
   transform: translateY(-1px);
 }
 
+.city-chip:focus-visible {
+  outline: 2px solid var(--aurora-primary);
+  outline-offset: 2px;
+}
+
 .home-uk__steps {
   margin: 0;
   padding-left: 1.2rem;
@@ -111,6 +116,37 @@
 
 .home-uk__jump-links a:hover {
   color: var(--aurora-primary-hover);
+}
+
+.home-uk__region-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--aurora-spacing-s);
+  margin-top: var(--aurora-spacing-m);
+}
+
+.home-uk__region-links a {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: var(--aurora-radius-chip);
+  background: var(--aurora-chip);
+  border: 1px solid var(--aurora-border-light);
+  color: var(--aurora-text-secondary);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: border-color var(--aurora-timing-fast) ease,
+    color var(--aurora-timing-fast) ease;
+}
+
+.home-uk__region-links a:hover {
+  border-color: var(--aurora-primary);
+  color: var(--aurora-primary);
+}
+
+.home-uk__region-links a:focus-visible {
+  outline: 2px solid var(--aurora-primary);
+  outline-offset: 2px;
 }
 
 .meta-chip {
@@ -265,6 +301,11 @@
 .az-link:hover {
   border-color: var(--aurora-primary);
   transform: translateY(-1px);
+}
+
+.az-link:focus-visible {
+  outline: 2px solid var(--aurora-primary);
+  outline-offset: 2px;
 }
 
 .az-link__name {

@@ -1,6 +1,7 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
+import DataSourceAttribution from '../components/DataSourceAttribution.astro';
 import '../styles/bundles/city-page.css';
 import '../styles/pages/city-page-inline.css';
 
@@ -78,6 +79,7 @@ const {
     <div class="container">
       <slot name="faq" />
       <slot name="travel-cta" />
+      <DataSourceAttribution variant="footer" />
     </div>
   </main>
 

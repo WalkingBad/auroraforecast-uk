@@ -31,46 +31,66 @@ export function generateTrackerTitle(): string {
   return "Live Aurora Borealis Map UK | Northern Lights Tracker Tonight";
 }
 
+/**
+ * Tier-based SEO title generation
+ * Uses 4 tiers based on Kp threshold for more unique, targeted titles
+ */
 export function generateSEOTitle(city: CityData): string {
   const magneticLat = city.magneticLat || 50;
+  const kpThreshold = calculateKpThreshold(magneticLat);
 
-  // High-latitude cities (MLAT > 55) - Most likely to see aurora (Scotland)
-  // Target: "aurora borealis tonight", "northern lights tonight" (50K each)
-  // Note: appendBrand() adds "| AuroraMe" suffix, so keep base title under 48 chars
-  if (magneticLat > 55) {
-    return `Aurora Borealis Tonight in ${city.name}`;
+  // Tier 1: Best locations (Kp 2-3 needed) - Shetland, Orkney, Outer Hebrides
+  // High-frequency aurora viewing, "see aurora tonight" intent
+  if (kpThreshold <= 3) {
+    return `See Aurora Tonight in ${city.name} | Peak Season`;
   }
 
-  // Mid-latitude cities (MLAT 45-55) - England, Wales, N. Ireland
-  // Target: "aurora borealis forecast" (500K/month)
-  else if (magneticLat > 45) {
-    return `${city.name} Aurora Borealis Forecast`;
+  // Tier 2: Good locations (Kp 4-5 needed) - Highlands, Aberdeen, N. Ireland
+  // Regular aurora opportunities, "check visibility" intent
+  if (kpThreshold <= 5) {
+    return `Aurora Forecast ${city.name} | Check Visibility Now`;
   }
 
-  // Low-latitude cities (MLAT < 45) - Southern England
-  // Target: "aurora borealis visibility" (5K, +9900% growth)
-  else {
-    return `Aurora Borealis Visibility ${city.name}`;
+  // Tier 3: Occasional locations (Kp 6 needed) - Edinburgh, Glasgow, Newcastle
+  // Storm-dependent viewing, "forecast" intent with threshold info
+  if (kpThreshold <= 6) {
+    return `Aurora Forecast ${city.name} | Kp ${kpThreshold}+ Required`;
   }
+
+  // Tier 4: Rare locations (Kp 7+ needed) - London, Birmingham, Bristol
+  // Event-driven viewing, "alerts" intent for rare events
+  return `See Aurora in ${city.name} | Rare Event Tracker`;
 }
 
 /**
  * Generate optimized meta description with high-value keywords
  * Targets: "aurora borealis visibility", "see aurora borealis tonight", "aurora prediction"
  */
+/**
+ * Tier-based SEO description generation
+ * More unique descriptions per tier for better CTR and indexing
+ */
 export function generateSEODescription(city: CityData): string {
   const magneticLat = city.magneticLat || 50;
+  const kpThreshold = calculateKpThreshold(magneticLat);
 
-  if (magneticLat > 55) {
-    // Target: "see aurora borealis tonight" (5K, +9900%), "aurora borealis visibility tonight"
-    return `See aurora borealis tonight in ${city.name}? Live visibility prediction with real-time Kp index and weather. Best time to view northern lights in Scotland. Free aurora alerts.`;
-  } else if (magneticLat > 45) {
-    // Target: "aurora borealis forecast" (500K), "aurora borealis prediction"
-    return `Aurora borealis forecast for ${city.name} with live visibility prediction. Track northern lights across UK with Kp index, cloud cover, moon phase. Free aurora borealis alerts.`;
-  } else {
-    // Target: "aurora borealis visibility" (5K, +9900% growth)
-    return `Aurora borealis visibility alerts for ${city.name}. Northern lights prediction with Met Office data. Get notified when aurora is visible in southern England.`;
+  // Tier 1: Best locations - emphasize frequent sightings
+  if (kpThreshold <= 3) {
+    return `Aurora borealis tonight in ${city.name}? Kp ${kpThreshold}+ brings frequent displays. Live forecast with cloud cover, best viewing hours, and free alerts. 15-30 nights per year visible here.`;
   }
+
+  // Tier 2: Good locations - emphasize regular opportunities
+  if (kpThreshold <= 5) {
+    return `${city.name} aurora forecast with live Kp index, weather, and visibility prediction. Northern lights visible when Kp reaches ${kpThreshold}+. Get free aurora alerts for clear sky nights.`;
+  }
+
+  // Tier 3: Occasional locations - emphasize monitoring
+  if (kpThreshold <= 6) {
+    return `Aurora forecast for ${city.name}: requires Kp ${kpThreshold}+ (geomagnetic storm). Track conditions with Met Office weather and NOAA data. Get alerts when northern lights reach your area.`;
+  }
+
+  // Tier 4: Rare locations - emphasize alerts for major events
+  return `Northern lights in ${city.name} during strong storms (Kp ${kpThreshold}+). Get instant alerts for rare aurora events. Last major display: May 2024. Track live geomagnetic activity.`;
 }
 
 /**
@@ -94,19 +114,30 @@ export function generateDynamicDescription(city: CityData, kp: number, clouds: n
  * Generate H1 optimized for featured snippets and voice search
  * Targets: "aurora borealis tonight", "aurora borealis visibility"
  */
+/**
+ * Tier-based H1 generation for better snippet targeting
+ */
 export function generateSEOH1(city: CityData): string {
   const magneticLat = city.magneticLat || 50;
+  const kpThreshold = calculateKpThreshold(magneticLat);
 
-  if (magneticLat > 55) {
-    // Target: "aurora borealis tonight {city}" (50K/month)
+  // Tier 1: Best - "tonight" intent
+  if (kpThreshold <= 3) {
     return `Aurora Borealis Tonight in ${city.name}`;
-  } else if (magneticLat > 45) {
-    // Target: "aurora borealis forecast" (500K/month)
-    return `Aurora Borealis Forecast for ${city.name}`;
-  } else {
-    // Target: "aurora borealis visibility" (+9900% growth)
-    return `Aurora Borealis Visibility in ${city.name}`;
   }
+
+  // Tier 2: Good - "forecast" intent
+  if (kpThreshold <= 5) {
+    return `Aurora Forecast for ${city.name}`;
+  }
+
+  // Tier 3: Occasional - "forecast" with location emphasis
+  if (kpThreshold <= 6) {
+    return `${city.name} Aurora Borealis Forecast`;
+  }
+
+  // Tier 4: Rare - "visibility" for rare event tracking
+  return `Northern Lights Visibility in ${city.name}`;
 }
 
 /**
