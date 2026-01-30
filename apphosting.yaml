@@ -43,7 +43,11 @@ env:
     availability:
       - BUILD
 
+# Note: SEO_API_KEY secret must be created and granted access:
+# firebase apphosting:secrets:set SEO_API_KEY --project auroraforecast-uk
+# firebase apphosting:secrets:grantaccess SEO_API_KEY --project auroraforecast-uk --backend auroraforecast-uk
   - variable: SEO_API_KEY
     secret: SEO_API_KEY
     availability:
       - BUILD
+      - RUNTIME
