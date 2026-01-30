@@ -115,12 +115,20 @@ async function loadStatusesFromAPI(): Promise<GlobalCityStatuses> {
     const attemptErrors: string[] = [];
     for (const url of candidateUrls) {
       try {
+        const headers: Record<string, string> = {
+          'Accept': 'application/json',
+          'User-Agent': 'AuroraMe-Web/1.0'
+        };
+
+        // Add API key for server-side (build-time) requests
+        const apiKey = import.meta.env.SEO_API_KEY;
+        if (apiKey) {
+          headers['x-api-key'] = apiKey;
+        }
+
         const response = await fetch(url, {
           method: 'GET',
-          headers: {
-            'Accept': 'application/json',
-            'User-Agent': 'AuroraMe-Web/1.0'
-          }
+          headers
         });
 
         if (!response.ok) {

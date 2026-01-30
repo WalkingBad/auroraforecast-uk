@@ -42,3 +42,8 @@ env:
     value: GB
     availability:
       - BUILD
+
+  - variable: SEO_API_KEY
+    secret: SEO_API_KEY
+    availability:
+      - BUILD
