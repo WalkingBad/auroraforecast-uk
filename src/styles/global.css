@@ -199,6 +199,7 @@ h3 {
   line-height: 1.2;
   margin-bottom: var(--aurora-spacing-l);
   color: var(--aurora-text-primary);
+  text-wrap: balance;
 }
 
 h1 {

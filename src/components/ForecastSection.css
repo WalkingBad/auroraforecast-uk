@@ -87,7 +87,7 @@
   font-weight: 500;
   color: var(--aurora-text-secondary);
   cursor: pointer;
-  transition: all var(--aurora-timing-fast);
+  transition: background var(--aurora-timing-fast), color var(--aurora-timing-fast), border-color var(--aurora-timing-fast);
   white-space: nowrap;
   text-align: center;
 }
@@ -95,6 +95,11 @@
 .forecast-tab:hover:not(.active) {
   background: rgba(255, 255, 255, 0.05);
   color: var(--aurora-text-primary);
+}
+
+.forecast-tab:focus-visible {
+  outline: 2px solid var(--aurora-primary);
+  outline-offset: 2px;
 }
 
 .forecast-tab.active {

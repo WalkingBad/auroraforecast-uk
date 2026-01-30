@@ -1,0 +1,333 @@
+---
+/**
+ * Regional Hub Pages
+ * SEO hub pages for UK regions to improve internal linking and indexing
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import '../../styles/pages/homepage-uk.css';
+import CitySearch from '../../components/CitySearch.astro';
+import StoreBadges from '../../components/StoreBadges.astro';
+import DataSourceAttribution from '../../components/DataSourceAttribution.astro';
+import citiesData from '../../data/site-cities';
+import { UK_REGIONS, REGIONAL_HUBS } from '../../data/uk-regions';
+import { calculateKpThreshold, formatKpThreshold } from '../../utils/kp-bands';
+
+export const prerender = true;
+
+export function getStaticPaths() {
+  return REGIONAL_HUBS.map(hub => ({
+    params: { region: hub.slug },
+    props: { hub }
+  }));
+}
+
+const { hub } = Astro.props;
+const cityBySlug = new Map(citiesData.map(city => [city.slug, city]));
+
+// Get all regions for this hub
+const hubRegions = UK_REGIONS.filter(r => hub.regions.includes(r.id));
+
+// Get all cities for this hub
+const hubCities: any[] = [];
+for (const region of hubRegions) {
+  for (const slug of region.cities) {
+    const city = cityBySlug.get(slug);
+    if (city) hubCities.push(city);
+  }
+}
+
+// Pre-process regions with cities data for template
+const regionsWithCities = hubRegions.map(region => {
+  const cities: any[] = [];
+  for (const slug of region.cities) {
+    const city = cityBySlug.get(slug);
+    if (city) {
+      const kpValue = calculateKpThreshold(city.magneticLat);
+      cities.push({
+        slug: city.slug,
+        name: city.name,
+        magneticLat: city.magneticLat,
+        kpLabel: formatKpThreshold(kpValue)
+      });
+    }
+  }
+  return {
+    id: region.id,
+    name: region.name,
+    tier: region.tier,
+    tierLabel: region.tierLabel,
+    summary: region.summary,
+    citiesData: cities
+  };
+});
+
+// Calculate stats
+const avgMagLat = hubCities.length > 0
+  ? hubCities.reduce((sum, c) => sum + (c.magneticLat || 0), 0) / hubCities.length
+  : 0;
+const kpValues = hubCities.map(c => calculateKpThreshold(c.magneticLat)).filter(v => Number.isFinite(v));
+const minKp = kpValues.length > 0 ? Math.min(...kpValues) : 5;
+const maxKp = kpValues.length > 0 ? Math.max(...kpValues) : 7;
+
+// Other hubs for cross-linking
+const otherHubs = REGIONAL_HUBS.filter(h => h.slug !== hub.slug);
+---
+
+<BaseLayout
+  title={`Aurora Forecast ${hub.name} Tonight | Northern Lights UK`}
+  description={hub.metaDescription}
+  canonical={`https://auroraforecast.uk/region/${hub.slug}`}
+>
+  <main class="home-uk">
+    <section class="home-uk__intro">
+      <div class="container">
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+          <ol>
+            <li><a href="/">Home</a></li>
+            <li><span aria-current="page">{hub.name}</span></li>
+          </ol>
+        </nav>
+
+        <h1>Aurora Forecast for {hub.name}</h1>
+        <p class="home-uk__subtitle">{hub.description}</p>
+
+        <div class="region-stats">
+          <div class="stat-chip">
+            <span class="stat-label">Locations</span>
+            <span class="stat-value">{hubCities.length}</span>
+          </div>
+          <div class="stat-chip">
+            <span class="stat-label">Kp Range</span>
+            <span class="stat-value">{formatKpThreshold(minKp)} - {formatKpThreshold(maxKp)}</span>
+          </div>
+          <div class="stat-chip">
+            <span class="stat-label">Avg MLAT</span>
+            <span class="stat-value">{avgMagLat.toFixed(1)}°</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="home-uk__search-section">
+      <div class="container">
+        <div class="home-uk__section-heading">
+          <h2>Find Your {hub.name} Location</h2>
+          <p>Search for a city or browse all {hubCities.length} locations below.</p>
+        </div>
+        <CitySearch id="region-city-search" compact={true} />
+      </div>
+    </section>
+
+    {regionsWithCities.map(region => (
+      <section class="home-uk__regions">
+        <div class="container">
+          <div class="home-uk__section-heading">
+            <h2>{region.name}</h2>
+            <p>{region.summary}</p>
+            <span class={`region-tier-badge region-tier-badge--${region.tier}`}>{region.tierLabel}</span>
+          </div>
+
+          <div class="az-grid">
+            {region.citiesData.map(city => (
+              <a class="az-link" href={`/${city.slug}`}>
+                <span class="az-link__name">{city.name}</span>
+                <span class="az-link__meta">Kp {city.kpLabel}+ • {city.magneticLat?.toFixed(1)}° MLAT</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+    ))}
+
+    <section class="home-uk__timing">
+      <div class="container">
+        <div class="home-uk__section-heading">
+          <h2>Best Time to See Aurora in {hub.name}</h2>
+        </div>
+
+        <div class="home-uk__timing-grid">
+          <article class="timing-card">
+            <h3>Peak Season</h3>
+            <p><strong>September - March</strong> offers the longest dark nights.</p>
+          </article>
+          <article class="timing-card">
+            <h3>Best Hours</h3>
+            <p><strong>10 PM - 2 AM</strong> local time typically offers the darkest skies.</p>
+          </article>
+          <article class="timing-card">
+            <h3>Viewing Tips</h3>
+            <p>Find a dark location with a clear northern horizon.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="home-uk__app-cta">
+      <div class="container">
+        <div class="home-uk__section-heading">
+          <h2>Get {hub.name} Aurora Alerts</h2>
+          <p>Free push notifications when northern lights are visible at your location.</p>
+        </div>
+        <StoreBadges />
+      </div>
+    </section>
+
+    <section class="home-uk__related">
+      <div class="container">
+        <div class="home-uk__section-heading">
+          <h2>Explore Other UK Regions</h2>
+        </div>
+        <div class="related-grid">
+          {otherHubs.map(otherHub => (
+            <a href={`/region/${otherHub.slug}`} class="related-card">
+              <h3>{otherHub.name}</h3>
+              <p>{otherHub.description.substring(0, 80)}...</p>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <div class="container">
+      <DataSourceAttribution variant="footer" />
+    </div>
+  </main>
+  <script src="/scripts/aurora-sync.js?v=3" defer></script>
+</BaseLayout>
+
+<style>
+  .breadcrumbs {
+    margin-bottom: var(--aurora-spacing-l);
+  }
+
+  .breadcrumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--aurora-spacing-s);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  .breadcrumbs li:not(:last-child)::after {
+    content: '›';
+    margin-left: var(--aurora-spacing-s);
+    color: var(--aurora-text-tertiary);
+  }
+
+  .breadcrumbs a {
+    color: var(--aurora-primary);
+    text-decoration: none;
+  }
+
+  .breadcrumbs a:hover {
+    text-decoration: underline;
+  }
+
+  .breadcrumbs span[aria-current] {
+    color: var(--aurora-text-secondary);
+  }
+
+  .region-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--aurora-spacing-m);
+    margin-top: var(--aurora-spacing-xl);
+  }
+
+  .stat-chip {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: var(--aurora-spacing-m) var(--aurora-spacing-l);
+    background: var(--aurora-surface);
+    border: 1px solid var(--aurora-border-light);
+    border-radius: var(--aurora-radius-m);
+  }
+
+  .stat-label {
+    font-size: 0.8rem;
+    color: var(--aurora-text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .stat-value {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--aurora-text-primary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .region-tier-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: var(--aurora-radius-s);
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-top: var(--aurora-spacing-s);
+  }
+
+  .region-tier-badge--best {
+    background: rgba(52, 201, 123, 0.15);
+    color: var(--aurora-success);
+    border: 1px solid rgba(52, 201, 123, 0.4);
+  }
+
+  .region-tier-badge--good {
+    background: rgba(91, 192, 235, 0.16);
+    color: var(--aurora-primary);
+    border: 1px solid rgba(91, 192, 235, 0.4);
+  }
+
+  .region-tier-badge--occasional {
+    background: rgba(255, 215, 0, 0.14);
+    color: var(--aurora-warning);
+    border: 1px solid rgba(255, 215, 0, 0.35);
+  }
+
+  .region-tier-badge--rare {
+    background: rgba(255, 71, 71, 0.14);
+    color: var(--aurora-danger);
+    border: 1px solid rgba(255, 71, 71, 0.35);
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--aurora-spacing-l);
+  }
+
+  .related-card {
+    display: block;
+    padding: var(--aurora-spacing-l);
+    background: var(--aurora-surface);
+    border: 1px solid var(--aurora-border-light);
+    border-radius: var(--aurora-radius-card);
+    text-decoration: none;
+    transition: transform var(--aurora-timing-fast) ease, border-color var(--aurora-timing-fast) ease;
+  }
+
+  .related-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--aurora-primary);
+  }
+
+  .related-card:focus-visible {
+    outline: 2px solid var(--aurora-primary);
+    outline-offset: 2px;
+  }
+
+  .related-card h3 {
+    color: var(--aurora-primary);
+    margin-bottom: var(--aurora-spacing-s);
+    font-size: 1.1rem;
+  }
+
+  .related-card p {
+    color: var(--aurora-text-secondary);
+    font-size: 0.9rem;
+    margin: 0;
+  }
+</style>

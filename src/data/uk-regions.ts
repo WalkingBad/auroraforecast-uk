@@ -1,3 +1,37 @@
+// Regional hubs for SEO landing pages
+export const REGIONAL_HUBS = [
+  {
+    slug: 'scotland',
+    name: 'Scotland',
+    description: 'Aurora forecast for Scotland with live visibility predictions for Shetland, Orkney, Highlands, and Central Belt.',
+    metaDescription: 'Aurora borealis forecast for Scotland tonight. Live northern lights visibility for 26 Scottish locations including Shetland, Orkney, Highlands. Free aurora alerts.',
+    regions: ['shetland', 'outer-hebrides', 'orkney', 'caithness', 'highlands', 'west-coast-isles', 'cairngorms', 'east-scotland', 'central-scotland']
+  },
+  {
+    slug: 'england',
+    name: 'England',
+    description: 'Aurora forecast for England covering Northern, Central and Southern regions with storm alerts.',
+    metaDescription: 'Aurora borealis forecast for England tonight. Northern lights visibility for Newcastle, Manchester, London and 20+ cities. Get alerts for strong geomagnetic storms.',
+    regions: ['northumberland-borders', 'yorkshire-humber', 'north-west', 'midlands', 'south-west-england', 'south-east-east']
+  },
+  {
+    slug: 'wales',
+    name: 'Wales',
+    description: 'Aurora forecast for Wales with visibility predictions for coastal and mountain viewpoints.',
+    metaDescription: 'Aurora borealis forecast for Wales tonight. Northern lights visibility for Cardiff, Swansea, Aberystwyth. Best viewing from dark sky reserves.',
+    regions: ['wales']
+  },
+  {
+    slug: 'northern-ireland',
+    name: 'Northern Ireland',
+    description: 'Aurora forecast for Northern Ireland with dark coastline and rural viewing locations.',
+    metaDescription: 'Aurora borealis forecast for Northern Ireland tonight. Northern lights visibility for Belfast, Derry, Portrush. Dark coastlines offer best chances.',
+    regions: ['northern-ireland']
+  }
+] as const;
+
+export type RegionalHub = typeof REGIONAL_HUBS[number];
+
 export const UK_REGIONS = [
   {
     id: 'shetland',

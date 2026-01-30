@@ -3,6 +3,7 @@ import FactorInfoHint from './FactorInfoHint.astro';
 import { DEFAULT_STATUS_COLORS, DEFAULT_STATUS_TEXTS, ALL_STATUSES } from '../data/status-defaults';
 import { toTitleCase } from '../utils/formatters';
 import { resolveVisibility } from '../utils/visibility';
+import { calculateKpThreshold } from '../utils/kp-bands';
 import webStrings from '../data/web-strings/en.json';
 
 interface Props {
@@ -12,6 +13,7 @@ interface Props {
   magneticLatitude: number;
   kpIndex: number;
   probability?: number;
+  cloudCoverage?: number;
   i18n?: any;
 }
 
@@ -22,29 +24,84 @@ const {
   magneticLatitude,
   kpIndex,
   probability,
+  cloudCoverage,
   i18n
 } = Astro.props;
 
 const statusColor = uiData.statusColors?.[statusLevel] || DEFAULT_STATUS_COLORS[statusLevel] || '#34C97B';
-const statusText = i18n 
+const statusText = i18n
   ? i18n.t(`status_${statusLevel}`, DEFAULT_STATUS_TEXTS[statusLevel])
   : (uiData.statusTexts?.[statusLevel] || DEFAULT_STATUS_TEXTS[statusLevel] || toTitleCase(statusLevel));
+
 const chanceValue = typeof probability === 'number' && !Number.isNaN(probability)
   ? Math.round(probability)
   : null;
-const chanceText = chanceValue !== null
-  ? (i18n
-      ? i18n.tpl(i18n.t('now_chance', 'Chance {value}%'), { value: chanceValue })
-      : `Chance ${chanceValue}%`)
-  : null;
 
+// Calculate Kp threshold for this location
+const kpThreshold = calculateKpThreshold(magneticLatitude);
+const isKpBelowThreshold = kpIndex < kpThreshold;
+
+// Get visibility description key
 const visibilityKey = resolveVisibility(magneticLatitude, kpIndex);
-const hasVisibilityText = visibilityKey !== 'aurora_visibility_not_visible';
-const visibilityText = i18n
-  ? i18n.t(visibilityKey, 'Aurora not visible.')
-  : (webStrings[visibilityKey] || webStrings['aurora_visibility_not_visible']);
+const hasVisibilityHint = visibilityKey !== 'aurora_visibility_not_visible';
 
-const hintText = i18n 
+// Get localized visibility text
+const getVisibilityText = (key: string) => {
+  if (i18n) return i18n.t(key, '');
+  return (webStrings as Record<string, string>)[key] || '';
+};
+const visibilityText = getVisibilityText(visibilityKey);
+
+// Check if overcast (clouds >= 80%)
+const isOvercast = typeof cloudCoverage === 'number' && cloudCoverage >= 80;
+
+// Determine which hint to show (priority system like Flutter app)
+// Priority 1: Warnings (Kp below threshold as warning when status is not very_low)
+// Priority 2: Visibility direction hint (when no warnings and status is visible)
+// Priority 3: Kp activity hint (when status is very_low but there's notable Kp activity)
+
+const isStatusLow = statusLevel === 'very_low' || statusLevel === 'none';
+const hasNotableKpActivity = kpIndex >= 3;
+
+// Determine hint type
+let hintType: 'warning' | 'visibility' | 'kp_hint' | null = null;
+let hintText = '';
+let hintIcon = '';
+let hintColorClass = '';
+
+if (isOvercast) {
+  // Priority 1a: Overcast warning
+  hintType = 'warning';
+  hintText = i18n ? i18n.t('weather_warning_overcast', 'Overcast - aurora hidden by clouds') : 'Overcast - aurora hidden by clouds';
+  hintIcon = 'cloud';
+  hintColorClass = 'hint-danger';
+} else if (isKpBelowThreshold && !isStatusLow) {
+  // Priority 1b: Kp below threshold warning (when aurora might be expected but Kp is low)
+  hintType = 'warning';
+  const kpActivity = kpIndex >= 6 ? 'Storm' : kpIndex >= 3 ? 'Good' : 'Low';
+  hintText = i18n
+    ? i18n.tpl(i18n.t('kp_below_threshold_hint', 'Kp {kp} {activity} - Need Kp {threshold}+'), { kp: kpIndex.toFixed(1), activity: kpActivity, threshold: Math.round(kpThreshold) })
+    : `Kp ${kpIndex.toFixed(1)} ${kpActivity} - Need Kp ${Math.round(kpThreshold)}+`;
+  hintIcon = 'bolt';
+  hintColorClass = 'hint-danger';
+} else if (!isStatusLow && hasVisibilityHint && visibilityText) {
+  // Priority 2: Visibility direction hint
+  hintType = 'visibility';
+  hintText = visibilityText;
+  hintIcon = 'eye';
+  hintColorClass = 'hint-blue';
+} else if (isStatusLow && hasNotableKpActivity && isKpBelowThreshold) {
+  // Priority 3: Kp activity hint when aurora unlikely
+  hintType = 'kp_hint';
+  const kpActivity = kpIndex >= 6 ? 'Storm' : kpIndex >= 3 ? 'Good' : 'Low';
+  hintText = i18n
+    ? i18n.tpl(i18n.t('kp_below_threshold_hint', 'Kp {kp} {activity} - Need Kp {threshold}+ for aurora here'), { kp: kpIndex.toFixed(1), activity: kpActivity, threshold: Math.round(kpThreshold) })
+    : `Kp ${kpIndex.toFixed(1)} ${kpActivity} - Need Kp ${Math.round(kpThreshold)}+ for aurora here`;
+  hintIcon = 'bolt';
+  hintColorClass = 'hint-status';
+}
+
+const hintTextForModal = i18n
   ? i18n.t('city_aurora_visibility_desc', 'Real-time aurora visibility status based on magnetic activity, weather conditions, moon phase and sky darkness.')
   : "Real-time aurora visibility status based on magnetic activity, weather conditions, moon phase and sky darkness.";
 
@@ -68,20 +125,135 @@ const visibilityTitle = i18n ? i18n.t('aurora_visibility_now', 'aurora visibilit
       <FactorInfoHint
         i18n={i18n}
         simple={true}
-        text={hintText}
+        text={hintTextForModal}
         statuses={statuses}
       />
     </div>
-    <div class="status-title-large" style={`color:${statusColor}`}>{statusText}</div>
-    {chanceText && statusLevel !== 'very_low' && statusLevel !== 'none' && (
-      <div class="status-chance">{chanceText}</div>
-    )}
+
     <div class="status-subtitle">{visibilityTitle}</div>
-    {statusLevel !== 'very_low' && statusLevel !== 'none' && hasVisibilityText && (
-      <div class="status-sub">
-        {visibilityText}
+    <div class="status-title-large" style={`color:${statusColor}`}>{statusText}</div>
+
+    {hintType && hintText && (
+      <div class={`condition-chip ${hintColorClass}`} style={hintType === 'kp_hint' ? `--chip-color:${statusColor}` : ''}>
+        {hintIcon === 'cloud' && (
+          <svg class="chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path>
+          </svg>
+        )}
+        {hintIcon === 'bolt' && (
+          <svg class="chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+        )}
+        {hintIcon === 'eye' && (
+          <svg class="chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        )}
+        <span class="chip-text">{hintText}</span>
       </div>
     )}
+
     <div id="aurora-warnings"></div>
   </div>
 </div>
+
+<style>
+  .status-card {
+    position: relative;
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--status-color) 12%, var(--aurora-surface)) 0%,
+      color-mix(in srgb, var(--status-color) 5%, var(--aurora-surface)) 100%
+    );
+    border: 1px solid color-mix(in srgb, var(--status-color) 35%, transparent);
+    border-radius: var(--aurora-radius-card);
+    padding: var(--aurora-spacing-xl);
+    min-height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--status-color) 20%, transparent);
+  }
+
+  .status-header {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+  }
+
+  .status-info-icon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    opacity: 0.5;
+  }
+
+  .status-subtitle {
+    font-size: 0.8rem;
+    color: var(--aurora-text-secondary);
+    text-transform: lowercase;
+    letter-spacing: 0.02em;
+    margin-bottom: var(--aurora-spacing-xs);
+  }
+
+  .status-title-large {
+    font-size: clamp(1.75rem, 6vw, 2.5rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: var(--aurora-spacing-s);
+  }
+
+  /* Condition chips */
+  .condition-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--aurora-spacing-xs);
+    padding: var(--aurora-spacing-xs) var(--aurora-spacing-m);
+    border-radius: var(--aurora-radius-chip);
+    font-size: 0.8rem;
+    margin-top: var(--aurora-spacing-xs);
+    max-width: 100%;
+  }
+
+  .condition-chip.hint-danger {
+    background: rgba(255, 71, 71, 0.1);
+    border: 1px solid rgba(255, 71, 71, 0.3);
+    color: var(--aurora-danger);
+  }
+
+  .condition-chip.hint-blue {
+    background: rgba(33, 150, 243, 0.1);
+    border: 1px solid rgba(33, 150, 243, 0.3);
+    color: var(--aurora-blue);
+  }
+
+  .condition-chip.hint-status {
+    background: color-mix(in srgb, var(--chip-color, var(--status-color)) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--chip-color, var(--status-color)) 30%, transparent);
+    color: var(--chip-color, var(--status-color));
+  }
+
+  .chip-icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+
+  .chip-text {
+    line-height: 1.3;
+    text-align: center;
+  }
+
+  /* Remove old styles */
+  .status-chance,
+  .status-sub {
+    display: none;
+  }
+</style>

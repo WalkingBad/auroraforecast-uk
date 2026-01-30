@@ -35,7 +35,7 @@ const hasGa = typeof gaId === 'string' && gaId.length > 0;
 ---
 
 <!DOCTYPE html>
-<html lang={lang}>
+<html lang={lang} style="color-scheme: dark;">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -106,7 +106,7 @@ const hasGa = typeof gaId === 'string' && gaId.length > 0;
 
     ym(106166738, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
   </script>
-  <noscript><div><img src="https://mc.yandex.ru/watch/106166738" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+  <noscript><div><img src="https://mc.yandex.ru/watch/106166738" style="position:absolute; left:-9999px;" alt="" width="1" height="1" /></div></noscript>
   <!-- /Yandex.Metrika counter -->
 
   <title>{title}</title>
@@ -141,7 +141,10 @@ const hasGa = typeof gaId === 'string' && gaId.length > 0;
   <link rel="icon" type="image/png" href="/icon-192.png" sizes="192x192">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="manifest" href="/manifest.json">
-  
+
+  <!-- Theme color for browser chrome -->
+  <meta name="theme-color" content="#0A0A0A">
+
   <!-- Open Graph -->
   <meta property="og:title" content={title}>
   <meta property="og:description" content={description}>
