@@ -73,35 +73,12 @@ export function getCityStatus(citySlug: string): MinimalCityStatus {
 /**
  * Load statuses from the optimized batch API
  */
-const DEFAULT_FUNCTIONS_BASE = 'https://europe-west1-aurorame-621f6.cloudfunctions.net';
+import { API_BASE } from '../config/api';
+
 const STATUS_ENDPOINT = 'allCitiesStatus';
 
-function stripTrailingSlashes(url: string): string {
-  return url.replace(/\/+$/, '');
-}
-
-function isServerlessFunctionsHost(base: string): boolean {
-  return /(cloudfunctions\.net|run\.app|localhost:5001|127\.0\.0\.1:5001)/i.test(base);
-}
-
 function buildStatusEndpointCandidates(): string[] {
-  const endpoints: string[] = [];
-
-  // Optional: custom API base from env (for dev/staging)
-  const configuredBase = import.meta.env.PUBLIC_API_BASE_URL;
-  if (configuredBase && configuredBase.trim().length > 0) {
-    const base = stripTrailingSlashes(configuredBase.trim());
-    if (isServerlessFunctionsHost(base)) {
-      endpoints.push(`${base}/${STATUS_ENDPOINT}`);
-    }
-  }
-
-  // Always add Cloud Functions as primary/fallback
-  if (!endpoints.some(e => e.includes('cloudfunctions.net'))) {
-    endpoints.push(`${DEFAULT_FUNCTIONS_BASE}/${STATUS_ENDPOINT}`);
-  }
-
-  return endpoints;
+  return [`${API_BASE}/${STATUS_ENDPOINT}`];
 }
 
 async function loadStatusesFromAPI(): Promise<GlobalCityStatuses> {

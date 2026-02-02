@@ -1,8 +1,9 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import '../../styles/components/checkout-success.css';
+import { API_BASE } from '../../config/api';
 
-const apiBase = import.meta.env.PUBLIC_API_BASE_URL || 'https://europe-west1-aurorame-621f6.cloudfunctions.net';
+const apiBase = API_BASE;
 ---
 
 <BaseLayout

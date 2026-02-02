@@ -25,7 +25,8 @@
     return;
   }
 
-  var snapshotPromise = fetch('https://europe-west1-aurorame-621f6.cloudfunctions.net/seoSnapshot?lat=' + location.lat + '&lon=' + location.lon)
+  var apiBase = window.AURORA_API_BASE || 'https://europe-west1-aurorame-621f6.cloudfunctions.net';
+  var snapshotPromise = fetch(apiBase + '/seoSnapshot?lat=' + location.lat + '&lon=' + location.lon)
     .then(function(r){ if(!r.ok) throw new Error('http '+r.status); return r.json(); });
 
   function hydrateThreeHour() {

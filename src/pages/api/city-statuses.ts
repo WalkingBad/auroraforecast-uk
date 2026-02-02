@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
+import { API_BASE } from '../../config/api';
 
-const STATUS_ENDPOINT = 'https://europe-west1-aurorame-621f6.cloudfunctions.net/allCitiesStatus';
+const STATUS_ENDPOINT = `${API_BASE}/allCitiesStatus`;
 
 export const GET: APIRoute = async () => {
   try {

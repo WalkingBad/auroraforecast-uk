@@ -1,6 +1,7 @@
 ---
 import './YearlyForecast.css';
 import AppDownloadCTA from './AppDownloadCTA.astro';
+import { AURORA_SUMMARY_API } from '../config/api';
 
 interface Props {
   lat: number;
@@ -225,8 +226,8 @@ const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov
   </div>
 </div>
 
-<script>
-  const AURORA_SUMMARY_API = 'https://httpaurorasummary-o4f4vlg27q-ew.a.run.app';
+<script define:vars={{ AURORA_SUMMARY_API }}>
+  // AURORA_SUMMARY_API is injected from server-side config
   const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
   let auroraSummaryData: any = null;

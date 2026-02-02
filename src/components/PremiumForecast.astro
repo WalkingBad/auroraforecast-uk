@@ -1,6 +1,7 @@
 ---
 import './PremiumForecast.css';
 import { DEFAULT_STATUS_COLORS, DEFAULT_STATUS_TEXTS } from '../data/status-defaults';
+import { API_BASE } from '../config/api';
 
 interface Props {
   lat: number;
@@ -10,7 +11,7 @@ interface Props {
 }
 
 const { lat, lon, statusTexts = DEFAULT_STATUS_TEXTS, i18n } = Astro.props;
-const apiBase = import.meta.env.PUBLIC_API_BASE_URL || 'https://europe-west1-aurorame-621f6.cloudfunctions.net';
+const apiBase = API_BASE;
 
 // Day labels for localization
 const dayLabels = {

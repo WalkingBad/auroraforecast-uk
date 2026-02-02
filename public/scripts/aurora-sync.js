@@ -11,8 +11,9 @@
 (() => {
   const CACHE_KEY = 'aurorame_city_statuses_v2'; // v2: 6-hour forecast (was 3-hour)
   const CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutes
-  // 🔥 FIX (2025-11-30): Use direct Cloud Function URL to avoid fetching stale static build artifacts
-  const STATUS_ENDPOINT = 'https://europe-west1-aurorame-621f6.cloudfunctions.net/allCitiesStatus';
+  // Use centralized API base from BaseLayout.astro (injected via define:vars)
+  const API_BASE = window.AURORA_API_BASE || 'https://europe-west1-aurorame-621f6.cloudfunctions.net';
+  const STATUS_ENDPOINT = `${API_BASE}/allCitiesStatus`;
   const LOG_PREFIX = '[AuroraMe][AuroraSync]';
   const OVERCAST_THRESHOLD = 85;
 
@@ -349,9 +350,10 @@
   // ============================================================================
 
   const buildSeoSnapshotUrl = (lat, lon) => {
+    // Use centralized API base from BaseLayout.astro
+    const primaryBase = window.AURORA_API_BASE || 'https://europe-west1-aurorame-621f6.cloudfunctions.net';
     const timestamp = Date.now();
-    // Use Cloud Functions directly (regional sites don't have /seoSnapshot endpoint)
-    return [`https://europe-west1-aurorame-621f6.cloudfunctions.net/seoSnapshot?lat=${lat}&lon=${lon}&_t=${timestamp}`];
+    return [`${primaryBase}/seoSnapshot?lat=${lat}&lon=${lon}&_t=${timestamp}`];
   };
 
   const fetchCityDetails = async (lat, lon) => {

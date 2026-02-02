@@ -4,6 +4,7 @@ import Header from '../components/Header.astro';
 import FooterLinks from '../components/FooterLinks.astro';
 import type { HreflangTag } from '../utils/hreflang';
 import type { I18nPageHelper } from '../utils/i18n-page';
+import { API_BASE, AURORA_SUMMARY_API } from '../config/api';
 
 export interface Props {
   title: string;
@@ -39,6 +40,11 @@ const hasGa = typeof gaId === 'string' && gaId.length > 0;
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- API Configuration (for runtime scripts) -->
+  <script define:vars={{ API_BASE, AURORA_SUMMARY_API }}>
+    window.AURORA_API_BASE = API_BASE;
+    window.AURORA_SUMMARY_API = AURORA_SUMMARY_API;
+  </script>
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://*.firebaseio.com https://*.googleapis.com https://www.googletagmanager.com https://fonts.gstatic.com https://fonts.googleapis.com https://mc.yandex.ru https://mc.yandex.com; connect-src 'self' https://*.googleapis.com https://*.google-analytics.com https://*.firebaseapp.com https://*.cloudfunctions.net https://*.a.run.app https://auroraforecast.uk https://mc.yandex.ru https://mc.yandex.com wss://mc.yandex.ru wss://mc.yandex.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; frame-src 'self' https://www.google.com https://*.google.com; media-src 'self' data: https:;">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
