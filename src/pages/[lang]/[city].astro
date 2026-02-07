@@ -447,47 +447,23 @@ const warnings = {
       })}
     ></script>
 
-    <!-- Event schema for aurora viewing tonight -->
+    <!-- TouristAttraction schema (stable, no stale build-time data) -->
     <script
       type="application/ld+json"
       set:html={JSON.stringify({
         '@context': 'https://schema.org',
-        '@type': 'Event',
-        name: `Aurora Forecast Tonight in ${name}`,
-        description: `Northern lights viewing opportunity in ${name}, ${translatedCountry}. Current probability: ${probability}%. KP index: ${kpIndex ?? 'N/A'}.`,
+        '@type': 'TouristAttraction',
+        name: `Aurora Borealis Viewing in ${name}`,
+        description: `Northern lights forecast and viewing conditions for ${name}, ${translatedCountry}. Track aurora visibility with real-time KP index, cloud cover and weather data.`,
         image: `https://auroraforecast.uk/og/${slug}.png`,
-        startDate: new Date().toISOString().split('T')[0] + 'T21:00:00',
-        endDate: new Date(Date.now() + 86400000).toISOString().split('T')[0] + 'T05:00:00',
-        eventStatus: 'https://schema.org/EventScheduled',
-        eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
-        location: {
-          '@type': 'Place',
-          name: `${name}, ${translatedCountry}`,
-          address: {
-            '@type': 'PostalAddress',
-            addressLocality: name,
-            addressCountry: translatedCountry
-          },
-          geo: { '@type': 'GeoCoordinates', latitude: lat || 0, longitude: lon || 0 }
-        },
-        performer: {
-          '@type': 'Thing',
-          name: 'Aurora Borealis',
-          alternateName: 'Northern Lights',
-          description: 'Natural light display in Earth\'s sky'
-        },
-        organizer: {
-          '@type': 'Organization',
-          name: 'AuroraMe',
-          url: 'https://auroraforecast.uk'
-        },
-        offers: {
-          '@type': 'Offer',
-          price: '0',
-          priceCurrency: 'USD',
-          availability: 'https://schema.org/InStock',
-          url: `https://auroraforecast.uk/${lang}/${slug}`,
-          validFrom: new Date().toISOString().split('T')[0]
+        url: `https://auroraforecast.uk/${lang}/${slug}`,
+        touristType: 'Aurora Hunters',
+        isAccessibleForFree: true,
+        geo: { '@type': 'GeoCoordinates', latitude: lat || 0, longitude: lon || 0 },
+        address: {
+          '@type': 'PostalAddress',
+          addressLocality: name,
+          addressCountry: translatedCountry
         }
       })}
     ></script>

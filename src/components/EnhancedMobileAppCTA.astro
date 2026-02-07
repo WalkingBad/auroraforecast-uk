@@ -44,14 +44,14 @@ const {
 } = Astro.props;
 
 // New title and subtitle with proper fallbacks
-const title = i18n?.t('app_title', 'AuroraMe app') || 'AuroraMe app';
+const title = i18n?.t('app_title', 'Get Alerted Before Aurora Appears') || 'Get Alerted Before Aurora Appears';
 const subtitle = (() => {
-  if (!i18n) return 'See the full aurora-forecast';
+  if (!i18n) return 'Push alerts 20–90 min before northern lights. 72h forecast, cloud cover, 11 years of historical data.';
   if (cityName) {
-    const template = i18n.t('app_subtitle_city', 'See the full aurora-forecast in {city}');
+    const template = i18n.t('app_subtitle_city', 'Push alerts before northern lights appear in {city}. 72h forecast, cloud cover & historical data.');
     return i18n.tpl(template, { city: cityName });
   }
-  return i18n.t('app_subtitle', 'See the full aurora-forecast');
+  return i18n.t('app_subtitle', 'Push alerts 20–90 min before northern lights. 72h forecast, cloud cover, 11 years of historical data.');
 })();
 ---
 

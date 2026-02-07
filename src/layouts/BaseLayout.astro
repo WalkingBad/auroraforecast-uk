@@ -3,6 +3,7 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import FooterLinks from '../components/FooterLinks.astro';
 import type { HreflangTag } from '../utils/hreflang';
+import { generateCrossDomainHreflangTags } from '../utils/hreflang';
 import type { I18nPageHelper } from '../utils/i18n-page';
 import { API_BASE, AURORA_SUMMARY_API } from '../config/api';
 
@@ -16,6 +17,7 @@ export interface Props {
   lon?: number;
   lang?: string;
   hreflangTags?: HreflangTag[];
+  pagePath?: string;
   i18n?: I18nPageHelper;
 }
 
@@ -29,8 +31,11 @@ const {
   lon,
   lang = 'en',
   hreflangTags = [],
+  pagePath = '',
   i18n
 } = Astro.props;
+
+const crossDomainTags = generateCrossDomainHreflangTags(pagePath);
 const gaId = import.meta.env.PUBLIC_GA_TRACKING_ID;
 const hasGa = typeof gaId === 'string' && gaId.length > 0;
 ---
@@ -45,7 +50,7 @@ const hasGa = typeof gaId === 'string' && gaId.length > 0;
     window.AURORA_API_BASE = API_BASE;
     window.AURORA_SUMMARY_API = AURORA_SUMMARY_API;
   </script>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://*.firebaseio.com https://*.googleapis.com https://www.googletagmanager.com https://fonts.gstatic.com https://fonts.googleapis.com https://mc.yandex.ru https://mc.yandex.com; connect-src 'self' https://*.googleapis.com https://*.google-analytics.com https://*.firebaseapp.com https://*.cloudfunctions.net https://*.a.run.app https://auroraforecast.uk https://mc.yandex.ru https://mc.yandex.com wss://mc.yandex.ru wss://mc.yandex.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; frame-src 'self' https://www.google.com https://*.google.com; media-src 'self' data: https:;">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://*.firebaseio.com https://*.googleapis.com https://www.googletagmanager.com https://fonts.gstatic.com https://fonts.googleapis.com; connect-src 'self' https://*.googleapis.com https://*.google-analytics.com https://*.firebaseapp.com https://*.cloudfunctions.net https://*.a.run.app https://auroraforecast.uk; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; frame-src 'self' https://www.google.com https://*.google.com; media-src 'self' data: https:;">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -101,19 +106,7 @@ const hasGa = typeof gaId === 'string' && gaId.length > 0;
     </>
   )}
 
-  <!-- Yandex.Metrika counter -->
-  <script is:inline>
-    (function(m,e,t,r,i,k,a){
-      m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-      m[i].l=1*new Date();
-      for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-      k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
-    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=106166738', 'ym');
-
-    ym(106166738, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
-  </script>
-  <noscript><div><img src="https://mc.yandex.ru/watch/106166738" style="position:absolute; left:-9999px;" alt="" width="1" height="1" /></div></noscript>
-  <!-- /Yandex.Metrika counter -->
+  <!-- Yandex.Metrika removed: not needed for UK market -->
 
   <title>{title}</title>
   <meta name="description" content={description}>
@@ -138,6 +131,10 @@ const hasGa = typeof gaId === 'string' && gaId.length > 0;
       <link rel="alternate" hreflang="x-default" href={canonical}>
     </>
   )}
+  <!-- Cross-domain hreflang: main ↔ USA ↔ UK -->
+  {crossDomainTags.map(tag => (
+    <link rel="alternate" hreflang={tag.hreflang} href={tag.href} />
+  ))}
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="/favicon.png">

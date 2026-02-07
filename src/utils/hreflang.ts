@@ -126,6 +126,23 @@ export function generateHomepageHreflangTags(
 }
 
 /**
+ * Generate cross-domain hreflang tags linking all 3 AuroraMe sites.
+ */
+export function generateCrossDomainHreflangTags(
+  pagePath: string = ''
+): HreflangTag[] {
+  const cleanPath = pagePath.startsWith('/') ? pagePath.slice(1) : pagePath;
+  const suffix = cleanPath ? `/${cleanPath}` : '';
+
+  return [
+    { hreflang: 'en', href: `https://auroraforecast.me${suffix}` },
+    { hreflang: 'en-US', href: `https://aurora-forecast-usa.com${suffix}` },
+    { hreflang: 'en-GB', href: `https://auroraforecast.uk${suffix}` },
+    { hreflang: 'x-default', href: `https://auroraforecast.me${suffix}` }
+  ];
+}
+
+/**
  * Convert hreflang tags to HTML string for embedding
  *
  * @param tags - Array of hreflang tag objects

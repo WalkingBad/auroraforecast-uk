@@ -12,6 +12,7 @@ interface Props {
   keywords?: string;
   lang?: string;
   hreflangTags?: any[];
+  pagePath?: string;
   i18n?: any;
   cityData: any;
   breadcrumbs: any[];
@@ -26,6 +27,7 @@ const {
   keywords,
   lang = 'en',
   hreflangTags,
+  pagePath,
   i18n,
   cityData,
   breadcrumbs,
@@ -41,6 +43,7 @@ const {
   keywords={keywords}
   lang={lang}
   hreflangTags={hreflangTags}
+  pagePath={pagePath || cityData.slug}
   i18n={i18n}
   city={cityData.name}
   lat={cityData.lat}

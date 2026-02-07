@@ -790,7 +790,7 @@
       await loadAllCityStatuses(forceRefresh);
 
       // Then load detailed seoSnapshot data
-      setTimeout(() => applyCityDetails(lat, lon), 500);
+      applyCityDetails(lat, lon);
     }
     // Other pages: load all city statuses
     else if (hasLiveBar || hasCityCards || statusCard) {
