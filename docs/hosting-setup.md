@@ -2,7 +2,7 @@
 
 ## 1. Firebase App Hosting
 - Подключить репозиторий `WalkingBad/auroraforecast-uk`.
-- Регион: `europe-west4`.
+- Регион: `europe-west1`.
 - Сборка: `npm run build` (использует `prebuild` и `npm run sync`).
 - Запуск: `npm run start` (Astro preview).
 - Переменные окружения берутся из `apphosting.yaml`.

@@ -669,7 +669,7 @@ import heroBackground from '../../assets/main-background.webp';
 ### Performance Tests
 - [ ] Build time doesn't increase significantly
 - [ ] Client-side search performs well with 970 cities
-- [ ] No runtime API calls
+- [ ] Runtime API calls work correctly (`allCitiesStatus` + `seoSnapshot`)
 - [ ] Page loads quickly
 
 ### Mobile Tests
@@ -691,7 +691,7 @@ import heroBackground from '../../assets/main-background.webp';
 
 ### Risk: Build Time Increase
 **Impact:** Slower deployments
-**Mitigation:** All processing at build time (no runtime cost), single API call cached
+**Mitigation:** Runtime endpoints are cached (`allCitiesStatus` + `seoSnapshot`), with graceful fallback UI on failures
 
 ### Risk: Code Duplication
 **Impact:** Maintenance burden
