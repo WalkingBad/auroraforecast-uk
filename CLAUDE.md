@@ -1,101 +1,30 @@
-# CLAUDE.md
+# Aurora Forecast UK — CLAUDE.md
 
-**Last updated:** 2025-01-07
+Regional SEO site for UK market. Astro 4.x static site on Firebase App Hosting (europe-west1).
 
-## Overview
+Part of AuroraMe multi-site: auroraforecast.me (global), aurora-forecast-usa.com (US), **auroraforecast.uk** (UK).
 
-**Aurora Forecast UK** — Regional SEO landing site for the UK market. Part of the AuroraMe multi-site architecture.
+## Regional Rules
 
-| Site | Domain | Target Market |
-|------|--------|---------------|
-| Main | auroraforecast.me | Global |
-| USA | aurora-forecast-usa.com | United States |
-| **UK (this)** | auroraforecast.uk | United Kingdom |
-
-## Repositories
-
-**This Repo**: `/Volumes/SSD/Repos/auroraforecast-uk` — Astro static site for UK market
-
-**Related Projects**:
-- `/Volumes/SSD/Repos/aurorame` — Flutter mobile app + Firebase Cloud Functions
-- `/Volumes/SSD/Repos/aurora-forecast-usa` — USA regional site (sister project)
-
-## Documentation
-
-- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — Technical architecture
-- [docs/hosting-setup.md](docs/hosting-setup.md) — Firebase App Hosting configuration
-
-## Tech Stack
-
-- **Framework**: Astro 4.x (static site generation)
-- **Hosting**: Firebase App Hosting (europe-west1)
-- **Analytics**: Google Analytics 4 + Yandex.Metrika (ID: 106166738)
-- **API**: Cloud Functions from aurorame (europe-west1)
-
-## API Security
-
-Cloud Functions are protected by origin-based authentication:
-- Browser requests from allowed domains (CORS) are automatically allowed
-- Direct API access requires `x-api-key` header with valid key
-- API key stored in Firebase Secret Manager (`SEO_API_KEY`)
-
-No changes needed in website code — browsers send `Origin` header automatically.
-
-## Regional Differentiation
-
-### UK-specific content
-- Data source references: **Met Office** (UK weather), NOAA (aurora)
-- Geographic focus: UK cities and regions only
-- Time zones: GMT/BST
-- SEO titles: Suffix with "UK" or "United Kingdom"
+- Data sources: Met Office for weather, NOAA for aurora (not US-only terminology)
+- Geographic scope: UK cities and regions only, GMT/BST
 - Terminology: "Northern Lights" preferred, British English
+- Guides live only on main site — no duplicate content
+- Unique meta descriptions via `seo-titles.ts`
 
-### Shared with main site (auroraforecast.me)
-- Cloud Functions API (CORS configured for all domains)
-- City database structure
-- Core component architecture
-- Analytics integration
+## Architecture
 
-## Critical Rules
-
-### Content Uniqueness
-1. **No duplicate guides** — Guides live only on main site (auroraforecast.me)
-2. **Regional data sources** — Reference Met Office for weather, NOAA for aurora
-3. **Geographic filtering** — Only UK cities in search/lists
-4. **Unique meta descriptions** — Regional variations in seo-titles.ts
-
-### Architecture
-1. **Sync from main site** — Use `npm run sync` to pull shared data
-2. **Regional overrides** — config/regional.ts for UK-specific settings
-3. **Shared API** — All Cloud Functions in aurorame repo
-
-### DO NOT
-1. Create duplicate content that exists on auroraforecast.me
-2. Reference US-specific terminology (NOAA forecasts for weather)
-3. Deploy Cloud Functions from this repo (they're in aurorame)
-4. Create .md files describing "what was done" (use git commits)
+- `npm run sync` pulls shared data from main site
+- Regional overrides in `config/regional.ts`
+- All Cloud Functions live in `aurorame` repo — CORS must include this domain
+- API security: browser requests auto-allowed via CORS, direct access needs `x-api-key`
 
 ## Commands
 
 ```bash
-npm run dev       # Local development
+npm run dev       # Local dev
 npm run build     # Production build
-npm run sync      # Sync data from aurorame
-npm run preview   # Preview production build
+npm run sync      # Sync from aurorame
 ```
 
-## Deployment
-
-Automatic via Firebase App Hosting on push to main branch.
-
-Manual deployment (if needed):
-```bash
-firebase apphosting:backends:update
-```
-
-## CORS Configuration
-
-API calls go to Cloud Functions in aurorame repo. CORS whitelist in:
-- `aurorame/functions/src/functions/*.ts`
-
-All functions must include `https://auroraforecast.uk` in ALLOWED_ORIGINS.
+Deploy: automatic on push to main. Manual: `firebase apphosting:backends:update`
