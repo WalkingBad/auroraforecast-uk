@@ -36,3 +36,13 @@ APP_ROOT=/Volumes/SSD/Repos/aurorame/app npm run sync
 
 - IndexNow ключ лежит в `public/88875cefd3af4ae41223ca0369010430.txt`
 - Файлы верификации для GSC/Bing/Yandex добавляются отдельно (см. `docs/hosting-setup.md`)
+
+## SEO updates
+
+- **robots.txt** — AI bot policy (GPTBot, CCBot и др. заблокированы)
+- **Organization schema** на главной странице (проверка `isHomepage` покрывает `/`, `/en`, `/en/`)
+- **/methodology** — отдельная страница (BaseLayout, кастомная навигация Related Pages, 54 города)
+- **QuickAnswer** компонент на страницах городов (speakable schema убран, будет добавлен в основную schema позже)
+- **Cross-linking**: город → guides + methodology; `aurora-borealis-forecast` → 6 городов UK
+- Ссылка на Methodology добавлена в footer
+- **dateModified** добавлен в StatePage

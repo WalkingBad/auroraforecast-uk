@@ -28,3 +28,17 @@ npm run sync      # Sync from aurorame
 ```
 
 Deploy: automatic on push to main. Manual: `firebase apphosting:backends:update`
+
+## SEO & Content Structure
+
+- **robots.txt**: AI bot policy — blocks common AI scrapers (GPTBot, CCBot, etc.)
+- **Organization schema**: added to homepage; `isHomepage` check covers `/`, `/en`, `/en/`
+- **Methodology page** (`/methodology`): uses BaseLayout, custom Related Pages nav, lists 54 UK cities
+- **QuickAnswer component**: shown on city pages; speakable schema removed (to be re-added to main page schema later)
+- **dateModified**: included in StatePage structured data
+
+## Cross-Linking
+
+- City pages link to relevant guides and the methodology page
+- `aurora-borealis-forecast` page links to 6 major UK cities
+- Methodology link added to site footer
