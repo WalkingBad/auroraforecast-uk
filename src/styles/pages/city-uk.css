@@ -127,12 +127,67 @@
   color: var(--aurora-text-primary);
 }
 
+/* Learn More — guide cross-links */
+.learn-more {
+  margin-bottom: var(--aurora-spacing-xxl);
+}
+
+.learn-more h2 {
+  margin-bottom: var(--aurora-spacing-l);
+}
+
+.learn-more__grid {
+  display: grid;
+  gap: var(--aurora-spacing-l);
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.learn-more__card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--aurora-spacing-s);
+  padding: var(--aurora-spacing-xl);
+  background: var(--aurora-surface);
+  border: 1px solid var(--aurora-border-light);
+  border-radius: var(--aurora-radius-card);
+  text-decoration: none;
+  transition: border-color 0.2s ease;
+}
+
+.learn-more__card:hover {
+  border-color: var(--aurora-primary);
+}
+
+.learn-more__label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--aurora-primary);
+}
+
+.learn-more__title {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--aurora-text-primary);
+}
+
+.learn-more__desc {
+  font-size: 0.875rem;
+  color: var(--aurora-text-tertiary);
+  line-height: 1.5;
+}
+
 @media (max-width: 720px) {
   .uk-city-guide__header {
     align-items: flex-start;
   }
 
   .uk-guide-card {
+    padding: var(--aurora-spacing-l);
+  }
+
+  .learn-more__card {
     padding: var(--aurora-spacing-l);
   }
 }

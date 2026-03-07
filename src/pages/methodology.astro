@@ -1,0 +1,146 @@
+---
+import GuideLayout from '../layouts/GuideLayout.astro';
+import citiesData from '../data/site-cities';
+
+export const prerender = true;
+
+const locationCount = citiesData.length;
+
+const popularCities = [
+  { slug: 'inverness', name: 'Inverness' },
+  { slug: 'edinburgh', name: 'Edinburgh' },
+  { slug: 'aberdeen', name: 'Aberdeen' },
+  { slug: 'lerwick', name: 'Lerwick' },
+  { slug: 'kirkwall', name: 'Kirkwall' },
+  { slug: 'belfast', name: 'Belfast' },
+];
+
+const relatedGuides = [
+  { title: 'Aurora Borealis UK Forecast', slug: '/aurora-borealis-forecast', category: 'Forecast', readingTime: '8 min read' },
+  { title: 'Northern Lights Near Me', slug: '/northern-lights-near-me', category: 'Guide', readingTime: '5 min read' },
+  { title: 'Aurora Visibility Map', slug: '/aurora-borealis-map', category: 'Map', readingTime: '4 min read' },
+];
+---
+
+<GuideLayout
+  title="How Aurora Forecast UK Works — Methodology & Data Sources"
+  description="Learn how Aurora Forecast UK predicts northern lights visibility across 200+ UK locations using NOAA space weather data, cloud cover, moon phase, darkness windows, and magnetic latitude."
+  publishDate="2025-01-15"
+  updateDate="2026-03-07"
+  author="AuroraMe Team"
+  readingTime="6 min read"
+  guideSlug="methodology"
+  relatedGuides={relatedGuides}
+>
+  <h2>Data Sources</h2>
+  <p>
+    Aurora Forecast UK draws on multiple real-time and reference data feeds
+    to produce location-specific visibility predictions for every city page.
+  </p>
+
+  <h3>NOAA Space Weather Prediction Center (SWPC)</h3>
+  <p>
+    The primary space weather input comes from NOAA's Space Weather Prediction
+    Center. We ingest the planetary Kp index, OVATION aurora oval model, and
+    solar wind parameters to determine current and forecast geomagnetic activity.
+    These feeds update every few minutes, giving near-real-time awareness of
+    solar-driven aurora conditions.
+  </p>
+
+  <h3>Kp Index</h3>
+  <p>
+    The Kp index measures global geomagnetic disturbance on a 0-9 scale.
+    Each UK location has a unique Kp threshold based on its magnetic latitude.
+    The further north a city sits on the geomagnetic grid, the lower the Kp
+    needed to see aurora. Shetland and Orkney can see displays at Kp 2-3,
+    while southern England needs Kp 7 or higher.
+  </p>
+
+  <h3>Cloud Cover</h3>
+  <p>
+    Even strong geomagnetic activity is invisible behind clouds. We pull
+    hourly cloud cover data to give each location an honest assessment of
+    whether the sky is clear enough for aurora viewing. Cloud cover above
+    80% typically blocks all visibility.
+  </p>
+
+  <h3>Moon Phase and Illumination</h3>
+  <p>
+    A bright moon washes out faint aurora. We factor in the current moon
+    phase and illumination percentage so that forecasts reflect real-world
+    sky brightness. New moon periods offer the darkest skies and the best
+    chance of spotting subtle aurora colours.
+  </p>
+
+  <h3>Darkness and Twilight Windows</h3>
+  <p>
+    Aurora is only visible after astronomical twilight ends. For every
+    location we calculate precise sunrise, sunset, and twilight times so
+    the forecast knows when darkness begins. During UK summer months, many
+    northern cities have very short true-darkness windows, which the model
+    accounts for automatically.
+  </p>
+
+  <h3>Magnetic Latitude</h3>
+  <p>
+    Geographic latitude alone does not determine aurora visibility. The
+    geomagnetic field is tilted, so magnetic latitude — the distance from the
+    magnetic pole — is what matters. We use the latest geomagnetic reference
+    model to assign each of our {locationCount}+ UK locations an accurate
+    magnetic latitude, which directly determines its Kp threshold.
+  </p>
+
+  <h2>Algorithm</h2>
+  <p>
+    Aurora Forecast UK uses a proprietary five-factor algorithm that combines
+    all the data sources above into a single visibility score for each
+    location. The five factors — Kp index, cloud cover, moon illumination,
+    sky darkness, and magnetic latitude — are weighted and blended to produce
+    an overall status (e.g. "Good", "Medium", "Low") and a percentage
+    probability.
+  </p>
+  <p>
+    The algorithm is calibrated against historical aurora observations and
+    tuned specifically for UK latitudes, where aurora is often lower on the
+    horizon and more sensitive to local conditions than at higher-latitude
+    Nordic sites.
+  </p>
+
+  <h2>Update Frequency</h2>
+  <p>
+    Space weather data refreshes every <strong>15 minutes</strong>, ensuring
+    that sudden geomagnetic storms are reflected in forecasts promptly.
+    Cloud cover updates on an <strong>hourly</strong> cycle. Moon and
+    darkness calculations are computed at build time and adjusted for the
+    current date.
+  </p>
+  <p>
+    City pages also display a 12-hour rolling forecast, a 27-day solar
+    rotation outlook, and monthly historical patterns — all updated on the
+    same refresh cycle.
+  </p>
+
+  <h2>Coverage</h2>
+  <p>
+    Aurora Forecast UK covers <strong>all UK regions</strong> — Scotland,
+    Northern England, Wales, and Northern Ireland — with
+    <strong>{locationCount}+ individual locations</strong>. From Lerwick in
+    Shetland to London in the south, every city page shows a tailored
+    forecast with local Kp thresholds, real-time conditions, and viewing tips.
+  </p>
+
+  <h3>Check Your Forecast</h3>
+  <p>
+    Pick a location to see tonight's aurora forecast with live data:
+  </p>
+  <ul>
+    {popularCities.map((city) => (
+      <li>
+        <a href={`/${city.slug}`}>{city.name} aurora forecast</a>
+      </li>
+    ))}
+  </ul>
+  <p>
+    Or use the <a href="/">homepage search</a> to find any of our {locationCount}+ UK locations.
+  </p>
+</GuideLayout>

@@ -1,0 +1,109 @@
+---
+/**
+ * QuickAnswer — speakable snippet for city pages.
+ * Renders a concise "Can I see aurora in {city} tonight?" block
+ * with structured data for Google featured snippets / voice search.
+ */
+interface Props {
+  cityName: string;
+  statusText: string;
+  statusLevel: string;
+  probability: number;
+  kpIndex: number | undefined;
+  kpThresholdLabel: string;
+  cloudCover: number;
+  skyDarkness: string;
+  magneticLatLabel: string;
+  citySlug: string;
+}
+
+const {
+  cityName,
+  statusText,
+  statusLevel,
+  probability,
+  kpIndex,
+  kpThresholdLabel,
+  cloudCover,
+  skyDarkness,
+  magneticLatLabel,
+  citySlug,
+} = Astro.props;
+
+const kpLabel = typeof kpIndex === 'number' ? kpIndex.toFixed(1) : 'N/A';
+const cloudLabel = typeof cloudCover === 'number' ? `${Math.round(cloudCover)}%` : 'Unknown';
+
+const isVisible = ['high', 'good', 'medium'].includes(statusLevel);
+const verdictShort = isVisible
+  ? `Yes — aurora chances in ${cityName} tonight are ${statusText.toLowerCase()} (${probability}%).`
+  : `Aurora is unlikely in ${cityName} right now — status is ${statusText.toLowerCase()}.`;
+
+const conditionsSummary = `Current Kp index is ${kpLabel} (needs ${kpThresholdLabel}), cloud cover ${cloudLabel}, sky ${skyDarkness}, magnetic latitude ${magneticLatLabel}.`;
+
+const speakableText = `${verdictShort} ${conditionsSummary}`;
+---
+
+<section class="quick-answer" aria-label={`Aurora quick answer for ${cityName}`}>
+  <h2 class="quick-answer__question">Can I see the aurora in {cityName} tonight?</h2>
+  <p class="quick-answer__verdict" data-status={statusLevel}>
+    {verdictShort}
+  </p>
+  <p class="quick-answer__conditions">
+    {conditionsSummary}
+  </p>
+</section>
+
+<!-- Speakable structured data for voice assistants -->
+<script
+  type="application/ld+json"
+  set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "speakable": {
+      "@type": "SpeakableSpecification",
+      "cssSelector": [".quick-answer__verdict", ".quick-answer__conditions"]
+    },
+    "name": `Aurora forecast for ${cityName} tonight`,
+    "url": `https://auroraforecast.uk/${citySlug}`
+  })}
+></script>
+
+<style>
+  .quick-answer {
+    background: var(--aurora-surface, #111214);
+    border: 1px solid var(--aurora-border-light, rgba(255,255,255,0.08));
+    border-radius: var(--aurora-radius-m, 12px);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .quick-answer__question {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--aurora-text-primary, #fff);
+    margin: 0 0 0.75rem;
+  }
+
+  .quick-answer__verdict {
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    color: var(--aurora-text-secondary, #c8c8c8);
+    margin: 0 0 0.5rem;
+  }
+
+  .quick-answer__verdict[data-status="high"],
+  .quick-answer__verdict[data-status="good"] {
+    color: var(--aurora-success, #34c97b);
+  }
+
+  .quick-answer__verdict[data-status="medium"] {
+    color: var(--aurora-primary, #6be7a0);
+  }
+
+  .quick-answer__conditions {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--aurora-text-muted, #8a8a8a);
+    margin: 0;
+  }
+</style>

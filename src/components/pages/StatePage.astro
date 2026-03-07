@@ -586,6 +586,7 @@ const dataTimestamp = new Date().toISOString();
       '@type': 'WebPage',
       'name': i18n.tpl(i18n.t('state_header_title'), { name }),
       'description': pageDescription,
+      'dateModified': new Date().toISOString(),
       'breadcrumb': {
         '@type': 'BreadcrumbList',
         'itemListElement': breadcrumbs

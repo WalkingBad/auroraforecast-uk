@@ -34,3 +34,16 @@ Disallow: /*.ts$
 Disallow: /*.tsx$
 Disallow: /*.js.map$
 Allow: /
+
+# AI bot rules
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Google-Extended
+Disallow: /

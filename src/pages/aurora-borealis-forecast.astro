@@ -229,6 +229,42 @@ const faqSchema = {
       </div>
     </section>
 
+    <!-- Check Forecast: Popular Locations -->
+    <section class="home-uk__check-forecast">
+      <div class="container">
+        <div class="home-uk__section-heading">
+          <h2>Check Aurora Forecast for Popular UK Locations</h2>
+          <p>Live visibility predictions updated every few minutes.</p>
+        </div>
+        <div class="check-forecast-grid">
+          <a href="/inverness" class="check-forecast-card">
+            <span class="check-forecast-name">Inverness</span>
+            <span class="check-forecast-region">Scottish Highlands</span>
+          </a>
+          <a href="/edinburgh" class="check-forecast-card">
+            <span class="check-forecast-name">Edinburgh</span>
+            <span class="check-forecast-region">Central Scotland</span>
+          </a>
+          <a href="/aberdeen" class="check-forecast-card">
+            <span class="check-forecast-name">Aberdeen</span>
+            <span class="check-forecast-region">North East Scotland</span>
+          </a>
+          <a href="/lerwick" class="check-forecast-card">
+            <span class="check-forecast-name">Lerwick</span>
+            <span class="check-forecast-region">Shetland Islands</span>
+          </a>
+          <a href="/kirkwall" class="check-forecast-card">
+            <span class="check-forecast-name">Kirkwall</span>
+            <span class="check-forecast-region">Orkney Islands</span>
+          </a>
+          <a href="/belfast" class="check-forecast-card">
+            <span class="check-forecast-name">Belfast</span>
+            <span class="check-forecast-region">Northern Ireland</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
     <!-- Related Pages -->
     <section class="home-uk__related">
       <div class="container">
@@ -244,9 +280,9 @@ const faqSchema = {
             <h3>Northern Lights Near Me</h3>
             <p>Find the best aurora viewing spots near your location.</p>
           </a>
-          <a href="/" class="related-card">
-            <h3>UK Aurora Forecast</h3>
-            <p>Complete aurora borealis forecast for all UK locations.</p>
+          <a href="/methodology" class="related-card">
+            <h3>How Our Forecast Works</h3>
+            <p>Data sources, algorithm, and methodology behind Aurora Forecast UK.</p>
           </a>
         </div>
       </div>
@@ -368,5 +404,39 @@ const faqSchema = {
     font-size: 0.9rem;
     color: var(--text-secondary, #666);
     margin: 0;
+  }
+
+  .check-forecast-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .check-forecast-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1rem 1.25rem;
+    background: var(--bg-secondary, #f8f9fa);
+    border-radius: 8px;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: border-color 0.2s ease;
+  }
+
+  .check-forecast-card:hover {
+    border-color: var(--link-color, #6be7a0);
+  }
+
+  .check-forecast-name {
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: var(--link-color, #6be7a0);
+  }
+
+  .check-forecast-region {
+    font-size: 0.8rem;
+    color: var(--text-secondary, #8a8a8a);
   }
 </style>

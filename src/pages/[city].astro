@@ -13,6 +13,7 @@ import AuroraStatusCard from '../components/AuroraStatusCard.astro';
 import VisibilityFactors from '../components/VisibilityFactors.astro';
 import AuroraWarnings from '../components/AuroraWarnings.astro';
 import ResponsiveTestWrapper from '../components/ResponsiveTestWrapper.astro';
+import QuickAnswer from '../components/QuickAnswer.astro';
 
 import citiesData from '../data/site-cities';
 import { getFactorDefinitions } from '../data/factor-definitions.ts';
@@ -252,6 +253,18 @@ const warnings = {
       overcastThreshold={OVERCAST_THRESHOLD}
       cityName={geoName}
       warnings={warnings}
+    />
+    <QuickAnswer
+      cityName={name}
+      statusText={statusText}
+      statusLevel={statusLevel}
+      probability={probability}
+      kpIndex={kpIndex}
+      kpThresholdLabel={localKpThresholdLabel}
+      cloudCover={cloudCover}
+      skyDarkness={skyDarkness || 'unknown'}
+      magneticLatLabel={localMagLatLabel}
+      citySlug={cityData.slug}
     />
   </section>
 
@@ -545,6 +558,28 @@ const warnings = {
       />
     </div>
   </div>
+
+  <!-- Learn More: Guide Cross-Links -->
+  <section class="learn-more" slot="faq">
+    <h2>Learn more about aurora in the UK</h2>
+    <div class="learn-more__grid">
+      <a class="learn-more__card" href="/methodology">
+        <span class="learn-more__label">Guide</span>
+        <span class="learn-more__title">How Aurora Forecast UK Works</span>
+        <span class="learn-more__desc">Data sources, algorithm, and update frequency behind our forecasts.</span>
+      </a>
+      <a class="learn-more__card" href={`/best-time/${cityData.slug}`}>
+        <span class="learn-more__label">Seasonal</span>
+        <span class="learn-more__title">Best Time to See Aurora in {name}</span>
+        <span class="learn-more__desc">Peak months, best hours, and planning tips for {name}.</span>
+      </a>
+      <a class="learn-more__card" href="/aurora-borealis-forecast">
+        <span class="learn-more__label">Forecast</span>
+        <span class="learn-more__title">UK Aurora Borealis Forecast</span>
+        <span class="learn-more__desc">Live Kp index, Kp thresholds by region, and viewing tips for tonight.</span>
+      </a>
+    </div>
+  </section>
 
   <!-- FAQ Section -->
   <CityFAQ

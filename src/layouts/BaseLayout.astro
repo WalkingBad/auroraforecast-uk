@@ -36,6 +36,7 @@ const {
 } = Astro.props;
 
 const crossDomainTags = generateCrossDomainHreflangTags(pagePath);
+const isHomepage = Astro.url.pathname === '/' || Astro.url.pathname === `/${lang}` || Astro.url.pathname === `/${lang}/`;
 const gaId = import.meta.env.PUBLIC_GA_TRACKING_ID;
 const hasGa = typeof gaId === 'string' && gaId.length > 0;
 ---
@@ -184,6 +185,21 @@ const hasGa = typeof gaId === 'string' && gaId.length > 0;
       }
     })}
   ></script>
+
+  <!-- Schema.org: Organization (homepage only) -->
+  {isHomepage && (
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Aurora Forecast UK",
+        "alternateName": "AuroraMe",
+        "url": "https://auroraforecast.uk",
+        "logo": "https://auroraforecast.uk/icon-192.png"
+      })}
+    ></script>
+  )}
 
   <!-- Schema.org: Place for city pages OR MobileApplication for other pages -->
   <script
