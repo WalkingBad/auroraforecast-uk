@@ -53,20 +53,8 @@ const speakableText = `${verdictShort} ${conditionsSummary}`;
   </p>
 </section>
 
-<!-- Speakable structured data for voice assistants -->
-<script
-  type="application/ld+json"
-  set:html={JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    "speakable": {
-      "@type": "SpeakableSpecification",
-      "cssSelector": [".quick-answer__verdict", ".quick-answer__conditions"]
-    },
-    "name": `Aurora forecast for ${cityName} tonight`,
-    "url": `https://auroraforecast.uk/${citySlug}`
-  })}
-></script>
+<!-- Speakable schema removed: WebPage type conflicts with page-level schema.
+     Speakable specification should be merged into the main page schema later. -->
 
 <style>
   .quick-answer {

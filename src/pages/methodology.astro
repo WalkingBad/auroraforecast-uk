@@ -1,6 +1,9 @@
 ---
-import GuideLayout from '../layouts/GuideLayout.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import StoreBadges from '../components/StoreBadges.astro';
 import citiesData from '../data/site-cities';
+import '../styles/pages/guide.css';
 
 export const prerender = true;
 
@@ -15,23 +18,51 @@ const popularCities = [
   { slug: 'belfast', name: 'Belfast' },
 ];
 
-const relatedGuides = [
-  { title: 'Aurora Borealis UK Forecast', slug: '/aurora-borealis-forecast', category: 'Forecast', readingTime: '8 min read' },
-  { title: 'Northern Lights Near Me', slug: '/northern-lights-near-me', category: 'Guide', readingTime: '5 min read' },
-  { title: 'Aurora Visibility Map', slug: '/aurora-borealis-map', category: 'Map', readingTime: '4 min read' },
+const title = "How Aurora Forecast UK Works — Methodology & Data Sources";
+const description = "Learn how Aurora Forecast UK predicts northern lights visibility across 200+ UK locations using NOAA space weather data, cloud cover, moon phase, darkness windows, and magnetic latitude.";
+const publishDate = "2025-01-15";
+const updateDate = "2026-03-07";
+const author = "AuroraMe Team";
+const readingTime = "6 min read";
+
+const breadcrumbs = [
+  { title: 'Home', href: '/' },
+  { title: 'Methodology' },
 ];
 ---
 
-<GuideLayout
-  title="How Aurora Forecast UK Works — Methodology & Data Sources"
-  description="Learn how Aurora Forecast UK predicts northern lights visibility across 200+ UK locations using NOAA space weather data, cloud cover, moon phase, darkness windows, and magnetic latitude."
-  publishDate="2025-01-15"
-  updateDate="2026-03-07"
-  author="AuroraMe Team"
-  readingTime="6 min read"
-  guideSlug="methodology"
-  relatedGuides={relatedGuides}
->
+<BaseLayout title={title} description={description}>
+  <article class="guide">
+    <div class="guide__container">
+      <Breadcrumbs items={breadcrumbs} />
+
+      <header class="guide__header">
+        <h1 class="guide__title">{title}</h1>
+        <div class="guide__meta">
+          <span class="guide__author">{author}</span>
+          <span class="guide__separator">•</span>
+          <time class="guide__date" datetime={publishDate}>
+            {new Date(publishDate).toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            })}
+          </time>
+          <span class="guide__separator">•</span>
+          <span class="guide__updated">
+            Updated {new Date(updateDate).toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            })}
+          </span>
+          <span class="guide__separator">•</span>
+          <span class="guide__reading-time">{readingTime}</span>
+        </div>
+        <p class="guide__description">{description}</p>
+      </header>
+
+      <div class="guide__content">
   <h2>Data Sources</h2>
   <p>
     Aurora Forecast UK draws on multiple real-time and reference data feeds
@@ -143,4 +174,61 @@ const relatedGuides = [
   <p>
     Or use the <a href="/">homepage search</a> to find any of our {locationCount}+ UK locations.
   </p>
-</GuideLayout>
+      </div>
+
+      <nav class="guide__related" aria-label="Related pages">
+        <h2>Related Pages</h2>
+        <ul>
+          <li><a href="/aurora-borealis-forecast">Aurora Borealis UK Forecast</a></li>
+          <li><a href="/northern-lights-near-me">Northern Lights Near Me</a></li>
+        </ul>
+      </nav>
+
+      <aside class="guide__cta">
+        <h3 class="guide__cta-title">Get Aurora Alerts on Your Phone</h3>
+        <p class="guide__cta-text">
+          Download AuroraMe to receive instant notifications when northern lights are visible in your area. Free 3-day forecast included.
+        </p>
+        <StoreBadges
+          pageType="guide"
+          guideSlug="methodology"
+          placement="content_cta"
+          enhanced={true}
+          size="large"
+        />
+      </aside>
+    </div>
+  </article>
+
+  <StoreBadges
+    pageType="guide"
+    guideSlug="methodology"
+    placement="sticky_footer"
+    sticky={true}
+    enhanced={true}
+  />
+
+  <script
+    type="application/ld+json"
+    set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": title,
+      "description": description,
+      "datePublished": publishDate,
+      "dateModified": updateDate,
+      "author": {
+        "@type": "Organization",
+        "name": author
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "AuroraMe",
+        "logo": {
+          "@type": "ImageObject",
+          "url": `${Astro.site}favicon.png`
+        }
+      }
+    })}
+  ></script>
+</BaseLayout>
