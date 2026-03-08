@@ -272,6 +272,12 @@ const hasGa = typeof gaId === 'string' && gaId.length > 0;
   <!-- Service Worker registration for PWA functionality -->
   <script is:inline src="/scripts/sw-register.js"></script>
 
-  <!-- No heavy scripts on SEO pages to avoid hydration and keep pages light -->
+  <script is:inline>
+  (function(){var r=document.referrer;if(!r)return;try{
+  if(!/chatgpt|openai|perplexity|you\.com|phind|bing\.com.*chat|gemini|claude\.ai|grok|meta\.ai|mistral/i.test(r))return;
+  var b=JSON.stringify({domain:location.hostname,url:location.href,referrer:r});
+  if(navigator.sendBeacon)navigator.sendBeacon("https://seo-ops-y2w4zqdyyq-ew.a.run.app/api/ai-referral",b);
+  }catch(e){}})();
+  </script>
 </body>
 </html>
